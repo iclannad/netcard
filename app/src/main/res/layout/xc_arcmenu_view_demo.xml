@@ -1,0 +1,26 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Grey"
+    android:fitsSystemWindows="true">
+
+    <blink.com.blinkcard320.View.MGridView
+        android:id="@+id/gridview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:horizontalSpacing="@dimen/ItemSpace"
+        android:numColumns="3"
+        android:layout_marginBottom="@dimen/ItemSpace"
+        android:scrollbars="none"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="@dimen/ItemSpace" />
+
+
+    <LinearLayout
+        android:layout_below="@+id/gridview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/White"/>
+
+</RelativeLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="marginBig">10dp</dimen>
+    <dimen name="popWindowHeight">50dp</dimen>
+    <dimen name="popWindowtextSize">14sp</dimen>
+    <dimen name="popWindowmarginTop">5dp</dimen>
+    <dimen name="margin">5dp</dimen>
+    <dimen name="initActivityEditImageHeight">50dp</dimen>
+    <dimen name="EditHeight">40dp</dimen>
+    <dimen name="textSize">15sp</dimen>
+    <dimen name="textSizeBig">18sp</dimen>
+    <dimen name="buttonHeight">40dp</dimen>
+    <dimen name="marginBigger">20dp</dimen>
+    <dimen name="marginBiggest">25dp</dimen>
+    <dimen name="marginMoreBig">30dp</dimen>
+    <dimen name="marginMoreBigger">35dp</dimen>
+    <dimen name="marginMoreBiggest">40dp</dimen>
+    <dimen name="chexkBoxSize">25dp</dimen>
+    <dimen name="editImageSize">25dp</dimen>
+    <dimen name="ScanCode">80dp</dimen>
+    <dimen name="LogoSize">80dp</dimen>
+    <dimen name="MainLogoSize">60dp</dimen>
+    <dimen name="TabLogoSize">20dp</dimen>
+    <dimen name="ItemSpace">1dp</dimen>
+    <dimen name="ItemSpaceer">2dp</dimen>
+    <dimen name="itemLogoSize">50dp</dimen>
+    <dimen name="titleHeight">50dp</dimen>
+    <dimen name="ItemImageSize">20dp</dimen>
+    <dimen name="ItemHeight">55dp</dimen>
+
+    <dimen name="CodeSize">150dp</dimen>
+
+    <dimen name="SplashSize">300dp</dimen>
+    <dimen name="SplashSize1">230dp</dimen>
+    <dimen name="SplashSize2">200dp</dimen>
+
+</resources>

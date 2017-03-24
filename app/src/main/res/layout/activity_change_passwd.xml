@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/change_passwd_original"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/marginBiggest"
+        android:layout_marginRight="@dimen/marginBiggest"
+        android:layout_marginTop="@dimen/marginBiggest"
+        android:background="@drawable/bg_edittext"
+        android:digits="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`~!@#$^&amp;*()-=_+[]{};:\&apos;\&quot;\\|/?.,&lt;>/% "
+        android:drawableLeft="@mipmap/icon_pw"
+        android:drawablePadding="@dimen/marginBig"
+        android:ems="10"
+        android:focusable="true"
+        android:hint="@string/activity_pwd_original_password"
+        android:inputType="textPassword"
+        android:padding="@dimen/marginBig"
+        android:textSize="@dimen/textSize" />
+
+    <EditText
+        android:id="@+id/change_passwd_new_first"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/marginBiggest"
+        android:layout_marginRight="@dimen/marginBiggest"
+        android:layout_marginTop="@dimen/margin"
+        android:background="@drawable/bg_edittext"
+        android:digits="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`~!@#$^&amp;*()-=_+[]{};:\&apos;\&quot;\\|/?.,&lt;>/% "
+        android:drawableLeft="@mipmap/icon_pw"
+        android:drawablePadding="@dimen/marginBig"
+        android:ems="10"
+        android:hint="@string/activity_pwd_new_password"
+        android:inputType="textPassword"
+        android:padding="@dimen/marginBig"
+        android:textSize="@dimen/textSize">
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/change_passwd_new_second"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/marginBiggest"
+        android:layout_marginRight="@dimen/marginBiggest"
+        android:layout_marginTop="@dimen/margin"
+        android:background="@drawable/bg_edittext"
+        android:digits="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`~!@#$^&amp;*()-=_+[]{};:\&apos;\&quot;\\|/?.,&lt;>/% "
+        android:drawableLeft="@mipmap/icon_pw"
+        android:drawablePadding="@dimen/marginBig"
+        android:ems="10"
+        android:hint="@string/activity_pwd_new_password_again"
+        android:inputType="textPassword"
+        android:padding="@dimen/marginBig"
+        android:textSize="@dimen/textSize" />
+
+    <Button
+        android:id="@+id/change_passwd_btn"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/butHeight"
+        android:layout_marginLeft="@dimen/marginBiggest"
+        android:layout_marginRight="@dimen/marginBiggest"
+        android:layout_marginTop="@dimen/marginMoreBigger"
+        android:background="@drawable/loginonclick"
+        android:text="@string/activity_pwd_confirm"
+        android:textColor="@color/White" />
+
+</LinearLayout>

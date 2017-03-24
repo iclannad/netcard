@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:fitsSystemWindows="true">
+
+    <!--<TextView-->
+    <!--android:id="@+id/task_title"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_centerHorizontal="true"-->
+    <!--android:layout_marginTop="10dp"-->
+    <!--android:text="@string/down_up_load"-->
+    <!--android:textColor="@android:color/black"-->
+    <!--android:textSize="22sp" />-->
+
+    <!--<RelativeLayout-->
+    <!--android:id="@+id/relativeLayout1"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="37dp"-->
+    <!--android:layout_below="@id/task_title" >-->
+
+    <!--<Button-->
+    <!--android:id="@+id/download_manager_clear"-->
+    <!--style="?android:attr/buttonStyleSmall"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="32dp"-->
+    <!--android:layout_centerVertical="true"-->
+    <!--android:layout_marginRight="18dp"-->
+    <!--android:background="@drawable/shape"-->
+    <!--android:text="@string/clear"-->
+    <!--android:textColor="@android:color/black"-->
+    <!--android:visibility="gone" />-->
+    <!--</RelativeLayout>-->
+
+    <!--<ExpandableListView-->
+    <!--android:id="@+id/expandable_list_view"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_below="@+id/relativeLayout1"-->
+    <!--&gt;-->
+    <!--</ExpandableListView>-->
+
+    <ListView
+        android:id="@+id/taskListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/taskBottomLinear"
+        android:layout_alignParentTop="true"
+        android:divider="@color/Grey"
+        android:dividerHeight="@dimen/listpaddingsmaller" />
+
+
+    <LinearLayout
+        android:id="@+id/taskBottomLinear"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/butHeight"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+
+        <TextView
+            android:id="@+id/taskDownText"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/MainColorBlue"
+            android:gravity="center"
+            android:text="下载"
+            android:textColor="@color/White"
+            android:textSize="@dimen/textsize_small" />
+
+
+        <TextView
+            android:id="@+id/taskUploadText"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/GreySmoke"
+            android:gravity="center"
+            android:text="上传"
+            android:textColor="@color/MainColorBlue"
+            android:textSize="@dimen/textsize_small" />
+
+    </LinearLayout>
+
+</RelativeLayout>

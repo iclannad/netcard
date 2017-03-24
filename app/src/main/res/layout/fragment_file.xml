@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <GridView
+        android:id="@+id/fragment_file_GridView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:horizontalSpacing="@dimen/marginSmallerest"
+        android:numColumns="2"
+        android:verticalSpacing="@dimen/marginSmallerest" />
+
+    <LinearLayout
+        android:id="@+id/activity_file_linear"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/marginSmallerest"
+        android:layout_marginTop="@dimen/marginSmallerest"
+        android:background="@color/White"
+        android:orientation="horizontal" />
+
+</LinearLayout>

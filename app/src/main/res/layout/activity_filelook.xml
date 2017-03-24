@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <blink.com.blinkcard320.View.FilePathLineayout
+            android:id="@+id/settings_myfilepath"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/y20"
+            android:background="@color/filepath"
+            android:gravity="center_vertical"></blink.com.blinkcard320.View.FilePathLineayout>
+
+        <LinearLayout
+            android:id="@+id/activity_save_filepath"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/loginonclick">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/butHeight"
+                android:gravity="center"
+                android:text="@string/filelook_savefilepath"
+                android:textColor="@color/White"
+                android:textSize="@dimen/textsize_medium" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/activity_save_filepath"
+            android:layout_below="@id/settings_myfilepath">
+
+            <ListView
+                android:id="@+id/activity_listview_filelook"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"></ListView>
+
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+</LinearLayout>

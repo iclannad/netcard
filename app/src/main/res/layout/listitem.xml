@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:id="@+id/listRelative"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <ImageView
+            android:id="@+id/listImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/marginBig"/>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/listImage"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/listText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:textColor="@color/Grey"
+                android:textSize="@dimen/listTextNormal" />
+
+            <TextView
+                android:id="@+id/listSubText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:singleLine="true"
+                android:textColor="@color/GreyDeep"
+                android:textSize="@dimen/listTextSmall"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/listright"
+            android:layout_width="@dimen/listRightImageSmaller"
+            android:layout_height="@dimen/listRightImageSmaller"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/marginBig" />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/listright"
+            android:gravity="right"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/listRightText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/GreyDeep"
+                android:textSize="@dimen/listTextSmall" />
+
+
+            <TextView
+                android:id="@+id/listRightText1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/GreyDeep"
+                android:textSize="@dimen/listTextSmall" />
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/listSetting"
+            android:layout_width="@dimen/listRightSettingWidth"
+            android:layout_height="@dimen/listRightSettingHeight"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/marginBigger"
+            android:background="@drawable/setting_but_selector"
+            android:orientation="horizontal"
+            android:padding="@dimen/listpaddingsmaller"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/listSettingText1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/setting_but_open" />
+
+
+            <TextView
+                android:id="@+id/listSettingText2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/setting_but_selector" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

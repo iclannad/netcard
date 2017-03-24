@@ -1,0 +1,89 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- 字体的大小-->
+    <dimen name="textsize_small">14sp</dimen>
+    <!-- 字体的大小-->
+    <dimen name="textsize_Big">18sp</dimen>
+    <!-- 小一号字体-->
+    <dimen name="textsize_smaller">12sp</dimen>
+    <!-- listview的高度-->
+    <dimen name="itemHeight">55dp</dimen>
+    <!-- 文字的宽度-->
+    <dimen name="textWidth">100dp</dimen>
+    <!-- 按钮的高度-->
+    <dimen name="butHeight">40dp</dimen>
+
+    <dimen name="butmargin">0.5dp</dimen>
+
+    <!-- 边距正常-->
+    <dimen name="marginNormal">5dp</dimen>
+    <!-- 编辑间隔-->
+    <dimen name="editMargin">7dp</dimen>
+    <!-- 边距大-->
+    <dimen name="marginBig">10dp</dimen>
+
+    <dimen name="marginBigger">15dp</dimen>
+
+    <dimen name="marginSmaller">3dp</dimen>
+
+    <dimen name="marginSmallerest">1dp</dimen>
+
+    <dimen name="marginBiggest">20dp</dimen>
+
+    <!-- 标题的高度-->
+    <dimen name="titleHeight">70dp</dimen>
+
+    <!-- listview Item-->
+    <dimen name="listText">18sp</dimen>
+    <dimen name="listTextNormal">15sp</dimen>
+    <dimen name="listTextSmall">12sp</dimen>
+    <dimen name="listRightSettingWidth">85dp</dimen>
+    <dimen name="listRightSettingHeight">25dp</dimen>
+    <dimen name="listRightImageSmall">25dp</dimen>
+    <dimen name="listpaddingsmaller">1dp</dimen>
+    <dimen name="listsubTextWidth">250dp</dimen>
+
+
+    <!-- fragment1-->
+    <dimen name="logoWidth">120dp</dimen>
+    <dimen name="logoHeight">60dp</dimen>
+
+
+    <!-- 网络优化-->
+    <dimen name="networkSize">200dp</dimen>
+
+    <!-- 安全保护-->
+    <dimen name="intusionImage">100dp</dimen>
+
+
+    <!-- 关于我们-->
+    <dimen name="logoSize">80dp</dimen>
+    <dimen name="logomargin">90dp</dimen>
+
+
+    <!-- 绑定路由器-->
+    <dimen name="searchImageSize">80dp</dimen>
+    <dimen name="searchImagemargin">100dp</dimen>
+    <dimen name="searchLogo">50dp</dimen>
+
+
+    <!-- 开始的扫描界面-->
+    <dimen name="titlemargin">100dp</dimen>
+    <dimen name="titleSize">28sp</dimen>
+
+
+    <!-- 建议界面-->
+    <dimen name="editWidth">300dp</dimen>
+
+
+    <!-- 欢迎界面-->
+    <dimen name="welcomebut">70dp</dimen>
+    <dimen name="welcomebutBottom">150dp</dimen>
+    <dimen name="origin">30dp</dimen>
+    <dimen name="originSize">8dp</dimen>
+    <dimen name="originmargin">2.5dp</dimen>
+
+</resources>

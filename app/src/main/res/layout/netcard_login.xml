@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:id="@+id/loginEditRelative"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/init_activity_button_want"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/butHeight"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="@dimen/marginBiggest"
+            android:layout_marginRight="@dimen/marginBiggest"
+            android:layout_marginTop="@dimen/marginBiggest"
+            android:background="@drawable/buttonblue"
+            android:gravity="center"
+            android:text="@string/activity_init_connect"
+            android:textColor="@color/White"
+            android:textSize="@dimen/listTextNormal" />
+
+        <RelativeLayout
+            android:id="@+id/init_checkLinear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/init_activity_button_want"
+            android:layout_marginTop="@dimen/marginBiggest"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="@dimen/marginBiggest"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/activity_checkbox_autologin"
+                    android:layout_width="@dimen/listRightSettingHeight"
+                    android:layout_height="@dimen/listRightSettingHeight"
+                    android:background="@drawable/checkbox_login"
+                    android:button="@null"
+                    android:clickable="true" />
+
+                <TextView
+                    android:id="@+id/init_auto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/marginNormal"
+                    android:text="@string/autologin"
+                    android:textSize="@dimen/listTextNormal" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="@dimen/marginBiggest"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/activity_checkbox_remeberpassword"
+                    android:layout_width="@dimen/listRightSettingHeight"
+                    android:layout_height="@dimen/listRightSettingHeight"
+                    android:background="@drawable/checkbox_login"
+                    android:button="@null"
+                    android:clickable="true" />
+
+                <TextView
+                    android:id="@+id/init_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/marginNormal"
+                    android:text="@string/remeberpw"
+                    android:textSize="@dimen/listTextNormal" />
+
+            </LinearLayout>
+        </RelativeLayout>
+
+
+        <EditText
+            android:id="@+id/activity_init_edit_passwd"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/butHeight"
+            android:layout_above="@id/init_checkLinear"
+            android:layout_marginLeft="@dimen/marginBigger"
+            android:layout_marginRight="@dimen/marginBigger"
+            android:background="@drawable/editsytle"
+            android:digits="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`~!@#$^&amp;*()-=_+[]{};:\&apos;\&quot;\\|/?.,&lt;>/% "
+            android:hint="@string/pawssword"
+            android:inputType="textPassword"
+            android:padding="@dimen/marginBig"
+            android:textColorHint="@color/Grey"
+            android:textSize="@dimen/listTextNormal" />
+
+        <RelativeLayout
+            android:id="@+id/init_idLinear"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/butHeight"
+            android:layout_above="@id/activity_init_edit_passwd"
+            android:layout_marginLeft="@dimen/marginBigger"
+            android:layout_marginRight="@dimen/marginBigger">
+
+            <EditText
+                android:id="@+id/init_activity_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/butHeight"
+                android:background="@drawable/editsytle"
+                android:hint="@string/username"
+                android:padding="@dimen/marginBig"
+                android:textColorHint="@color/Grey"
+                android:textSize="@dimen/listTextNormal" />
+
+            <ImageView
+                android:id="@+id/init_downImage"
+                android:layout_width="@dimen/marginBiggest"
+                android:layout_height="@dimen/marginBiggest"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/marginBig"
+                android:src="@mipmap/init_down" />
+        </RelativeLayout>
+
+
+        <!--<LinearLayout-->
+        <!--android:id="@+id/activity_ll_user"-->
+        <!--android:layout_width="@dimen/x250"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/init_idLinear"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:background="@android:color/white"-->
+        <!--android:orientation="horizontal" >-->
+
+        <!--<com.blink.blinkp2p.ui.view.ClearEditText-->
+        <!--android:id="@+id/init_activity_edit_text"-->
+        <!--android:layout_width="@dimen/x210"-->
+        <!--android:layout_height="@dimen/x30"-->
+        <!--android:background="@android:color/white"-->
+        <!--android:ems="10"-->
+        <!--android:hint="@string/username"-->
+        <!--android:inputType="none"-->
+        <!--android:paddingLeft="@dimen/x10"-->
+        <!--android:singleLine="true"-->
+        <!--android:textSize="@dimen/x15" />-->
+
+        <!--<ImageView-->
+        <!--android:id="@+id/activity_imageview_listview"-->
+        <!--android:layout_width="@dimen/x53"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_gravity="top|left"-->
+        <!--android:src="@drawable/pulldown" />-->
+        <!--</LinearLayout>-->
+
+
+        <ImageView
+            android:id="@+id/loginLogo"
+            android:layout_width="@dimen/logoHeight"
+            android:layout_height="@dimen/logoHeight"
+            android:layout_above="@id/init_idLinear"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/searchLogo"
+            android:src="@mipmap/ic_launcher" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/loginScanRelative"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/init_activity_button_sweep"
+            android:layout_width="@dimen/logoHeight"
+            android:layout_height="@dimen/logoHeight"
+            android:layout_centerInParent="true"
+            android:background="@drawable/qcodeonclick" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/init_activity_button_sweep"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/marginBig"
+            android:text="@string/activity_Qcode"
+            android:textColor="@color/Greyer"
+            android:textSize="@dimen/listTextNormal" />
+    </RelativeLayout>
+
+</LinearLayout>

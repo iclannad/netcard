@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/White">
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:layout_margin="@dimen/marginBig">
+
+        <ImageView
+            android:id="@+id/skin_Adapter_Back"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/Blue"
+            android:layout_margin="@dimen/marginBig"/>
+
+        <ImageView
+            android:id="@+id/skin_Adapter_id"
+            android:layout_width="@dimen/marginMoreBig"
+            android:layout_height="@dimen/marginMoreBig"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true" />
+
+    </RelativeLayout>
+
+</LinearLayout>

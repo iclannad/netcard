@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/BlinkCard.iml" filepath="$PROJECT_DIR$/BlinkCard.iml" />
+      <module fileurl="file://$PROJECT_DIR$/BlinkCardSDK/BlinkCardSDK.iml" filepath="$PROJECT_DIR$/BlinkCardSDK/BlinkCardSDK.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DATA_SDK/DATA_SDK.iml" filepath="$PROJECT_DIR$/DATA_SDK/DATA_SDK.iml" />
+      <module fileurl="file://$PROJECT_DIR$/UI_SDK/UI_SDK.iml" filepath="$PROJECT_DIR$/UI_SDK/UI_SDK.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Widgets/Widgets.iml" filepath="$PROJECT_DIR$/Widgets/Widgets.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+    </modules>
+  </component>
+</project>

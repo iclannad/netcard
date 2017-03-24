@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/activity_relativelayout_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/back"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/activity_button_sure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/circlebuttonclick"
+            android:text="@string/yes" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/activity_button_sure"
+            android:layout_alignBottom="@+id/activity_button_sure"
+            android:layout_centerHorizontal="true"
+            android:text="@string/activity_sendfile"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/white" />
+    </RelativeLayout>
+
+    <blink.com.blinkcard320.View.FilePathLineayout
+        android:id="@+id/activity_myfilepath"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/butHeight"
+        android:layout_alignParentTop="true"
+        android:alpha="0.8"
+        android:background="@color/filepath"
+        android:gravity="center_vertical" />
+
+    <LinearLayout
+        android:id="@+id/activity_ll_downll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/filepath"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/activity_button_cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/marginNormal"
+            android:layout_weight="1"
+            android:background="@drawable/circlebuttonclick"
+            android:text="@string/activity_cancel" />
+
+        <Button
+            android:id="@+id/activity_button_send"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/marginNormal"
+            android:layout_weight="1"
+            android:background="@drawable/circlebuttonclick"
+            android:text="@string/activity_send" />
+
+        <Button
+            android:id="@+id/activity_button_delete"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/marginNormal"
+            android:layout_weight="1"
+            android:background="@drawable/circlebuttonclick"
+            android:text="@string/activity_delete" />
+
+        <Button
+            android:id="@+id/activity_button_allin"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/marginNormal"
+            android:layout_weight="1"
+            android:background="@drawable/circlebuttonclick"
+            android:text="@string/activity_all_in" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/activity_listview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/activity_ll_downll"
+        android:layout_below="@+id/activity_myfilepath" />
+
+</RelativeLayout>

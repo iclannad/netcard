@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mydeviceback"
+    android:orientation="vertical">
+
+
+    <!--<LinearLayout-->
+    <!--android:id="@+id/fragment_deviceTop"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:background="@color/actionbarcolor"-->
+    <!--android:orientation="vertical">-->
+
+    <!--<ImageView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_margin="@dimen/marginBig"-->
+    <!--android:src="@mipmap/icon_deviceback" />-->
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_marginTop="@dimen/x5"-->
+    <!--android:layout_weight="0.2"-->
+    <!--android:gravity="center"-->
+    <!--android:orientation="horizontal">-->
+
+    <!--<TextView-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="@dimen/x5"-->
+    <!--android:layout_weight="1"-->
+    <!--android:text="@string/username"-->
+    <!--android:textColor="@android:color/white"-->
+    <!--android:textSize="@dimen/textsize_small" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/fragment_pcusername"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="4"-->
+    <!--android:singleLine="true"-->
+    <!--android:text="技嘉 To be filled by O.E.M."-->
+    <!--android:textColor="@android:color/white"-->
+    <!--android:textSize="@dimen/textsize_small" />-->
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_marginTop="@dimen/x5"-->
+    <!--android:layout_weight="0.2"-->
+    <!--android:gravity="center"-->
+    <!--android:orientation="horizontal">-->
+
+    <!--<TextView-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="@dimen/x5"-->
+    <!--android:layout_weight="1"-->
+    <!--android:text="@string/fragment_PCos"-->
+    <!--android:textColor="@android:color/white"-->
+    <!--android:textSize="@dimen/textsize_small" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/fragment_os"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="4"-->
+    <!--android:singleLine="true"-->
+    <!--android:text="Microsoft Windows 8.1 专业版 (64位)"-->
+    <!--android:textColor="@android:color/white"-->
+    <!--android:textSize="@dimen/textsize_small" />-->
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_marginTop="@dimen/x5"-->
+    <!--android:layout_weight="0.2"-->
+    <!--android:gravity="center"-->
+    <!--android:orientation="horizontal">-->
+
+    <!--<TextView-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="@dimen/x5"-->
+    <!--android:layout_weight="1"-->
+    <!--android:text="CPU"-->
+    <!--android:textColor="@android:color/white"-->
+    <!--android:textSize="@dimen/textsize_small" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/fragment_cpu"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="4"-->
+    <!--android:singleLine="true"-->
+    <!--android:text="Realtek PCIe GBE 系列控制器"-->
+    <!--android:textColor="@android:color/white"-->
+    <!--android:textSize="@dimen/textsize_small" />-->
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_marginTop="@dimen/x5"-->
+    <!--android:layout_weight="0.2"-->
+    <!--android:gravity="center"-->
+    <!--android:orientation="horizontal">-->
+
+    <!--<TextView-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="@dimen/x5"-->
+    <!--android:layout_weight="1"-->
+
+    <!--android:text="@string/fragment_PCmemory"-->
+    <!--android:textColor="@android:color/white"-->
+    <!--android:textSize="@dimen/textsize_small" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/fragment_memory"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="4"-->
+    <!--android:singleLine="true"-->
+    <!--android:text="Realtek PCIe GBE 系列控制器"-->
+    <!--android:textColor="@android:color/white"-->
+    <!--android:textSize="@dimen/textsize_small" />-->
+    <!--</LinearLayout>-->
+
+    <!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_marginBottom="@dimen/x5"-->
+    <!--android:layout_marginTop="@dimen/x5"-->
+    <!--android:layout_weight="0.2"-->
+    <!--android:gravity="center"-->
+    <!--android:orientation="horizontal">-->
+
+    <!--<TextView-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="@dimen/x5"-->
+    <!--android:layout_weight="1"-->
+    <!--android:singleLine="true"-->
+    <!--android:text="@string/fragment_PCtime"-->
+    <!--android:textColor="@android:color/white"-->
+    <!--android:textSize="@dimen/textsize_small" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/fragment_time"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="4"-->
+    <!--android:singleLine="true"-->
+    <!--android:text="Realtek PCIe GBE 系列控制器"-->
+    <!--android:textColor="@android:color/white"-->
+    <!--android:textSize="@dimen/textsize_small" />-->
+    <!--</LinearLayout>-->
+    <!--</LinearLayout>-->
+
+    <GridView
+        android:id="@+id/fragmentdevice_gridview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/marginSmallerest"
+        android:horizontalSpacing="@dimen/marginSmallerest"
+        android:listSelector="@null"
+        android:numColumns="3"
+        android:layout_alignParentBottom="true"
+        android:scrollbars="none"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="@dimen/marginSmallerest" />
+
+    <LinearLayout
+        android:id="@+id/fragmentDeviceBack"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/MainColorBlue"
+        android:layout_above="@+id/fragmentdevice_gridview">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/marginBig"
+            android:src="@mipmap/icon_deviceback" />
+    </LinearLayout>
+
+
+</RelativeLayout>

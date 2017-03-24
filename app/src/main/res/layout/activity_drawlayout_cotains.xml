@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/GreyBack"
+    android:fitsSystemWindows="true">
+
+
+    <LinearLayout
+        android:id="@+id/activity_device_tab"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="@dimen/listpaddingsmaller"
+        android:background="@color/White"
+        android:focusableInTouchMode="true"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/activity_ll_myfiles"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/marginNormal">
+
+            <ImageView
+                android:layout_width="@dimen/marginBiggest"
+                android:layout_height="@dimen/marginBiggest"
+                android:layout_gravity="center"
+                android:src="@mipmap/icon_myfiles" />
+
+            <TextView
+                android:id="@+id/activity_textview_myfiles"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="top"
+                android:text="@string/my_file"
+                android:textColor="@color/Greyer" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/activity_ll_devices"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/GreySmork"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/marginNormal">
+
+            <ImageView
+                android:layout_width="@dimen/marginBiggest"
+                android:layout_height="@dimen/marginBiggest"
+                android:layout_gravity="center"
+                android:src="@mipmap/icon_mydevice" />
+
+            <TextView
+                android:id="@+id/activity_textview_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="top"
+                android:text="@string/my_devices"
+                android:textColor="@color/Greyer" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:id="@+id/activity_device_framelayout"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/activity_device_tab" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:padding="@dimen/marginBig">
+
+        <ImageView
+            android:id="@+id/activity_imageview_quitstart"
+            android:layout_width="@dimen/logoHeight"
+            android:layout_height="@dimen/logoHeight"
+            android:src="@mipmap/icon_quitstart"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
+
+
+</RelativeLayout>

@@ -1,0 +1,329 @@
+<resources>
+    <string name="app_name">必联云网卡2</string>
+
+    <!-- string_mainactivity-->
+    <string name="activity_main_exit">再按一次退出程序</string>
+    <string name="activity_main_ask_reconnect">系统检测到您已断开和电脑的连接，您将无法继续操作，是否重新连接电脑？</string>
+    <string name="activity_main_start_reconnect">开始断线重连</string>
+    <string name="activity_main_donnot_reconnect">继续留在当前页面</string>
+    <string name="activity_pwd_change_password">修改密码</string>
+    <!-- FragmentDevices -->
+    <string name="instruction">指令</string>
+    <string name="instruction_getpcinfo">获得电脑信息</string>
+    <string name="instruction_reboot">重启</string>
+    <string name="instruction_wshutdown">定时关机</string>
+    <string name="instruction_shutdown">立即关机</string>
+    <string name="instruction_lock">修改密码</string>
+    <string name="instruction_lockingdevice">锁定设备</string>
+    <string name="instruction_getupdate">获取更新</string>
+    <string name="instruction_AlterPassword">修改密码</string>
+    <string name="instruction_Camera">照相机</string>
+    <string name="fragment_PCos">操作系统</string>
+    <string name="fragment_PCmemory">物理内存</string>
+    <string name="fragment_PCtime">在线时间</string>
+    <!-- FragmentFileManager -->
+    <string name="fragment_pcfile">电脑文件</string>
+    <string name="fragment_phonefile">手机文件</string>
+    <string name="fragment_translist">传输列表</string>
+    <string name="fragment_filerecord">文件记录</string>
+    <!-- fragment file PC -->
+    <string name="file_pc_mypc">我的电脑</string>
+    <string name="file_pc_video">视频</string>
+    <string name="file_pc_docume">文档</string>
+    <string name="file_pc_down">下载</string>
+    <string name="file_pc_music">音乐</string>
+    <string name="file_pc_desk">桌面</string>
+    <string name="file_pc_picture">图片</string>
+    <!-- fragment file Phone -->
+    <string name="file_phone_myphone">手机</string>
+    <string name="file_phone_image">图片</string>
+    <string name="file_phone_desk">安装包</string>
+    <string name="file_phone_Installation_package">安装包</string>
+    <string name="file_phone_Compression_package">压缩包</string>
+    <string name="file_phone_Bluetooth">蓝牙</string>
+    <string name="Camera_no_permission">app没有开启照相机权限</string>
+    <string name="Camera">照相机</string>
+    <!-- 抽屉 -->
+
+    <string name="actionbar_connect_manager">连接管理</string>
+    <string name="actionbar_setting">设置</string>
+    <string name="actionbar_feedback">反馈</string>
+    <string name="actionbar_update">更新软件</string>
+    <string name="actionbar_changepassword">修改密码</string>
+    <string name="actionbar_useinfo">使用说明</string>
+    <string name="actionbar_about">关于</string>
+    <string name="actionbar_exit">重新登录</string>
+    <string name="actionbar_customer">联系客服</string>
+    <string name="actionbar_shop">必联商城</string>
+    <!-- actionbar -->
+    <string name="back">返回</string>
+    <string name="camera_filepath">文件路径：</string>
+    <string name="upload_list_item_listener_confirm">确定上传该文件吗？</string>
+    <string name="upload_list_item_listener_upload">上传</string>
+    <string name="lock_pc">锁定设备</string>
+    <string name="update">获取更新</string>
+    <string name="findversion">发现新版本，是否检测更新?</string>
+    <string name="update_info">正在更新App</string>
+    <string name="IsNewVersion">已经是最新版本</string>
+    <string name="dir">目录</string>
+    <string name="no_choosefile">未选择文件</string>
+    <string name="delete_file">删除文件</string>
+    <string name="tips">提示</string>
+    <string name="downfile">下载文件</string>
+    <string name="sendfile">发送到</string>
+    <string name="delete_currenttask">确定删除任务吗？</string>
+    <string name="delete_succcess">删除成功</string>
+    <string name="phone_update">照片上传</string>
+    <string name="my_devices">我的设备</string>
+    <string name="my_pc_file">电脑文件</string>
+    <string name="my_file">我的文件</string>
+    <string name="my_pc">我的电脑</string>
+    <string name="photo">照片上传</string>
+
+
+    <!-- string_quest-->
+    <string name="getpc">正在获取PC信息...</string>
+    <string name="sendfeed">正在发送反馈信息...</string>
+    <string name="send_pw">正在修改密码...</string>
+    <string name="send_reconnect">正在断线重连...</string>
+    <string name="getpath">正在获取路径...</string>
+    <string name="pc">电脑</string>
+    <string name="phone">手机</string>
+    <string name="send">发送文件</string>
+    <string name="yes">确定</string>
+    <string name="no">取消</string>
+    <string name="cancel">取消</string>
+    <string name="askbreak">断线</string>
+    <string name="askreconnect">断线是否重新连接</string>
+    <string name="reconnect">重连</string>
+    <string name="reconnect_success">重连成功</string>
+    <string name="login">登录</string>
+    <string name="login_success">登录成功</string>
+    <string name="activity_main_disconnected">您与电脑已断开连接</string>
+    <string name="activity_main_reconnect">是否重连？</string>
+    <string name="complete">完成</string>
+    <string name="send_loss">发送失败，请稍后尝试重新发送</string>
+    <string name="reconnect_http">重新连接成功</string>
+    <string name="reconnect_udp">重新连接成功</string>
+    <!--<string name="back">返回</string>-->
+    <string name="activity_init_connect_pc">连接电脑…</string>
+    <string name="activity_init_save_passwd">保存密码</string>
+    <string name="activity_init_save_passwd_msg">是否保存密码</string>
+    <string name="activity_init_cannot_connect">登录超时，请检查您的网络连接</string>
+    <string name="activity_init_double_cone_nat">正在通过服务器连接...</string>
+    <string name="activity_init_cannot_connect_server">登录超时,请稍后再试</string>
+    <string name="activity_init_cannot_connect_sub_server">登录超时，请稍后再试</string>
+    <string name="activity_init_passwd_error">密码错误,请重新输入密码</string>
+    <string name="activity_init_pc_offline">电脑不在线,请确认电脑已经开启</string>
+    <string name="activity_init_others_already_connected">连接到该电脑的手机数量已达上限</string>
+    <string name="activity_init_login_error_len">密码或则用户名过长</string>
+    <string name="activity_init_user_error">用户名错误</string>
+
+
+    <!-- string_initactivity-->
+    <string name="username">用户名</string>
+    <string name="pawssword">密码</string>
+    <string name="autologin"> 自 动 登 录 </string>
+    <string name="remeberpw"> 记 住 密 码 </string>
+    <string name="activity_init_connect">连接</string>
+    <string name="activity_Qcode">扫描二维码</string>
+    <!--<string name="activity_pwd_change_password">修改密码</string>-->
+    <string name="activity_pwd_different_password">两次输入的密码不一致</string>
+    <string name="activity_pwd_changing">正在修改密码</string>
+    <string name="activity_pwd_original_password">原密码</string>
+    <string name="activity_pwd_new_password">新密码</string>
+    <string name="activity_pwd_new_password_again">新密码</string>
+    <string name="activity_pwd_confirm">确认修改</string>
+
+
+    <!-- string_changpw-->
+    <string name="change_passwd">修改密码</string>
+    <!--<string name="activity_pwd_new_password_again">再次输入新密码</string>-->
+    <!--<string name="activity_pwd_confirm">应用</string>-->
+    <!--<string name="activity_pwd_original_password">原密码</string>-->
+    <!--<string name="activity_pwd_new_password">新密码</string>-->
+
+
+    <!-- string_about-->
+    <string name="homename">深圳市必联电子有限公司</string>
+    <string name="homenet">www.b-link.net.cn</string>
+    <string name="about">关于</string>
+    <string name="version">1.0.7</string>
+    <string name="blinkapp">必联云网卡</string>
+
+    <!-- stirng_fileback-->
+    <string name="feedback">反馈</string>
+    <string name="feedback_connectway">联系方式:QQ/手机号/邮箱等</string>
+    <string name="feedback_text">我们会认真阅读您的反馈，以更好地提升产品体验。</string>
+
+
+    <!-- string_filelool -->
+    <string name="setpath">设置路径</string>
+    <string name="path_set">路径设置</string>
+    <string name="filelook_savefilepath">保存当前路径</string>
+    <string name="setupfilepath">设置上传路径</string>
+    <string name="readpath">读取路径...</string>
+    <string name="setfiledownpath">下载路径</string>
+    <string name="setpicpath">相片路径</string>
+    <string name="uploadfilepath">上传路径</string>
+
+
+    <!-- string_filepreriew-->
+    <string name="file_pre">文件浏览</string>
+    <string name="activity_cancel">取消</string>
+    <string name="activity_sendfile">已选中</string>
+    <string name="activity_send">发送</string>
+    <string name="activity_delete">删除</string>
+    <string name="activity_delete_error">删除失败</string>
+    <string name="activity_all_in">全选</string>
+    <string name="activity_operation">未选择操作模式</string>
+    <string name="phone_file">手机文件</string>
+    <string name="remote_file">远程文件</string>
+    <string name="root_dir">根目录</string>
+    <string name="parent_dir">父目录</string>
+    <string name="shutdown">关机</string>
+    <string name="restart">重启</string>
+
+    <string name="device">设备</string>
+
+    <string name="down_up_load">上传/下载列表</string>
+    <string name="frag_remote_file_look_file">查看文件</string>
+    <string name="frag_remote_file_processing">处理中…</string>
+    <string name="frag_remote_file_long_click">长按可下载该文件</string>
+    <string name="frag_remote_file_download">下载</string>
+    <string name="frag_remote_file_confirm_download">确定下载该文件吗？</string>
+    <string name="frag_remote_file_sd_unmounted">SD卡未插入，无法下载</string>
+    <string name="confirm">确定</string>
+
+
+    <!-- string_filerecord-->
+    <string name="activity_record">文件记录</string>
+    <string name="clear">清空</string>
+
+
+    <!-- string_mainhandler-->
+    <string name="main_handler_empty_dir">空目录</string>
+    <string name="main_handler_look_lost_msg">查看文件命令丢失，请重新查看</string>
+    <string name="main_handler_look_lost_half_msg">传回部分文件</string>
+    <string name="main_handler_start_download">开始下载</string>
+    <string name="main_handler_waitting_download">等待下载</string>
+    <string name="main_handler_download_success">下载完成</string>
+    <string name="main_handler_download_failed">下载失败</string>
+    <string name="main_handler_start_upload">开始上传</string>
+    <string name="main_handler_upload_fair">上传失败，请检查网络</string>
+    <string name="main_handler_waitting_upload">等待上传</string>
+    <string name="main_handler_upload_success">上传完成</string>
+    <string name="main_handler_upload_failed">上传失败</string>
+    <string name="main_handler_change_lost">修改密码命令失败，请稍候重试</string>
+    <string name="main_handler_original_error">原密码错误，请重试</string>
+    <string name="main_handler_change_sucess">修改密码成功</string>
+    <string name="main_handler_getinfo_fair">获得电脑信息失败</string>
+    <string name="main_handler_reconnect">重连</string>
+    <string name="main_handler_ask_reconnect">您已掉线，是否重连</string>
+    <string name="main_handler_shutdown_recved">电脑收到关机命令，稍后将关机</string>
+    <string name="main_handler_shutdown_lost">关机命令发送失败，请重试</string>
+    <string name="main_handler_restart_recved">电脑收到重启命令，稍后将重启</string>
+    <string name="main_handler_lock_recved">电脑已经锁机</string>
+    <string name="main_handler_lock_lost">锁机失败，请重试</string>
+    <string name="main_handler_restart_lost">重启命令失败，请重试</string>
+    <string name="main_handler_getfiledir_error">获得下载目录失败</string>
+    <string name="main_handler_uploadpath_error">获取上传目录失败</string>
+    <string name="main_handler_uploadpath_seterror">设置上传目录失败</string>
+    <string name="main_handler_uploadpath_success">设置上传目录成功</string>
+
+
+    <!-- string_quitstart-->
+    <string name="quitstart">设置当前快速启动方式是</string>
+    <string name="quit_start">快速启动</string>
+    <string name="tip">提示</string>
+    <string name="frag_more_ask_clear">是否清空所有任务？</string>
+
+
+    <!-- string_settingactivity-->
+    <string name="set_path_success">设置路径成功</string>
+    <string name="settings_appsetting">应用设置</string>
+    <string name="feedback_appsetting">反馈</string>
+    <string name="settings_tipsetting">便捷设置</string>
+    <string name="settings_filepath_setting">快传存放位置</string>
+    <string name="setting_filepath_setting">文件路径</string>
+    <string name="setting_NotificationBar">通知栏提醒</string>
+    <string name="setting_Quick_start">快速启动</string>
+    <string name="setting_skin">皮肤设置</string>
+    <string name="setting_pcwd">密码不能为空</string>
+    <string name="settings_downfilepath">文件下载地址</string>
+    <string name="setting_pictruefilepath">照片存储位置</string>
+    <string name="setting_upload">上传文件路径</string>
+
+
+    <!-- string_splashactivity-->
+    <string name="start_go">开启云网卡科技之旅</string>
+    <string name="speed_up10">10倍速度提升</string>
+    <string name="WLNB">WLAN、LAN口全千兆</string>
+    <string name="splash">首次启动会停留一秒的那个图片</string>
+
+
+    <!-- string_squit-->
+    <string name="login_name">当前登录用户名：</string>
+    <string name="pc_name">计算机名：</string>
+    <string name="ing_os">当前操作系统：</string>
+    <string name="cpu">CPU型号：</string>
+    <string name="memory">物理内存：</string>
+    <string name="runtime">从开机到现在一共运行了</string>
+
+
+    <!-- string_sweepactivity-->
+    <string name="scan_text">将二维码放入框内, 即可自动扫描</string>
+    <string name="scan_back">返回</string>
+    <string name="scan_title">二维码扫描</string>
+
+
+    <!-- string_transportactivity-->
+    <string name="delete_task">删除任务</string>
+    <string name="restart_task">重新开始</string>
+    <string name="jump_task">跳过任务</string>
+    <string name="upload_list">上传队列</string>
+    <string name="download_list">下载队列</string>
+    <string name="activity_tranlist">传输列表</string>
+    <string name="edit">编辑</string>
+    <string name="wait">等待</string>
+    <string name="fair">失败</string>
+
+
+    <!-- string_userinfo-->
+    <string name="userinfo">使用说明</string>
+    <string name="usertextview">这么简单，相信你会用</string>
+
+
+    <!-- string_error-->
+    <string name="error_input_shortsix">密码不能少于6位,请重新输入</string>
+    <string name="error_input_long">密码不能超过15位，请重新输入</string>
+    <string name="error_input_null">输入字符不能为空</string>
+    <string name="error_input_null_userpw">密码输入不能为空</string>
+    <string name="error_input_null_user">用户名输入不能为空</string>
+    <string name="error_user_long">用户名输入超过限制，请重新输入</string>
+    <string name="error_pw_long">密码不能超过15位，请重新输入</string>
+    <string name="error_pw_short">密码不能超过6位，请重新输入</string>
+    <string name="error_pw_noeq">两次输入密码不一致，请重新输入</string>
+    <string name="error_downfile">下载文件失败，请检查文件合法性</string>
+    <string name="error_delete_runing">不能删除正在进行的任务</string>
+    <string name="error_feedback_isnull">联系方式和提交信息不能为空</string>
+    <string name="error_feedback_islen">联系方式或提交信息超过字数限制</string>
+    <string name="error_clearsuccess">已经清除历史记录</string>
+    <string name="error_taskfair">任务失败</string>
+    <string name="error_ucode">转码错误</string>
+
+
+    <string name="fragmentdeviceItem">待定功能</string>
+
+    <string name="InstallLeftButExits">退出</string>
+    <string name="Leadfragment3">开启之旅>>></string>
+    <string name="isFile">app没有访问手机权限</string>
+    <string name="isPhoneorEmail">联系方式格式不正确 请重新输入</string>
+    <string name="computerDelete">电脑文件不能删除</string>
+    <string name="submit">提交</string>
+    <string name="submit_feedback_success">提交成功</string>
+    <string name="submit_feedback_failed">提交失败</string>
+
+    <string name="reset_quick_start">重新清空快捷方式</string>
+
+</resources>

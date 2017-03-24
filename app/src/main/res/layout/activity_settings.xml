@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mydeviceback">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/y15"
+            android:layout_marginLeft="@dimen/x10"
+            android:layout_marginTop="@dimen/y15"
+            android:text="@string/settings_appsetting"
+            android:textColor="@android:color/black" />
+
+        <LinearLayout
+            android:id="@+id/activity_ll_down"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/MainLogoSize"
+            android:background="@android:color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!--<ImageView-->
+                <!--android:layout_width="@dimen/marginMoreBigger"-->
+                <!--android:layout_height="@dimen/marginMoreBigger"-->
+                <!--android:layout_marginLeft="@dimen/x20"-->
+                <!--android:src="@mipmap/downing_icon" />-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/settings_downfilepath"
+                android:gravity="center_vertical"
+                android:textColor="@color/Greyer"
+                android:textSize="@dimen/textSize"
+                android:layout_marginLeft="@dimen/marginBig"/>
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="@dimen/x10"-->
+                <!--android:layout_marginLeft="@dimen/x30"-->
+                <!--android:layout_marginTop="@dimen/y15"-->
+                <!--android:gravity="center_vertical"-->
+                <!--android:orientation="vertical">-->
+
+
+
+                <!--<TextView-->
+                    <!--android:id="@+id/settings_filedown"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textColor="@color/blue_background" />-->
+            <!--</LinearLayout>-->
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/activity_ll_upload"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/MainLogoSize"
+            android:layout_marginTop="@dimen/ItemSpace"
+            android:background="@android:color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!--<ImageView-->
+                <!--android:layout_width="@dimen/marginMoreBigger"-->
+                <!--android:layout_height="@dimen/marginMoreBigger"-->
+                <!--android:layout_marginLeft="@dimen/x20"-->
+                <!--android:src="@mipmap/icon_down" />-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setting_upload"
+                android:gravity="center_vertical"
+                android:textColor="@color/Greyer"
+                android:textSize="@dimen/textSize"
+                android:layout_marginLeft="@dimen/marginBig"/>
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="@dimen/x10"-->
+                <!--android:layout_marginLeft="@dimen/x30"-->
+                <!--android:layout_marginTop="@dimen/y15"-->
+                <!--android:gravity="center_vertical"-->
+
+                <!--android:orientation="vertical"-->
+                <!--android:textColor="@color/blue_background">-->
+
+                <!---->
+
+                <!--<TextView-->
+                    <!--android:id="@+id/settings_fileup"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textColor="@color/blue_background" />-->
+            <!--</LinearLayout>-->
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/activity_ll_picture"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/MainLogoSize"
+            android:layout_marginTop="@dimen/ItemSpace"
+            android:background="@android:color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!--<ImageView-->
+                <!--android:layout_width="@dimen/marginMoreBigger"-->
+                <!--android:layout_height="@dimen/marginMoreBigger"-->
+                <!--android:layout_marginLeft="@dimen/x20"-->
+                <!--android:src="@mipmap/icon_picturefile" />-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/setting_pictruefilepath"
+                android:textColor="@color/Greyer"
+                android:textSize="@dimen/textSize"
+                android:layout_marginLeft="@dimen/marginBig"/>
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="@dimen/y10"-->
+                <!--android:layout_marginLeft="@dimen/x30"-->
+                <!--android:layout_marginTop="@dimen/y15"-->
+                <!--android:gravity="center_vertical"-->
+                <!--android:orientation="vertical"-->
+                <!--android:textColor="@color/blue_background">-->
+
+
+
+                <!--<TextView-->
+                    <!--android:id="@+id/settings_filepicture"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:textColor="@color/blue_background" />-->
+            <!--</LinearLayout>-->
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/x10"
+            android:layout_marginTop="@dimen/y10"
+            android:text="@string/settings_tipsetting"
+            android:textColor="@android:color/black" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/y20"
+            android:background="@android:color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="@dimen/x35"
+                android:layout_height="@dimen/y25"
+                android:layout_marginLeft="@dimen/x20"
+                android:src="@mipmap/icon_message" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/x40"
+                android:textColor="@color/blue_background" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/x100"
+                android:clickable="true" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_quitstart"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/MainLogoSize"
+            android:layout_marginBottom="@dimen/ItemSpace"
+            android:layout_marginTop="@dimen/y15"
+            android:background="@android:color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!--<ImageView-->
+                <!--android:layout_width="@dimen/marginMoreBigger"-->
+                <!--android:layout_height="@dimen/marginMoreBigger"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:layout_marginLeft="@dimen/x20"-->
+                <!--android:src="@mipmap/gorebnoot_icon" />-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/marginBig"
+                android:text="@string/setting_Quick_start"
+                android:textColor="@color/Greyer"
+                android:textSize="@dimen/textSize" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_skin"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/MainLogoSize"
+            android:background="@android:color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!--<ImageView-->
+                <!--android:layout_width="@dimen/marginMoreBigger"-->
+                <!--android:layout_height="@dimen/marginMoreBigger"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:layout_marginLeft="@dimen/x20"-->
+                <!--android:src="@mipmap/gorebnoot_icon" />-->
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/marginBig"
+                android:text="@string/setting_skin"
+                android:textColor="@color/Greyer"
+                android:textSize="@dimen/textSize" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

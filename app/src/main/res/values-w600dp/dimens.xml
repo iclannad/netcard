@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 360为正常像素   600为1.5倍-->
+    <dimen name="marginBig">15dp</dimen>
+    <dimen name="popWindowHeight">75dp</dimen>
+    <dimen name="popWindowtextSize">21sp</dimen>
+    <dimen name="popWindowmarginTop">7.5dp</dimen>
+    <dimen name="margin">7.5dp</dimen>
+    <dimen name="initActivityEditImageHeight">75dp</dimen>
+    <dimen name="EditHeight">60dp</dimen>
+    <dimen name="textSize">22.5sp</dimen>
+    <dimen name="textSizeBig">27sp</dimen>
+    <dimen name="buttonHeight">60dp</dimen>
+    <dimen name="marginBigger">30dp</dimen>
+    <dimen name="marginBiggest">37.5dp</dimen>
+    <dimen name="marginMoreBig">45dp</dimen>
+    <dimen name="marginMoreBigger">52.5dp</dimen>
+    <dimen name="marginMoreBiggest">60dp</dimen>
+    <dimen name="chexkBoxSize">37.5dp</dimen>
+    <dimen name="editImageSize">37.5dp</dimen>
+    <dimen name="ScanCode">120dp</dimen>
+    <dimen name="LogoSize">120dp</dimen>
+    <dimen name="MainLogoSize">90dp</dimen>
+    <dimen name="TabLogoSize">30dp</dimen>
+    <dimen name="ItemSpace">1.5dp</dimen>
+    <dimen name="ItemSpaceer">3dp</dimen>
+    <dimen name="itemLogoSize">75dp</dimen>
+    <dimen name="titleHeight">75dp</dimen>
+    <dimen name="ItemImageSize">30dp</dimen>
+    <dimen name="ItemHeight">82.5dp</dimen>
+
+    <dimen name="CodeSize">225dp</dimen>
+
+    <dimen name="SplashSize">450dp</dimen>
+    <dimen name="SplashSize1">345dp</dimen>
+    <dimen name="SplashSize2">300dp</dimen>
+
+</resources>

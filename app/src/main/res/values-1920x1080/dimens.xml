@@ -1,0 +1,20 @@
+<resources>
+
+    <dimen name="slidingmenu_offset">100dp</dimen>
+    <dimen name="list_padding">10dp</dimen>
+    <dimen name="shadow_width">15dp</dimen>
+    <dimen name="margin">10dip</dimen>
+    <dimen name="margin_top">12dip</dimen>
+     <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <integer name="num_cols">1</integer>  
+     <dimen name="textsize_big">22sp</dimen>
+    <dimen name="textsize_medium">18sp</dimen>
+    <dimen name="textsize_small">14sp</dimen>
+    <dimen name="textsize_verysmall">12sp</dimen>
+        <dimen name="item_title">18sp</dimen>
+    <dimen name="item_info">14sp</dimen>
+    <dimen name="padding">10dp</dimen>
+    <dimen name="item_padding">8dp</dimen>
+        <dimen name="textsize">16sp</dimen>
+</resources>
