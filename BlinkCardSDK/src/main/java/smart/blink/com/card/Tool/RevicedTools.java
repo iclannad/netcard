@@ -14,6 +14,8 @@ import smart.blink.com.card.API.BlinkWeb;
 import smart.blink.com.card.API.ErrorNo;
 import smart.blink.com.card.API.Protocol;
 import smart.blink.com.card.BlinkNetCardCall;
+import smart.blink.com.card.Tcp.TcpSocket;
+import smart.blink.com.card.Tcp.TcpUtils;
 import smart.blink.com.card.Udp.UdpSocket;
 import smart.blink.com.card.bean.ChangePcPwdRsp;
 import smart.blink.com.card.bean.ChangePwdRsp;
@@ -96,6 +98,7 @@ public class RevicedTools {
                 break;
             //查看文件
             case Protocol.LookFileMsgReviced:
+                Log.e(TAG, "RevicedTools: LookFileMsgReviced");
                 LookFileMsg(buffer, call);
                 break;
             //开始下载的返回的数据
@@ -344,55 +347,105 @@ public class RevicedTools {
      * @param call
      */
     public static void LookFileMsg(byte[] buffer, BlinkNetCardCall call) {
+
         LookFileRsp lookFileRsp = new LookFileRsp();
         //1返回失败 0返回成功
 //        lookFileRsp.setSuccess(1);
-        //传输完毕
-//        if (buffer[4] == Protocol.controlEND) {
+        //传输完毕 tcp
         lookFileRsp.setSuccess(0);
-        lookFileRsp.setProtrolList(UdpSocket.controlList);
-        int control;
-        ArrayList<String> list = new ArrayList<>();
-        for (int r = 0; r < UdpSocket.controlList.size(); r++) {
-            //获取列表的格式
-            control = UdpSocket.controlList.get(r);
-            //获取列表的内容
-            byte[] buf = UdpSocket.bufferList.get(r);
-            //获取字节数组的列表
-            int length = FileEnd(buf, 8);
-            switch (control) {
-                //盘符
-                case Protocol.controlPAN:
-                    for (int i = 8; i < buf.length; i++) {
-                        if (buf[i] == 0)
-                            break;
-                        list.add(String.valueOf((char) buf[i]));
-                    }
-                    break;
-                //文件夹
-                case Protocol.controlDIR:
-                    try {
-                        list.add(new String(buf, 8, length, "UTF-8"));
-                    } catch (UnsupportedEncodingException e) {
-                    }
-                    break;
-                //文件
-                case Protocol.controlFL:
-                    try {
-                        list.add(new String(buf, 8, length, "UTF-8"));
-                    } catch (UnsupportedEncodingException e) {
-                    }
-                    break;
-                //没有找到文件夹
-                case Protocol.controlNOTFOUND:
-                    break;
+
+        // 先暂时这么处理，不过代码有点多,两种情况，tcp和udp
+        if (BlinkWeb.STATE == BlinkWeb.TCP) {
+
+            lookFileRsp.setProtrolList(TcpSocket.controlList);
+            int control;
+            ArrayList<String> list = new ArrayList<>();
+            for (int r = 0; r < TcpSocket.controlList.size(); r++) {
+                //获取列表的格式
+                control = TcpSocket.controlList.get(r);
+                //获取列表的内容
+                byte[] buf = TcpSocket.bufferList.get(r);
+                //获取字节数组的列表
+                int length = FileEnd(buf, 8);
+                switch (control) {
+                    //盘符
+                    case Protocol.controlPAN:
+                        for (int i = 8; i < buf.length; i++) {
+                            if (buf[i] == 0)
+                                break;
+                            list.add(String.valueOf((char) buf[i]));
+                        }
+                        break;
+                    //文件夹
+                    case Protocol.controlDIR:
+                        try {
+                            list.add(new String(buf, 8, length, "UTF-8"));
+                        } catch (UnsupportedEncodingException e) {
+                        }
+                        break;
+                    //文件
+                    case Protocol.controlFL:
+                        try {
+                            list.add(new String(buf, 8, length, "UTF-8"));
+                        } catch (UnsupportedEncodingException e) {
+                        }
+                        break;
+                    //没有找到文件夹
+                    case Protocol.controlNOTFOUND:
+                        break;
+                }
             }
+            lookFileRsp.setList(list);
+            call.onSuccess(position, lookFileRsp);
+
+            //清除缓存
+            TcpSocket.bufferList.clear();
+            TcpSocket.controlList.clear();
+        } else {
+            lookFileRsp.setProtrolList(UdpSocket.controlList);
+            int control;
+            ArrayList<String> list = new ArrayList<>();
+            for (int r = 0; r < UdpSocket.controlList.size(); r++) {
+                //获取列表的格式
+                control = UdpSocket.controlList.get(r);
+                //获取列表的内容
+                byte[] buf = UdpSocket.bufferList.get(r);
+                //获取字节数组的列表
+                int length = FileEnd(buf, 8);
+                switch (control) {
+                    //盘符
+                    case Protocol.controlPAN:
+                        for (int i = 8; i < buf.length; i++) {
+                            if (buf[i] == 0)
+                                break;
+                            list.add(String.valueOf((char) buf[i]));
+                        }
+                        break;
+                    //文件夹
+                    case Protocol.controlDIR:
+                        try {
+                            list.add(new String(buf, 8, length, "UTF-8"));
+                        } catch (UnsupportedEncodingException e) {
+                        }
+                        break;
+                    //文件
+                    case Protocol.controlFL:
+                        try {
+                            list.add(new String(buf, 8, length, "UTF-8"));
+                        } catch (UnsupportedEncodingException e) {
+                        }
+                        break;
+                    //没有找到文件夹
+                    case Protocol.controlNOTFOUND:
+                        break;
+                }
+            }
+            lookFileRsp.setList(list);
+            call.onSuccess(position, lookFileRsp);
+            //清除缓存
+            UdpSocket.bufferList.clear();
+            UdpSocket.controlList.clear();
         }
-        lookFileRsp.setList(list);
-        call.onSuccess(position, lookFileRsp);
-        //清除缓存
-        UdpSocket.bufferList.clear();
-        UdpSocket.controlList.clear();
 //        } else {
 //            bufferList.add(buffer);
 //            controlList.add((int) buffer[4]);

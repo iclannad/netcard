@@ -38,7 +38,7 @@ import smart.blink.com.card.bean.LookFileRsp;
  */
 public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClickListener, HandlerImpl {
 
-    private static final String TAG = Filelook.class.getSimpleName();
+    private static final String TAG = FilelookPC.class.getSimpleName();
     private String currentfile = Environment.getExternalStorageDirectory()
             .getPath();
 
@@ -192,6 +192,7 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
         if (position == ActivityCode.GetUploadDir) {
             GetUploadDirRsp uploadDirRsp = (GetUploadDirRsp) object;
             Log.e(TAG, "myHandler: " + uploadDirRsp.getPath());
+            Log.e(TAG, "myHandler: " + "获取上传目录成功");
             // 获取电脑上传文件的目录
             currentfile = uploadDirRsp.getPath();
             // 获得上传目录之后就可以向服务器请求其子文件和子文件夹
@@ -199,7 +200,7 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
         }
 
         if (position == ActivityCode.LookFileMsg) {
-            Log.e(TAG, "myHandler: 这里访问电脑的文件夹后返回的数据");
+            Log.e(TAG, "我们进入到文件夹中");
             LookFileRsp lookFileRsp = (LookFileRsp) object;
 
             name = new ArrayList<>();
@@ -217,10 +218,13 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
                     list.add(pair);
                 }
             } else {
+                // 这条代码有问题
                 int length = control.size() > name.size() ? control.size() : control.size();
+
                 for (int i = 0; i < length; i++) {
                     Pair<String, Integer> pair = new Pair<>();
                     pair.setA(name.get(i));
+
                     if (control.get(i) == ActivityCode.DIR)
                         pair.setB(ActivityCode.DIR);
                     if (control.get(i) == ActivityCode.FL)
@@ -228,6 +232,7 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
                     list.add(pair);
                 }
             }
+
             // 重新刷新一下界面
             mFileListAdapter.setList(list);
             if (isFirstTimer) {
@@ -237,7 +242,6 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
 
         }
 
-        Log.e(TAG, "myHandler: " + "有数据过来了");
         if (position == ActivityCode.SetUploadDir) {
             Log.e(TAG, "myHandler: " + "设置目录成功");
         }

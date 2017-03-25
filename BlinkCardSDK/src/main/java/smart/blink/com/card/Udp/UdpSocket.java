@@ -41,6 +41,7 @@ public class UdpSocket {
 
     public static ArrayList<byte[]> bufferList = null;
     public static ArrayList<Integer> controlList = null;
+
     private static Timer timer = null;
     //private  Timer timer = null;
     private Timer wantTimer = null;
@@ -125,7 +126,7 @@ public class UdpSocket {
 
     private void Send(String ip, int PORT, byte[] buffer) {
         // 发送心跳包
-        BlinkLog.Print("发送心跳包: " + ip + ":" + PORT + "----" + Arrays.toString(buffer));
+        BlinkLog.Print("发送数据包: " + ip + ":" + PORT + "----" + Arrays.toString(buffer));
         DatagramPacket out = null;
         try {
             out = new DatagramPacket(buffer, 0, buffer.length, InetAddress.getByName(ip), PORT);

@@ -135,6 +135,7 @@ public class FileListAdapter extends BaseAdapter {
             // A中存放在是全路径
             String[] item_names = pair.getA().split("/");
             String item_name = item_names[item_names.length - 1];
+            //　打印每个条目的信息
             Log.d("run", "item_name=" + item_name + " pair==" + pair.getB());
             // 根据B设置图标
             switch (pair.getB()) {

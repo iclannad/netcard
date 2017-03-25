@@ -9,6 +9,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import smart.blink.com.card.API.BlinkLog;
@@ -31,6 +32,9 @@ public class TcpSocket {
     private static int position = 0;
     private static BlinkNetCardCall call = null;
 
+    public static ArrayList<byte[]> bufferList = null;
+    public static ArrayList<Integer> controlList = null;
+
     /**
      * 封装tcp连接
      *
@@ -43,6 +47,10 @@ public class TcpSocket {
     public TcpSocket(final String ip, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
         TcpSocket.position = position;
         TcpSocket.call = call;
+
+        bufferList = new ArrayList<>();
+        controlList = new ArrayList<>();
+
         thread = null;
 
         thread = new Thread(new Runnable() {
@@ -57,6 +65,7 @@ public class TcpSocket {
                         readThread = new Thread(new Runnable() {
                             @Override
                             public void run() {
+                                // 接收数据
                                 while (true) {
                                     try {
                                         Thread.sleep(0);
@@ -85,7 +94,7 @@ public class TcpSocket {
 
 
     private void Send(byte[] buffer) {
-        BlinkLog.Print(Arrays.toString(buffer));
+        BlinkLog.Print("send: " + Arrays.toString(buffer));
         try {
             out = new DataOutputStream(socket.getOutputStream());
             out.write(buffer);
@@ -101,15 +110,31 @@ public class TcpSocket {
         try {
             // 没有数据来的话就会在这里阻塞
             length = in.read(buffer);
-            BlinkLog.Print(Arrays.toString(buffer));
+            BlinkLog.Print("received: " + Arrays.toString(buffer));
+
         } catch (IOException e) {
             BlinkLog.Error(e.toString());
         }
-        // 在主线程用中调用方法
-        Message message = Message.obtain();
-        message.obj = buffer;
-        message.what = length;
-        handler.sendMessage(message);
+
+        if (buffer[0] == 5) {
+            if (buffer[4] == 3) {
+                Message message = new Message();
+                message.obj = new byte[]{5};
+                message.what = 0;
+                handler.sendMessage(message);
+                return;
+            } else {
+                bufferList.add(Arrays.copyOfRange(buffer, 0, buffer.length));
+                controlList.add((int) buffer[4]);
+            }
+        } else {
+            // 在主线程用中调用方法
+            Message message = Message.obtain();
+            message.obj = buffer;
+            message.what = length;
+            handler.sendMessage(message);
+        }
+
 
     }
 

@@ -150,6 +150,7 @@ public class BlinkNetCardSDK {
                 UdpUtils.GetUploadDir(call);
                 break;
             case BlinkWeb.TCP:
+                Log.e(TAG, "GetUploadDir: " + "走tcp获取上传目录");
                 TcpUtils.GetUploadDir(call);
                 break;
             case BlinkWeb.UNONLINE:
