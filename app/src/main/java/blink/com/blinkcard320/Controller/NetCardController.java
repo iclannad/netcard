@@ -13,6 +13,29 @@ import smart.blink.com.card.bean.MainObject;
  */
 public class NetCardController {
 
+    private static final String TAG = NetCardController.class.getSimpleName();
+
+
+    /**
+     * 与子服务器建立连接
+     *
+     * @param handler
+     */
+    public static void CONNECT_TO_SUBSERVER(final HandlerImpl handler) {
+        BlinkNetCardSDK.CONNECT_TO_SUBSERVER(new BlinkNetCardCall() {
+
+            @Override
+            public void onSuccess(int position, MainObject mainObject) {
+                handler.myHandler(ActivityCode.ConnectPC, mainObject);
+            }
+
+            @Override
+            public void onFail(int error) {
+
+            }
+        });
+    }
+
     /**
      * 用户反馈
      * my test code

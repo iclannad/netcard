@@ -5,6 +5,8 @@ package smart.blink.com.card.API;
  */
 public class Protocol {
 
+    // 内网进行打洞失败
+    public static final int HELLO_FAILED = 3;
     // 发反馈信息
     public static final int FEEDBACK = 10;
 

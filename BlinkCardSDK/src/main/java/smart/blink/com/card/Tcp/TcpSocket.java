@@ -1,6 +1,10 @@
 package smart.blink.com.card.Tcp;
 
 
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,6 +20,8 @@ import smart.blink.com.card.Tool.RevicedTools;
  */
 public class TcpSocket {
 
+    private static final String TAG = TcpSocket.class.getSimpleName();
+
     private static Socket socket = null;
     private DataOutputStream out = null;
     private static DataInputStream in = null;
@@ -25,17 +31,27 @@ public class TcpSocket {
     private static int position = 0;
     private static BlinkNetCardCall call = null;
 
+    /**
+     * 封装tcp连接
+     *
+     * @param ip
+     * @param PORT
+     * @param buffer
+     * @param position
+     * @param call
+     */
     public TcpSocket(final String ip, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
         TcpSocket.position = position;
         TcpSocket.call = call;
         thread = null;
+
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 if (socket == null) {
                     try {
+                        Log.e(TAG, "run: " + ip + "---" + PORT);
                         socket = new Socket(ip, PORT);
-
                         in = new DataInputStream(socket.getInputStream());
                         buf = new byte[1296];
                         readThread = new Thread(new Runnable() {
@@ -63,7 +79,7 @@ public class TcpSocket {
     }
 
 
-    public static Socket getSocket(){
+    public static Socket getSocket() {
         return socket;
     }
 
@@ -79,16 +95,35 @@ public class TcpSocket {
         }
     }
 
+
     private void Write(byte[] buffer) {
         int length = 0;
         try {
+            // 没有数据来的话就会在这里阻塞
             length = in.read(buffer);
             BlinkLog.Print(Arrays.toString(buffer));
         } catch (IOException e) {
             BlinkLog.Error(e.toString());
         }
-        //处理返回的结果
-        new RevicedTools(position, buffer, length , call);
+        // 在主线程用中调用方法
+        Message message = Message.obtain();
+        message.obj = buffer;
+        message.what = length;
+        handler.sendMessage(message);
+
     }
+
+    // 这个方法是在主线程中调用的
+    private Handler handler = new Handler() {
+
+        @Override
+        public void dispatchMessage(Message msg) {
+            byte[] buffer = (byte[]) msg.obj;
+            int length = msg.what;
+            //处理返回的结果
+            new RevicedTools(position, buffer, length, call);
+
+        }
+    };
 
 }

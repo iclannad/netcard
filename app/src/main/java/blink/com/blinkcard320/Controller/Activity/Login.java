@@ -28,6 +28,8 @@ import blink.com.blinkcard320.Tool.System.MyToast;
 import blink.com.blinkcard320.Tool.Thread.HandlerImpl;
 import blink.com.blinkcard320.Tool.Utils.SharedPrefsUtils;
 import blink.com.blinkcard320.application.MyApplication;
+import smart.blink.com.card.bean.ConnectPcRsp;
+import smart.blink.com.card.bean.RelayMsgRsp;
 import smart.blink.com.card.bean.WantRsp;
 
 /**
@@ -338,11 +340,41 @@ public class Login extends BaseActivity implements HandlerImpl {
 
         }
 
-        /**
-         * 申请子服务器
-         */
+        // 申请与子服务器成功后会走这个方法，通过TCP方法与服务器连接
         if (position == ActivityCode.RelayMsg) {
+            Log.e(TAG, "onSuccess: " + "申请与子服务器成功");
+            RelayMsgRsp relayMsgRsp = (RelayMsgRsp) object;
 
+//            Log.e(TAG, "myHandler: " + relayMsgRsp.getIP());
+//            Log.e(TAG, "myHandler: " + relayMsgRsp.getPORT());
+//            byte[] uuid = relayMsgRsp.getUUID();
+//            for (byte b :
+//                    uuid) {
+//                Log.e(TAG, "myHandler: " + b);
+//            }
+            Log.e(TAG, "onSuccess: " + "开始申请与子服务器进行连接");
+            NetCardController.CONNECT_TO_SUBSERVER(this);
+        }
+
+        // 与子服务器连接成功
+        if (position == ActivityCode.ConnectPC) {
+            ConnectPcRsp connectPcRsp = (ConnectPcRsp) object;
+            Log.e(TAG, "myHandler: result位为：" + connectPcRsp.getSuccess());
+            if (connectPcRsp.getSuccess() == 0) {
+                //打洞成功
+                CommonIntent.IntentActivity(context, MainActivity.class);
+                Applications.getInstance().removeOneActivity(this);
+
+                // 记住用户名和密码
+                MyApplication.userName = ID;
+                MyApplication.userPassword = password;
+
+                MyToast.Toast(context, R.string.login_success);
+
+                finish();
+
+                saveAutoLoginData();
+            }
         }
     }
 

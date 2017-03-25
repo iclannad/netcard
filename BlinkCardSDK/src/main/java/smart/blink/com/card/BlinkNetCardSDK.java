@@ -1,6 +1,8 @@
 package smart.blink.com.card;
 
 
+import android.util.Log;
+
 import smart.blink.com.card.API.BlinkWeb;
 import smart.blink.com.card.Tcp.TcpUtils;
 import smart.blink.com.card.Udp.UdpUtils;
@@ -13,13 +15,25 @@ import smart.blink.com.card.Udp.UdpUtils;
 public class BlinkNetCardSDK {
 
 
+    private static final String TAG = BlinkNetCardSDK.class.getSimpleName();
+
+
+    /**
+     * 与子服务器进行连接
+     *
+     * @param call
+     */
+    public static void CONNECT_TO_SUBSERVER(BlinkNetCardCall call) {
+        TcpUtils.ConnectPc(call);
+    }
+
     /**
      * 用户反馈
      * my test code
      *
      * @param username    反馈的用户
      * @param usercontent 反馈的内容
-     * @param call     回调界面的接口
+     * @param call        回调界面的接口
      */
     public static void FEEDBACK(String username, String usercontent, BlinkNetCardCall call) {
         UdpUtils.FEEDBACK(username, usercontent, call);
@@ -170,6 +184,7 @@ public class BlinkNetCardSDK {
                 UdpUtils.Heart(call);
                 break;
             case BlinkWeb.TCP:
+                Log.e(TAG, "Heart: 我走到了发送心跳TCP的方法中");
                 TcpUtils.Heart(call);
                 break;
             case BlinkWeb.UNONLINE:
@@ -330,4 +345,6 @@ public class BlinkNetCardSDK {
                 break;
         }
     }
+
+
 }

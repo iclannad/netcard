@@ -42,6 +42,7 @@ import blink.com.blinkcard320.Tool.Utils.UIHelper;
 import blink.com.blinkcard320.View.DialogClick;
 import blink.com.blinkcard320.View.MyProgressDIalog;
 import blink.com.blinkcard320.camera.CameraActivity;
+import smart.blink.com.card.API.BlinkWeb;
 import smart.blink.com.card.bean.ChangePcPwdRsp;
 import smart.blink.com.card.bean.LookPCRsp;
 import smart.blink.com.card.bean.RestartRsp;
@@ -322,7 +323,17 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
         if (position == ActivityCode.LOOKPC) {
             LookPCRsp lookPCRsp = (LookPCRsp) object;
             if (lookPCRsp.getSuccess() == 0) {
-                MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_lock_recved);
+                if (BlinkWeb.STATE == BlinkWeb.TCP) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_lock_recved);
+                        }
+                    });
+                } else {
+                    MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_lock_recved);
+                }
+
             }
         }
 
@@ -330,7 +341,17 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
         if (position == ActivityCode.Restart) {
             RestartRsp restartRsp = (RestartRsp) object;
             if (restartRsp.getSuccess() == 0) {
-                MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_restart_recved);
+                if (BlinkWeb.STATE == BlinkWeb.TCP) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_restart_recved);
+                        }
+                    });
+                } else {
+                    MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_restart_recved);
+                }
+
             }
         }
 

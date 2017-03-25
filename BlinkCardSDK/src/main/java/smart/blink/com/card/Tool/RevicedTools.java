@@ -121,6 +121,10 @@ public class RevicedTools {
                 Log.e(TAG, "RevicedTools: " + buffer[4]);
                 FEEDBACK(buffer, call);
                 break;
+            case Protocol.HELLO_FAILED:
+                HELLO_FAILED(call);
+                break;
+
         }
     }
 
@@ -186,6 +190,19 @@ public class RevicedTools {
             }
         }
         call.onSuccess(position, wantRsp);
+    }
+
+    /**
+     * 打洞失败处理
+     *
+     * @param call
+     */
+    public static void HELLO_FAILED(BlinkNetCardCall call) {
+
+        // 打洞失败将网络访问改成TCP连接
+        BlinkWeb.STATE = BlinkWeb.TCP;
+        // 这里参数无所谓
+        call.onFail(1);
     }
 
     /**
@@ -425,6 +442,7 @@ public class RevicedTools {
         BlinkWeb.uuid = relayMsgRsp.getUUID();
 
         call.onSuccess(Protocol.RelayMsg, relayMsgRsp);
+
     }
 
 

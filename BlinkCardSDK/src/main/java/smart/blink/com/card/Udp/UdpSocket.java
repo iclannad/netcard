@@ -111,7 +111,7 @@ public class UdpSocket {
             }
         }, 2000, 2000);
 
-        //　然后再开启一个接收线程
+        //　然后再开启一个发送线程
         thread = null;
         thread = new Thread(new Runnable() {
             @Override
@@ -184,6 +184,7 @@ public class UdpSocket {
         }
     }
 
+    // 这个方法是在主线程中调用的
     private Handler handler = new Handler() {
 
         @Override
