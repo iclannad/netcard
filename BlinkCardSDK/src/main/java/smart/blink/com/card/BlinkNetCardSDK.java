@@ -124,12 +124,15 @@ public class BlinkNetCardSDK {
      * @param call        处理回调接口的方法
      */
     public static void ChangePwd(String id, String oldPassword, String newPassword, BlinkNetCardCall call) {
+        // 修改登录密码，只需要与主服务器
         switch (BlinkWeb.STATE) {
             case BlinkWeb.UDP:
                 UdpUtils.ChangePwd(id, oldPassword, newPassword, call);
                 break;
             case BlinkWeb.TCP:
-                TcpUtils.ChangePwd(id, oldPassword, newPassword, call);
+                Log.e(TAG, "ChangePwd: " + "我是走了tcp的修改用户登录密码");
+                //TcpUtils.ChangePwd(id, oldPassword, newPassword, call);
+                UdpUtils.ChangePwd(id, oldPassword, newPassword, call);
                 break;
             case BlinkWeb.UNONLINE:
                 break;
@@ -222,9 +225,10 @@ public class BlinkNetCardSDK {
             case BlinkWeb.UDP:
                 UdpUtils.ChangePcPwd(oldPassworld, newPassword, call);
                 break;
-//            case BlinkWeb.TCP:
-//                TcpUtils.ChangePcPwd(newPassword, call);
-//                break;
+            case BlinkWeb.TCP:
+                //TcpUtils.ChangePcPwd(newPassword, call);
+                TcpUtils.ChangePcPwd(oldPassworld, newPassword, call);
+                break;
             case BlinkWeb.UNONLINE:
                 break;
         }
@@ -242,6 +246,7 @@ public class BlinkNetCardSDK {
                 UdpUtils.LookFileMsg(path, call);
                 break;
             case BlinkWeb.TCP:
+                Log.e(TAG, "LookFileMsg: 我走的是tcp方式查看电脑的文件目录");
                 TcpUtils.LookFileMsg(path, call);
                 break;
             case BlinkWeb.UNONLINE:

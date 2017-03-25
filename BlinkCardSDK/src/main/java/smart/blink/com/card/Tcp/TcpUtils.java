@@ -50,6 +50,13 @@ public class TcpUtils {
         new TcpSocket(BlinkWeb.zIP, BlinkWeb.zPORT, SendTools.Heart(), Protocol.Heart, call);
     }
 
+    /**
+     * @param newPassword
+     * @param call
+     */
+    public static void ChangePcPwd(String oldPassworld, String newPassword, BlinkNetCardCall call) {
+        new TcpSocket(BlinkWeb.zIP, BlinkWeb.zPORT, SendTools.ChangePcPwd(oldPassworld, newPassword), Protocol.ChangePcPwd, call);
+    }
 
     public static void ChangePcPwd(String newPassword, BlinkNetCardCall call) {
         new TcpSocket(BlinkWeb.zIP, BlinkWeb.zPORT, SendTools.ChangePcPwd(newPassword), Protocol.ChangePcPwd, call);
@@ -64,7 +71,7 @@ public class TcpUtils {
     }
 
     public static void DownLoading(String path, final String filename, final int wantblock, final BlinkNetCardCall call) {
-        new Down(path , filename , wantblock , call);
+        new Down(path, filename, wantblock, call);
     }
 
     public static void Uploading(String path, String filename, BlinkNetCardCall call) {

@@ -148,34 +148,6 @@ public class UdpSocket {
             socket.receive(in);
             length = in.getLength();
 
-//            // ----------------------------------------------
-//            if (isReceived) {
-//                return;
-//            }
-//            /**
-//             * 由于不知为何当发送want请求时，服务器会返回三条一样的结果，故在这里做特殊处理
-//             *
-//             * 200ms后重新将isReceived的值置为false
-//             *
-//             * 添加代码后可能会产生 未知的bug
-//             */
-//            if (buffer[0] == 2) {
-//                isReceived = true;
-//                wantTimer = null;
-//                wantTimer = new Timer();
-//                wantTimer.schedule(new TimerTask() {
-//                    @Override
-//                    public void run() {
-//                        Log.e(TAG, "run: " + isReceived);
-//                        isReceived = false;
-//                        if (wantTimer != null) {
-//                            wantTimer.cancel();
-//                        }
-//                    }
-//                }, 100, 200);
-//                // ----------------------------------------------
-//            }
-
             BlinkLog.Print("接收服务器返回的数据: " + Arrays.toString(buffer));
             setData(buffer, length);
 
