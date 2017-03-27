@@ -196,10 +196,14 @@ public class UdpSocket {
 
     private void CloseTime() {
         BlinkLog.Error("************" + timer);
-        if (timer != null) {
-            BlinkLog.Error("定时器关闭");
-            timer.cancel();
-            timer = null;
+        // 自己添加的同步代码，如果不行的话就可以去掉
+        synchronized (this) {
+            if (timer != null) {
+                BlinkLog.Error("定时器关闭");
+                timer.cancel();
+                timer = null;
+            }
         }
+
     }
 }

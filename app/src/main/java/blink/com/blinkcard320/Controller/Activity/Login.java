@@ -17,6 +17,8 @@ import com.example.administrator.ui_sdk.Applications;
 import com.example.administrator.ui_sdk.DensityUtil;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import blink.com.blinkcard320.Controller.ActivityCode;
@@ -55,9 +57,6 @@ public class Login extends BaseActivity implements HandlerImpl {
     private Button initActivityButtonSweep;
 
 
-//    public static int wantCount = 0;
-//    public static int helloCount = 0;
-
     //用户ID和密码
     private String ID = null;
     private String password = null;
@@ -81,7 +80,6 @@ public class Login extends BaseActivity implements HandlerImpl {
 
         setTileBar(0);
 
-
         loginEditRelative = (RelativeLayout) view.findViewById(R.id.loginEditRelative);
         loginScanRelative = (RelativeLayout) view.findViewById(R.id.loginScanRelative);
         initActivityButtonWant = (TextView) view.findViewById(R.id.init_activity_button_want);
@@ -99,12 +97,13 @@ public class Login extends BaseActivity implements HandlerImpl {
         loginLogo = (ImageView) view.findViewById(R.id.loginLogo);
         initActivityButtonSweep = (Button) view.findViewById(R.id.init_activity_button_sweep);
 
+        // 给布局设置高度，用代码设置方便屏幕适配
         DensityUtil.setHeight(loginEditRelative, BaseActivity.height / 5 * 3);
         DensityUtil.setHeight(loginScanRelative, BaseActivity.height / 5 * 2);
 
         setContent(view);
 
-        // 调用代码用
+        // 调试代码用，会删除
         initActivityEditText.setText("112233445566");
         activityInitEditPasswd.setText("123456");
 
@@ -267,20 +266,24 @@ public class Login extends BaseActivity implements HandlerImpl {
 
         if (ID.length() == 0) {
             MyToast.Toast(context, R.string.error_input_null_user);
+            wantCount.set(0);
             return;
         }
 
         if (password.length() == 0) {
             MyToast.Toast(context, R.string.error_input_null_userpw);
+            wantCount.set(0);
             return;
         }
 
         if (ID.length() >= 48) {
             MyToast.Toast(context, R.string.error_user_long);
+            wantCount.set(0);
             return;
         }
         if (password.length() > 15) {
             MyToast.Toast(context, R.string.error_pw_long);
+            wantCount.set(0);
             return;
         }
         //首先获取内外网IP和端口
@@ -300,6 +303,20 @@ public class Login extends BaseActivity implements HandlerImpl {
             wantCount.getAndIncrement();
 
             WantRsp wantRsp = (WantRsp) object;
+            // 请求不成功，250ms后重新标志位清0
+            if (wantRsp.getSuccess() != 0) {
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        synchronized (this) {
+                            wantCount.set(0);
+                            Log.e(TAG, "run: " + "我已经清除了标志位");
+                            this.cancel();
+                        }
+                    }
+                }, 250, 250);
+            }
+
             switch (wantRsp.getSuccess()) {
                 case 0:
                     //返回成功之后

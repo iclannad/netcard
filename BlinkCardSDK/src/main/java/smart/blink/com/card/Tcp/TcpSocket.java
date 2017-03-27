@@ -116,6 +116,9 @@ public class TcpSocket {
             BlinkLog.Error(e.toString());
         }
 
+        /**
+         * ＴＣＰ访问电脑文件的逻辑
+         */
         if (buffer[0] == 5) {
             if (buffer[4] == 3) {
                 Message message = new Message();

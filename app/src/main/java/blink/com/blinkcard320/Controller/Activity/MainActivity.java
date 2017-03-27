@@ -636,6 +636,7 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
             }
         }
 
+        // helloCount.get() 因为服务器可能为了防治丢包而多发几次数据
         if (position == ActivityCode.HELLO && MyApplication.helloCount.get() == 0) {
 
             MyApplication.helloCount.getAndIncrement();
@@ -708,6 +709,7 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // 释放心跳线程的资源
         SendHeartThread.isClose = true;
         synchronized (SendHeartThread.HeartLock) {
             SendHeartThread.HeartLock.notify();
