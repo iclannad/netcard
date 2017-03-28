@@ -21,10 +21,13 @@ import smart.blink.com.card.bean.DownLoadingRsp;
  */
 public class DownUtils implements HandlerImpl {
 
+    private static final String TAG = DownUtils.class.getSimpleName();
+
     private DownorUpload downorUpload = null;
     private static boolean isEnd = true;
     public static int count = 0;
     private static DownUpCallback downUpCallback = null;
+
 
     public DownUtils() {
         if (isEnd) {
@@ -37,10 +40,12 @@ public class DownUtils implements HandlerImpl {
         DownUtils.downUpCallback = downUpCallback;
     }
 
-
+    private String downLoadFileNamePath;
     private void StartLoad() {
         downorUpload = (DownorUpload) Comment.list.get(count);
-        NetCardController.DownloadStart(downorUpload.getPath(), this);
+        downLoadFileNamePath = downorUpload.getPath();
+        //NetCardController.DownloadStart(downorUpload.getPath(), this);
+        NetCardController.DownloadStart(downLoadFileNamePath, this);
         count++;
         isEnd = false;
     }
@@ -57,16 +62,19 @@ public class DownUtils implements HandlerImpl {
     @Override
     public void myHandler(int position, Object object) {
         if (position == ActivityCode.DownloadStart) {
+            Log.e(TAG, "myHandler: " + "下载请求之后正式开始下载");
             downLoadStartRsp = (DownLoadStartRsp) object;
-            //正在下载
-            NetCardController.DownLoading(Comment.FilePath, downLoadStartRsp.getFilename(), downLoadStartRsp.getTotalblock(), this);
+
+            // 正在下载
+            //NetCardController.DownLoading(Comment.FilePath, downLoadStartRsp.getFilename(), downLoadStartRsp.getTotalblock(), this);
+            NetCardController.DownLoading(Comment.FilePath, downLoadFileNamePath, downLoadStartRsp.getTotalblock(), this);
         }
 
         if (position == ActivityCode.Downloading) {
             DownLoadingRsp downLoadingRsp = (DownLoadingRsp) object;
             if (downUpCallback != null)
                 downUpCallback.Call(position, downLoadingRsp);
-            Log.e("Ruan" , downLoadingRsp.getSpeed() + "--");
+            Log.e("Ruan", downLoadingRsp.getSpeed() + "--");
             isEnd = downLoadingRsp.isEnd();
             if (isEnd) {
                 if (count < Comment.list.size()) {

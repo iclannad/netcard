@@ -1,6 +1,8 @@
 package smart.blink.com.card.Udp.File;
 
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import smart.blink.com.card.API.BlinkLog;
  */
 public class FileWrite {
 
+    private static final String TAG = FileWrite.class.getSimpleName();
     private static RandomAccessFile randomAccessFile = null;
     private String filanme = null;
 
@@ -46,7 +49,7 @@ public class FileWrite {
         //如果拥有则不创建，否则会自动创建
         //如果拥有文件就直接删除该文件
         //该方法自动实现上面的操作包括自动备份功能
-//        FileTool.JudgeFile(filename, path);
+        FileTool.JudgeFile(filename, path);
         try {
             randomAccessFile = new RandomAccessFile(file, "rw");
         } catch (FileNotFoundException e) {

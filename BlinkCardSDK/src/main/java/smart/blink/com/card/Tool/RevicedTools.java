@@ -524,7 +524,7 @@ public class RevicedTools {
         if (buffer[0] == Protocol.DownloadStartReviced) {
             downLoadStartRsp.setSuccess(0);
 
-
+            // 文件大小
             byte[] fileSize = new byte[length];
             for (int i = 2; i < length; i++) {
                 fileSize[i - 2] = buffer[i];
@@ -537,7 +537,10 @@ public class RevicedTools {
                     Size += Character.getNumericValue((int) c);
                 }
             }
+
+
             downLoadStartRsp.setFilesize(Long.parseLong(Size));
+            // 设置请求块的大小
             int block;
             if (Long.parseLong(Size) % 1024 == 0) {
                 block = (int) Long.parseLong(Size) / 1024;

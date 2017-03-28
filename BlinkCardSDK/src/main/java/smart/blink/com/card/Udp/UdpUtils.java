@@ -1,6 +1,8 @@
 package smart.blink.com.card.Udp;
 
 
+import android.util.Log;
+
 import smart.blink.com.card.API.BlinkWeb;
 import smart.blink.com.card.API.Protocol;
 import smart.blink.com.card.BlinkNetCardCall;
@@ -11,6 +13,8 @@ import smart.blink.com.card.Tool.SendTools;
  * Created by Ruanjiahui on 2016/11/29.
  */
 public class UdpUtils {
+
+    private static final String TAG = UdpUtils.class.getSimpleName();
 
     /**
      * my test code

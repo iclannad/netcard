@@ -1,5 +1,7 @@
 package smart.blink.com.card.Tool;
 
+import android.util.Log;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,6 +17,7 @@ import smart.blink.com.card.BlinkNetCardCall;
  * Created by Ruanjiahui on 2017/1/10.
  */
 public class ReqDownUp {
+    public static final String TAG = ReqDownUp.class.getSimpleName();
 
     private static Socket socket = null;
     private static byte[] buf = null;
@@ -36,6 +39,7 @@ public class ReqDownUp {
         ReqDownUp.buffer = buffer;
         ReqDownUp.position = position;
         thread = new Thread(new Runnable() {
+
             @Override
             public void run() {
                 try {
@@ -99,6 +103,7 @@ public class ReqDownUp {
     private void Reviced(byte[] buffer) {
         int length = 0;
         try {
+            // 获取buffer的长度
             length = in.read(buffer);
             BlinkLog.Print(Arrays.toString(buffer));
         } catch (IOException e) {

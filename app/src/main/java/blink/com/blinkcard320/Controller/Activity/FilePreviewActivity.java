@@ -44,6 +44,8 @@ import smart.blink.com.card.bean.LookFileRsp;
 
 public class FilePreviewActivity extends MyBaseActivity implements OnItemClickListener, OnItemLongClickListener, HandlerImpl {
 
+    private static final String TAG = FilePreviewActivity.class.getSimpleName();
+
     private LinearLayout mlinearlayout;
     public static Object mUploadLock = new Object();
     private FileListAdapter fileListAdapter = null;
