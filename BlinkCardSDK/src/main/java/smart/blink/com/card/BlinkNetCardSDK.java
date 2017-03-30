@@ -286,6 +286,8 @@ public class BlinkNetCardSDK {
                 break;
             case BlinkWeb.TCP:
                 TcpUtils.DownLoadStart(path, call);
+                // 由于现在新版和旧都是用TCP来传输数据的，所以现在用这个来调试看看
+                //UdpUtils.TCPDownLoadStart(path, call);
                 break;
             case BlinkWeb.UNONLINE:
                 break;
@@ -320,10 +322,10 @@ public class BlinkNetCardSDK {
      * @param filename 上传文件的名称
      * @param call
      */
-    public static void UploadStart(String filename, BlinkNetCardCall call) {
+    public static void UploadStart(String filePath, String filename, BlinkNetCardCall call) {
         switch (BlinkWeb.STATE) {
             case BlinkWeb.UDP:
-                UdpUtils.UploadStart(filename, call);
+                UdpUtils.UploadStart(filePath, filename, call);
                 break;
             case BlinkWeb.TCP:
                 break;

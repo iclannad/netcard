@@ -381,6 +381,26 @@ public class NetCardController {
     }
 
     /**
+     * 请求上传
+     *
+     * @param filename 请求上传文件的名字
+     * @param handler
+     */
+    public static void UploadStart(String filePath,String filename, final HandlerImpl handler) {
+        BlinkNetCardSDK.UploadStart(filePath,filename, new BlinkNetCardCall() {
+            @Override
+            public void onSuccess(int position, MainObject mainObject) {
+                handler.myHandler(ActivityCode.UploadStart, mainObject);
+            }
+
+            @Override
+            public void onFail(int error) {
+                handler.myError(ActivityCode.DownloadStart, error);
+            }
+        });
+    }
+
+    /**
      * 上传文件
      *
      * @param path     上传文件的路径

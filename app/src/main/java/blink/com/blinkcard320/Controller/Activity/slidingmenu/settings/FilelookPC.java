@@ -30,6 +30,7 @@ import blink.com.blinkcard320.Tool.Thread.HandlerImpl;
 import blink.com.blinkcard320.Tool.Utils.SharedPrefsUtils;
 import blink.com.blinkcard320.View.FilePathLineayout;
 import blink.com.blinkcard320.Tool.Adapter.FileListAdapter.Pair;
+import blink.com.blinkcard320.View.MyPersonalProgressDIalog;
 import smart.blink.com.card.bean.GetUploadDirRsp;
 import smart.blink.com.card.bean.LookFileRsp;
 
@@ -169,6 +170,8 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
             return;
         }
 
+        // 弹出提示框
+        MyPersonalProgressDIalog.getInstance(this).setContent("正读取文件").showProgressDialog();
         // 请求查看电脑的文件
         NetCardController.LookFileMsg(currentfile + pair.getA() + "\\", this);
         mFilePathLineayout.pushView(pair.getA(), currentfile + pair.getA() + "\\", this);
@@ -191,8 +194,8 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
 
         if (position == ActivityCode.GetUploadDir) {
             GetUploadDirRsp uploadDirRsp = (GetUploadDirRsp) object;
-            Log.e(TAG, "myHandler: " + uploadDirRsp.getPath());
-            Log.e(TAG, "myHandler: " + "获取上传目录成功");
+
+
             // 获取电脑上传文件的目录
             currentfile = uploadDirRsp.getPath();
             // 获得上传目录之后就可以向服务器请求其子文件和子文件夹
@@ -200,7 +203,10 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
         }
 
         if (position == ActivityCode.LookFileMsg) {
-            Log.e(TAG, "我们进入到文件夹中");
+
+            // 关闭提示框
+            MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
+
             LookFileRsp lookFileRsp = (LookFileRsp) object;
 
             name = new ArrayList<>();

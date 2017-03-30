@@ -31,6 +31,7 @@ import blink.com.blinkcard320.Tool.Utils.SharedPrefsUtils;
 import blink.com.blinkcard320.Tool.Utils.UIHelper;
 import blink.com.blinkcard320.View.FilePathLineayout;
 import blink.com.blinkcard320.Tool.Adapter.FileListAdapter.Pair;
+import blink.com.blinkcard320.View.MyPersonalProgressDIalog;
 
 /**
  * Created by Administrator on 2017/3/20.
@@ -232,7 +233,7 @@ public class Filelook extends MyBaseActivity implements AdapterView.OnItemClickL
     }
 
     private void phoneOnclick(int position) {
-
+        MyPersonalProgressDIalog.getInstance(this).setContent("正读取文件").showProgressDialog();
         String tmp = list.get(position).getA().toString() + "/";
         Log.d("run", "currentfile---" + tmp);
         File f = new File(tmp);
@@ -245,7 +246,7 @@ public class Filelook extends MyBaseActivity implements AdapterView.OnItemClickL
         updatelist_dat();
         fileListAdapter.notifyDataSetChanged();
         mFileDAOAdapter.notifyDataSetChanged();
-
+        MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
     }
 
     private void updatelist_dat() {

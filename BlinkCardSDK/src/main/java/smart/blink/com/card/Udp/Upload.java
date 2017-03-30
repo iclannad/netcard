@@ -1,11 +1,15 @@
 package smart.blink.com.card.Udp;
 
 
+import android.util.Log;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Timer;
 
 import smart.blink.com.card.API.BlinkLog;
@@ -25,6 +29,7 @@ import smart.blink.com.card.bean.UploadReq;
  */
 public class Upload implements BlinkNetCardCall, TimerTaskCall {
 
+    private static final String TAG = Upload.class.getSimpleName();
     private FileRead fileRead = null;
     private int[] countArray = null;
     private boolean[] threadArray = null;
@@ -57,7 +62,9 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
         this.call = call;
 
         uploadReq = new UploadReq();
-        fileRead = new FileRead(path);
+        Log.e(TAG, "Upload: " + path + "/" + filename);
+        //fileRead = new FileRead(path);
+        fileRead = new FileRead(path + "/" + filename);
         size = fileRead.getFileSize() / 1024;
         if (fileRead.getFileSize() % 1024 != 0)
             size += 1;
@@ -83,11 +90,13 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
         timer = new Timer();
         timer.schedule(new MyTimerTask(this), 0, 5000);
 
+        // 最多开启5条线程下载
         for (int i = 1; i <= length; i++) {
             int flag = i;
             downList[i] = 1;
             StartThread(IP, PORT, flag, filename);
         }
+
     }
 
     /**
@@ -131,6 +140,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                         socketArray[k] = socket;
                     }
                     byte[] buffer = null;
+
                     if (id == 0) {
                         buffer = SendTools.Uploading(k, filename);
 //                        BlinkLog.Print(Arrays.toString(buffer));
@@ -149,7 +159,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                     try {
                         in.read(buf);
                         if (buf[0] == Protocol.UploadingReviced) {
-//                            BlinkLog.Print(Arrays.toString(buf));
+                            BlinkLog.Print(Arrays.toString(buf));
                             //上传请求验证成功，将id转成1
                             id = 1;
                         }
@@ -197,6 +207,9 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                 timer.cancel();
                 timer = null;
             }
+            // 更新一下值，允许下一次任务的添加
+            Log.e(TAG, "WaitStart: " + "允许下一次任务的添加");
+            uploadReq.setEnd(true);
             //最后一次返回数据给界面
             totalSpeed();
             //关闭写入流
@@ -243,6 +256,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                 BlinkLog.Print("上传完成");
                 CloseSocket(position);
                 WaitStart();
+
             }
         } else {
             if (countArray[position] == downSize) {
@@ -283,6 +297,10 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
             lateSize += speedArray[i];
             speedArray[i] = countArray[i];
         }
+
+        Log.e(TAG, "totalSpeed: setBlockID" +  totalSize);
+        Log.e(TAG, "totalSpeed: setBlockSize" +  (int)size);
+
         speed = totalSize - lateSize;
         uploadReq.setSpeed(speed / 5 + "K/S");
         uploadReq.setBlockID(totalSize);

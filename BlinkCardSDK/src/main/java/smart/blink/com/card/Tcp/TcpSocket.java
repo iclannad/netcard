@@ -53,6 +53,8 @@ public class TcpSocket {
 
         thread = null;
 
+        Log.e(TAG, "TcpSocket: tcp");
+
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -111,7 +113,6 @@ public class TcpSocket {
             // 没有数据来的话就会在这里阻塞
             length = in.read(buffer);
             BlinkLog.Print("received: " + Arrays.toString(buffer));
-
         } catch (IOException e) {
             BlinkLog.Error(e.toString());
         }

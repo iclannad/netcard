@@ -29,6 +29,8 @@ import blink.com.blinkcard320.R;
 import blink.com.blinkcard320.Tool.System.MyToast;
 import blink.com.blinkcard320.Tool.Thread.HandlerImpl;
 import blink.com.blinkcard320.Tool.Utils.SharedPrefsUtils;
+import blink.com.blinkcard320.View.MyPersonalProgressDIalog;
+import blink.com.blinkcard320.View.MyProgressDIalog;
 import blink.com.blinkcard320.application.MyApplication;
 import smart.blink.com.card.bean.ConnectPcRsp;
 import smart.blink.com.card.bean.RelayMsgRsp;
@@ -288,6 +290,9 @@ public class Login extends BaseActivity implements HandlerImpl {
         }
         //首先获取内外网IP和端口
         NetCardController.WANT(ID, password, this);
+        // 登录提示
+        MyPersonalProgressDIalog.getInstance(this).setContent("正在连接电脑").showProgressDialog();
+
     }
 
     /**
@@ -350,6 +355,8 @@ public class Login extends BaseActivity implements HandlerImpl {
             MyApplication.userName = ID;
             MyApplication.userPassword = password;
 
+            MyProgressDIalog.dissmissProgress();
+
             MyToast.Toast(context, R.string.login_success);
             finish();
 
@@ -361,7 +368,6 @@ public class Login extends BaseActivity implements HandlerImpl {
         if (position == ActivityCode.RelayMsg) {
             Log.e(TAG, "onSuccess: " + "申请与子服务器成功");
             RelayMsgRsp relayMsgRsp = (RelayMsgRsp) object;
-
 //            Log.e(TAG, "myHandler: " + relayMsgRsp.getIP());
 //            Log.e(TAG, "myHandler: " + relayMsgRsp.getPORT());
 //            byte[] uuid = relayMsgRsp.getUUID();
@@ -369,7 +375,6 @@ public class Login extends BaseActivity implements HandlerImpl {
 //                    uuid) {
 //                Log.e(TAG, "myHandler: " + b);
 //            }
-            Log.e(TAG, "onSuccess: " + "开始申请与子服务器进行连接");
             NetCardController.CONNECT_TO_SUBSERVER(this);
         }
 
@@ -386,6 +391,8 @@ public class Login extends BaseActivity implements HandlerImpl {
                 MyApplication.userName = ID;
                 MyApplication.userPassword = password;
 
+                // 关闭掉对话框
+                MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
                 MyToast.Toast(context, R.string.login_success);
 
                 finish();
@@ -406,8 +413,9 @@ public class Login extends BaseActivity implements HandlerImpl {
     public void myError(int position, int error) {
         if (position == ActivityCode.HELLO) {
             //打洞失败则申请子服务器
+            MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
+            MyPersonalProgressDIalog.getInstance(this).setContent("正通过服务器连接").showProgressDialog();
             NetCardController.RelayMsg(this);
-            Log.e(TAG, "myHandler: " + "我要开始申请进行服务器连接");
         }
 
         if (position == ActivityCode.WANT) {

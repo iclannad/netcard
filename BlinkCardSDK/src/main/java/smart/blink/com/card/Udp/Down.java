@@ -1,10 +1,13 @@
 package smart.blink.com.card.Udp;
 
 
+import android.util.Log;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Timer;
 
@@ -27,6 +30,7 @@ import smart.blink.com.card.bean.MainObject;
  */
 public class Down implements BlinkNetCardCall, TimerTaskCall {
 
+    private static final String TAG = Down.class.getSimpleName();
     /**
      * /存储当前每个链路的下载数目
      * 可以根据这个来查看每个链路下载了多少数据
@@ -144,11 +148,13 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
         this.PORT = PORT;
         this.filename = filename;
 
+        // 打印块数
         BlinkLog.Print(count);
         length = count;
         if (count > countThread)
             length = countThread;
 
+        // 同时开启5条线程下载
         for (int i = 0; i < length; i++) {
             final int flag = i + 1;
             downList[flag] = 1;
@@ -156,10 +162,13 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
         }
     }
 
+
     @Override
     public void onSuccess(int position, MainObject mainObject) {
         DownLoadingRsp downLoadingRsp = (DownLoadingRsp) mainObject;
+        // 将获得的数据写入到文件中
         fileWrite.Write(downLoadingRsp.getData(), position, countArray[position]);
+
         if (position == count) {
             if (countArray[position] == size % downSize) {
 //                SendClose(position);
@@ -243,17 +252,19 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                             in = new DataInputStream(socket.getInputStream());
                             //把链路添加到数组里面
                             socketArray[k] = socket;
-
+                            // 设置连接时间
                             socket.setSoTimeout(5000);
                         }
                         //如果id为0则说明请求下载
                         //否则就是进入下载东西的过程
                         if (id == 0) {
+                            // 0x03 0x00 ./win7.iso 0x00 13 0x00   数据包长度strlen(“./win7.iso”)+5
                             byte[] buffer = SendTools.Downloading(k, filename);
                             BlinkLog.Print(Arrays.toString(buffer));
                             out.write(buffer);
                             out.flush();
                         } else {
+                            // 将会发送下载块数据小包数据包
                             byte[] buffer = SendTools.Downloading();
                             out.write(buffer);
                             out.flush();
@@ -262,11 +273,13 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                         //接收数据
                         int length = in.read(buf);
                         if (buf[0] == Protocol.DownloadingReviced) {
+                            //当服务器接收到请求下载块数据包之后，正常返回允许下载块数据包，异常发送异常数据包：
                             BlinkLog.Print(Arrays.toString(buf));
                             id = 1;
                         }
                         if (buf[0] == Protocol.DownloadingReviced1) {
                             j++;
+                            //正常则读取数据发送实际数据
                             countArray[k] = j;
                             RevicedTools.Downloading(k, countArray[k], buf, blinkcall);
                         }
@@ -310,6 +323,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
         //如果下载完成模块数等于总模块数说明下载完成
         if (total == count) {
             CloseTimer();
+            downLoadingRsp.setEnd(true);
             //最后一次返回数据给界面
             totalSpeed();
             //关闭写入流
@@ -353,16 +367,24 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
     private void totalSpeed() {
         totalSize = 0;
         lateSize = 0;
+
         for (int i = 1; i < count + 1; i++) {
             totalSize += countArray[i];
             lateSize += speedArray[i];
             speedArray[i] = countArray[i];
         }
+
+        Log.e(TAG, "totalSpeed: setBlockId" +  totalSize);
+        Log.e(TAG, "totalSpeed: setTotolSize" +  (int)size);
+
         speed = totalSize - lateSize;
         downLoadingRsp.setSpeed(speed / 5 + "K/S");
         downLoadingRsp.setBlockId(totalSize);
         downLoadingRsp.setFilename(fileWrite.getFilename());
         downLoadingRsp.setTotolSize((int) size);
+
+        // 存放在全局变量中
         call.onSuccess(Protocol.Downloading, downLoadingRsp);
+
     }
 }

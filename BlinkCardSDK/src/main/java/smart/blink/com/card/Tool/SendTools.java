@@ -22,6 +22,8 @@ import smart.blink.com.card.bean.UploadReq;
  */
 public class SendTools {
 
+    private static final String TAG = SendTools.class.getSimpleName();
+
     /**
      * 发送反馈的的命令
      *
@@ -393,7 +395,6 @@ public class SendTools {
         return restart;
     }
 
-
     /**
      * 下载中的指令
      *
@@ -401,6 +402,7 @@ public class SendTools {
      * @return
      */
     public static byte[] Downloading(int wantblock, String filename) {
+
         byte[] restart = new byte[5 + filename.getBytes().length];
         restart[0] = Protocol.Downloading;
         restart[1] = 0x00;
@@ -446,19 +448,46 @@ public class SendTools {
     }
 
     /**
-     * 开始上传
+     * 开始上传 有作修改，请注意
      *
      * @param filename 文件名
      * @return
      */
-    public static byte[] UploadStart(String filename) {
-        byte[] load = new byte[filename.getBytes().length + 3];
+    public static byte[] UploadStart(String filePath, String filename) {
+        Log.e(TAG, "UploadStart: " + filename);
+//        byte[] load = new byte[filename.getBytes().length + 3];
+//
+//        load[0] = Protocol.UploadStart;
+//        load[1] = 0x00;
+//        for (int i = 0; i < filename.getBytes().length; i++) {
+//            load[2 + i] = filename.getBytes()[i];
+//        }
+//        load[load.length - 1] = 0x00;
+//
+//        return load;
+
+        // TODO: 2017/3/29
+        File file = new File(filePath, filename);
+        int size = 1024 * 1024 * 10;
+        long length = file.length();
+        int totalBlock = 0;
+        totalBlock = (int) (length / size);
+        if (length % size != 0) {
+            totalBlock += 1;
+        }
+
+        Log.e(TAG, "UploadStart: " + file.getName() + "---" + file.length());
+        Log.e(TAG, "UploadStart: totalBlock值为：" + totalBlock);
+
+        byte[] load = new byte[filename.getBytes().length + 5];
 
         load[0] = Protocol.UploadStart;
         load[1] = 0x00;
         for (int i = 0; i < filename.getBytes().length; i++) {
             load[2 + i] = filename.getBytes()[i];
         }
+        load[load.length - 3] = 0x00;
+        load[load.length - 2] = (byte) totalBlock;     // 先用小文件数据上传试试,查看返回的结果对不对
         load[load.length - 1] = 0x00;
 
         return load;

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.administrator.data_sdk.FileUtil.FileTool;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
@@ -39,6 +40,7 @@ import blink.com.blinkcard320.Tool.Thread.HandlerImpl;
 import blink.com.blinkcard320.Tool.UploadUtils;
 import blink.com.blinkcard320.Tool.Utils.Mime;
 import blink.com.blinkcard320.View.FilePathLineayout;
+import blink.com.blinkcard320.View.MyPersonalProgressDIalog;
 import smart.blink.com.card.API.BlinkLog;
 import smart.blink.com.card.bean.LookFileRsp;
 
@@ -103,9 +105,11 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                         return;
                     }
                     if (type != ActivityCode.ComputerFile) {
+                        MyPersonalProgressDIalog.getInstance(FilePreviewActivity.this).setContent("正读取文件").showProgressDialog();
                         mFilePathLineayout.pullViewString(mCurrentPath);
                         onclickfiledir(new File(msg.obj.toString()));
                     } else {
+                        MyPersonalProgressDIalog.getInstance(FilePreviewActivity.this).setContent("正读取文件").showProgressDialog();
 //                        if ("/".equals(mCurrentPath))
 //                            mCurrentPath = "";
                         mFilePathLineayout.pullViewString(mCurrentPath);
@@ -195,6 +199,7 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
         initdata();
 
         if (type == ActivityCode.ComputerFile) {
+            MyPersonalProgressDIalog.getInstance(this).setContent("正读取文件").showProgressDialog();
             //获取电脑路径
             NetCardController.LookFileMsg(mCurrentPath, this);
 //            getPcList();
@@ -268,18 +273,29 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
             }
             int[] delete = fileListAdapter.getcheboxSelectList();
             ArrayList<Integer> deArray = selectArray(delete);
+
+            // 按照原来他的代码多选删除会报错，所以我先删除文件，再删除对应List里面的对象
             for (int i = 0; i < deArray.size(); i++) {
-                //删除文件
+                //删除文件                                           // 文件夹                 文件名
                 FileTool.deleteFolderFile(Tools.GetFilePath(list.get(deArray.get(i)).getA(), positionFile), true);
-                list.remove(list.get(deArray.get(i)));
+                //list.remove(list.get(deArray.get(i)));
             }
+            List<FileListAdapter.Pair<String, Integer>> newList = new ArrayList<>(list);
+            for (int i = 0; i < deArray.size(); i++) {
+                list.remove(newList.get(deArray.get(i)));
+            }
+
             fileListAdapter.setList(list);
             fileListAdapter.notifyDataSetChanged();
+
             setCheckboxCancel();
             return;
         }
         //发送或者下载
         if (v.getId() == R.id.activity_button_send) {
+            int downCount = Comment.list.size();
+            int uploadCount = Comment.Uploadlist.size();
+
             int[] send = fileListAdapter.getcheboxSelectList();
             ArrayList<Integer> seArray = selectArray(send);
 
@@ -296,6 +312,9 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                     DownorUpload downorUpload = new DownorUpload();
                     String[] filename = list.get(seArray.get(i)).getA().split("/");
                     downorUpload.setName(filename[filename.length - 1]);
+
+                    Log.e(TAG, "Click: " + filename[filename.length - 1]);
+
                     downorUpload.setFLAG(DownorUpload.UPLOAD);
                     String[] filepath = list.get(seArray.get(i)).getA().split("/");
                     String path = "";
@@ -305,10 +324,27 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                     Comment.Uploadlist.add(downorUpload);
                 }
             }
-            if (type == ActivityCode.ComputerFile)
-                new DownUtils();
-            else
-                new UploadUtils();
+
+            if (type == ActivityCode.ComputerFile) {
+                Log.e(TAG, "Click: 添加了几个下载任务：" + Comment.list.size());
+                Toast.makeText(this, "添加" + (Comment.list.size() - downCount) + "个任务到下载列表", Toast.LENGTH_SHORT).show();
+            } else {
+                // 打印查看添加了几个任务
+                Log.e(TAG, "Click: 添加了几个上传任务：" + Comment.Uploadlist.size());
+                Toast.makeText(this, "添加" + (Comment.Uploadlist.size() - uploadCount) + "任务到上传列表", Toast.LENGTH_SHORT).show();
+            }
+
+
+            // 暂时注释
+            if (type == ActivityCode.ComputerFile) {
+                //Log.e(TAG, "Click: " + "选择框被点击了");
+                new DownUtils(this);
+            } else {
+                //Log.e(TAG, "Click: " + "选择框被点击了");
+                new UploadUtils(this);
+            }
+            // 隐藏掉选择框
+            setCheckboxCancel();
             return;
         }
     }
@@ -521,6 +557,7 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (type == ActivityCode.ComputerFile) {
+            MyPersonalProgressDIalog.getInstance(this).setContent("正读取文件").showProgressDialog();
             //跳转到下一级
             //如果是文件夹的话
             FileListAdapter.Pair<String, Integer> pair = list.get(position);
@@ -533,8 +570,10 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
             NetCardController.LookFileMsg(mCurrentPath + pair.getA() + "\\", this);
             mFilePathLineayout.pushView(pair.getA(), mCurrentPath + pair.getA() + "\\", this);
             mCurrentPath += pair.getA() + "\\";
-        } else
+        } else {
             onclickfile(position);
+        }
+
     }
 
     /**
@@ -553,6 +592,8 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
      * @param position
      */
     private void onclickfile(int position) {
+        // 提示
+        MyPersonalProgressDIalog.getInstance(FilePreviewActivity.this).setContent("正读取文件").showProgressDialog();
         String filepath;
         filepath = Tools.GetFilePath(list.get(position).getA(), positionFile);
         File f = new File(filepath);
@@ -596,6 +637,8 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
             fileListAdapter.notifyDataSetInvalidated();
         }
         fileListAdapter.notifyDataSetChanged();
+        // 关闭对话框
+        MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
     }
 
 
@@ -903,6 +946,8 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                 }
             }
             fileListAdapter.setList(list);
+            // 关闭对话框
+            MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
         }
     }
 

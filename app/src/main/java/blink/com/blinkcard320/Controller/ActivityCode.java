@@ -104,6 +104,11 @@ public class ActivityCode {
     /**
      * 上传文件
      */
+    public final static int UploadStart = 18;
+
+    /**
+     * 上传文件
+     */
     public final static int Upload = 19;
 
 

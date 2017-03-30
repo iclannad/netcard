@@ -538,7 +538,6 @@ public class RevicedTools {
                 }
             }
 
-
             downLoadStartRsp.setFilesize(Long.parseLong(Size));
             // 设置请求块的大小
             int block;
@@ -576,11 +575,13 @@ public class RevicedTools {
                 Size += Character.getNumericValue((int) c);
             }
         }
+
         //获取实际的数据
         byte[] msg = new byte[Integer.parseInt(Size)];
         for (int i = 0; i < msg.length; i++)
             msg[i] = buffer[376 + i];
 
+        // 校验和
         if (Checksum.ckecksum(msg, msg.length) == buffer[2]) {
             downLoadingRsp.setData(msg);
             downLoadingRsp.setBlockId(position);

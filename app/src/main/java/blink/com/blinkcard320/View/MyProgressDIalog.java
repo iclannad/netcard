@@ -370,6 +370,7 @@ public class MyProgressDIalog {
                 .getString(R.string.activity_init_connect_pc));
     }
 
+
     public void setTile(String name) {
         mProgressDialog.setTitle(context.getResources().getString(
                 R.string.activity_init_cannot_connect_server));
@@ -527,11 +528,22 @@ public class MyProgressDIalog {
 //        dialog.show();
 //    }
 
-//    public static void OpenCountTimeThread(Handler handler, int OpeartionLoss) {
+    //    public static void OpenCountTimeThread(Handler handler, int OpeartionLoss) {
 //
 //        CountTime ct = new CountTime(OpeartionLoss, handler);
 //        ct.start();
 //
 //    }
+    // 对话框的内容设置
+    public void setContent(String content) {
+//        if (mProgressDialog != null) {
+//            mProgressDialog.setTitle(content);
+//        } else {
+//            mProgressDialog = new ProgressDialog(context, content);
+//        }
+        mProgressDialog = new ProgressDialog(context, content);
+    }
+
+
 
 }

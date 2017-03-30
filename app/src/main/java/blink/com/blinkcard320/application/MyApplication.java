@@ -6,6 +6,9 @@ import android.app.Application;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import smart.blink.com.card.bean.DownLoadingRsp;
+import smart.blink.com.card.bean.UploadReq;
+
 /**
  * Created by Administrator on 2017/3/20.
  */
@@ -53,5 +56,9 @@ public class MyApplication extends Application {
         exitapp();
     }
 
+
+    // 用于当界面切换时进度条重新置0的情况
+    public  DownLoadingRsp downLoadingRsp = null;
+    public  UploadReq uploadReq = null;
 
 }
