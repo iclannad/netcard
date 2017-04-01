@@ -178,7 +178,8 @@ public class RevicedTools {
      */
     public void DownloadingBySubServer(int flag, int position, byte[] buffer, BlinkNetCardCall call) {
         // 可以在这里对得到的数据进行解析
-        DownLoadByServerRsp downLoadByServerRsp = new DownLoadByServerRsp();
+        //DownLoadByServerRsp downLoadByServerRsp = new DownLoadByServerRsp();
+        DownLoadingRsp downLoadingRsp = new DownLoadingRsp();
 
         byte[] temp = new byte[4];
         temp[0] = buffer[7];
@@ -243,14 +244,14 @@ public class RevicedTools {
         Log.e(TAG, "check[0]===" + check[0]);
 
         if (ckecksum(buffer, buffer.length - 4) == check[0]) {
-            downLoadByServerRsp.setSuccess(0);
-            downLoadByServerRsp.data = wdata;
+            downLoadingRsp.setSuccess(0);
+            downLoadingRsp.data = wdata;
             Log.e(TAG, "数据正确");
-            call.onSuccess(0, downLoadByServerRsp);
+            call.onSuccess(0, downLoadingRsp);
         } else {
             // 数据校验失败
-            downLoadByServerRsp.setSuccess(1);
-            call.onSuccess(1, downLoadByServerRsp);
+            downLoadingRsp.setSuccess(1);
+            call.onSuccess(1, downLoadingRsp);
         }
 
 

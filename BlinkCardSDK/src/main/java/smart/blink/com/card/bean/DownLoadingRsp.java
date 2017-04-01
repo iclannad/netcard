@@ -16,7 +16,7 @@ public class DownLoadingRsp extends MainObject {
     //下载文件名称
     private String filename = null;
     //下载的文件数据
-    private byte[] data = null;
+    public byte[] data = null;
     //校验码
     private int cksum = 0;
     //判断下载是否完成
@@ -95,4 +95,5 @@ public class DownLoadingRsp extends MainObject {
     public void setCksum(int cksum) {
         this.cksum = cksum;
     }
+
 }

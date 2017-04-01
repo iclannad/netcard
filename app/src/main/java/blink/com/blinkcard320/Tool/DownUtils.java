@@ -132,6 +132,18 @@ public class DownUtils implements HandlerImpl {
         if (position == ActivityCode.Downloading) {
             if (BlinkWeb.STATE == BlinkWeb.TCP) {
                 Log.e(TAG, "myHandler: 下载成功的回调,再次开启心跳线程");
+                // ---------------------------------------------------------------------------------
+                DownLoadingRsp downLoadingRsp = (DownLoadingRsp) object;
+                // 存放在全局变量中
+                MyApplication.getInstance().downLoadingRsp = downLoadingRsp;
+                // 更新界面调用
+                if (downUpCallback != null) {
+                    downUpCallback.Call(position, downLoadingRsp);
+                }
+                // 如果当前的回调只是更新ui，那么不会开启一个任务
+                if (!downLoadingRsp.isEnd()) {
+                    return;
+                }
 
                 //Comment.list.remove(0); // 删除任务列表中的第一个任务
                 if (count < Comment.list.size()) {
@@ -167,7 +179,7 @@ public class DownUtils implements HandlerImpl {
                 MyApplication.getInstance().downLoadingRsp = downLoadingRsp;
                 // 更新界面调用
                 if (downUpCallback != null) {
-                    // 这条语句在子线程调用
+
                     downUpCallback.Call(position, downLoadingRsp);
                 }
 
