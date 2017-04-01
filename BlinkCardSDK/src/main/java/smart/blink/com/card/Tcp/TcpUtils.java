@@ -67,14 +67,19 @@ public class TcpUtils {
     }
 
     public static void DownLoadStart(String path, BlinkNetCardCall call) {
-        new TcpSocket(BlinkWeb.zIP, BlinkWeb.zPORT, SendTools.DownloadStart(path), Protocol.DownloadStart, call);
+        new TcpSocket(BlinkWeb.zIP, BlinkWeb.zPORT, SendTools.DownloadStartBySubServer(path), Protocol.DownloadStart, call);
     }
 
+
+    //                             下载到手机的路径        电脑里面要下载文件的全路径   要下载的总块数         回调
     public static void DownLoading(String path, final String filename, final int wantblock, final BlinkNetCardCall call) {
-        new Down(path, filename, wantblock, call);
+        //new Down(path, filename, wantblock, call);
+        new MyDown(path, filename, wantblock, call);
     }
 
+    //                    上传文件的路径（文件夹）    文件名       回调
     public static void Uploading(String path, String filename, BlinkNetCardCall call) {
-        new Upload(path, filename, call);
+        //new Upload(path, filename, call);
+        new MyUpload(path, filename, call);
     }
 }

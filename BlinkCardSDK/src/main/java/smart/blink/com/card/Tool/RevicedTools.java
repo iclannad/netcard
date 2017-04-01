@@ -14,12 +14,15 @@ import smart.blink.com.card.API.BlinkWeb;
 import smart.blink.com.card.API.ErrorNo;
 import smart.blink.com.card.API.Protocol;
 import smart.blink.com.card.BlinkNetCardCall;
+import smart.blink.com.card.Tcp.MyDown;
 import smart.blink.com.card.Tcp.TcpSocket;
 import smart.blink.com.card.Tcp.TcpUtils;
 import smart.blink.com.card.Udp.UdpSocket;
 import smart.blink.com.card.bean.ChangePcPwdRsp;
 import smart.blink.com.card.bean.ChangePwdRsp;
 import smart.blink.com.card.bean.ConnectPcRsp;
+import smart.blink.com.card.bean.DownLoadByServerRsp;
+import smart.blink.com.card.bean.DownLoadStartByServerRsp;
 import smart.blink.com.card.bean.DownLoadStartRsp;
 import smart.blink.com.card.bean.DownLoadingRsp;
 import smart.blink.com.card.bean.FeedbackRsp;
@@ -32,6 +35,7 @@ import smart.blink.com.card.bean.RelayMsgRsp;
 import smart.blink.com.card.bean.RestartRsp;
 import smart.blink.com.card.bean.SetUploadDirRsp;
 import smart.blink.com.card.bean.ShutdownRsp;
+import smart.blink.com.card.bean.UpLoadByServerRsp;
 import smart.blink.com.card.bean.UploadStartReq;
 import smart.blink.com.card.bean.WantRsp;
 
@@ -127,8 +131,193 @@ public class RevicedTools {
             case Protocol.HELLO_FAILED:
                 HELLO_FAILED(call);
                 break;
+            case 9:
+                // 与子服务器进行连接时，请求下载返回的结果
+                DownloadStartBySubServer(buffer, call);
+                break;
+            case 71:
+                // 与子服务器进行连接时，下载中返回的结果
+                //Log.e(TAG, "RevicedTools: 与子服务器进行连接时，下载中返回的结果");
+                DownloadingBySubServer(0, 0, buffer, call);
+                break;
+            case 80:
+                // 与子服务器进行连接时，上传中返回的结果
+                UploadingBySubServer(0, 0, buffer, call);
+                break;
 
         }
+    }
+
+    /**
+     * 与子服务器连接时候上传成功的回调
+     *
+     * @param flag
+     * @param position
+     * @param buffer
+     * @param call
+     */
+    private void UploadingBySubServer(int flag, int position, byte[] buffer, BlinkNetCardCall call) {
+        UpLoadByServerRsp upLoadByServerRsp = new UpLoadByServerRsp();
+        if (buffer[0] == 80) {
+            // 上传成功
+            upLoadByServerRsp.setSuccess(0);
+        } else {
+            // 上传失败
+            upLoadByServerRsp.setSuccess(1);
+        }
+        call.onSuccess(0, upLoadByServerRsp);
+    }
+
+    /**
+     * 与子服务器连接的时候下载中的回调
+     *
+     * @param flag
+     * @param position
+     * @param buffer
+     * @param call
+     */
+    public void DownloadingBySubServer(int flag, int position, byte[] buffer, BlinkNetCardCall call) {
+        // 可以在这里对得到的数据进行解析
+        DownLoadByServerRsp downLoadByServerRsp = new DownLoadByServerRsp();
+
+        byte[] temp = new byte[4];
+        temp[0] = buffer[7];
+        temp[1] = buffer[6];
+        temp[2] = buffer[5];
+        temp[3] = buffer[4];
+        // 块序号
+        int id = DataConverter.byteArrayToInt(temp);
+        Log.e(TAG, "DownloadingBySubServer: id==" + id);
+
+        // 文件长度
+        int index = 4 + 4;
+        byte[] blocklen = new byte[4];
+        for (int i = index; i < 12; i++) {
+            blocklen[i - index] = buffer[i];
+        }
+        temp[0] = blocklen[3];
+        temp[1] = blocklen[2];
+        temp[2] = blocklen[1];
+        temp[3] = blocklen[0];
+        int ilen = DataConverter.byteArrayToInt(temp);
+        Log.e(TAG, "DownloadingBySubServer: ilen" + ilen);
+
+        // 文件名，如有需要再处理
+        index = 4 + 4 + 4;
+        byte[] filename = new byte[256];
+        for (int i = index; i < (1296 - 4 - 1024); i++) {
+            filename[i - index] = buffer[i];
+        }
+        int filenamelen = Util.StringEnd(filename);
+        try {
+            String sfilename = new String(Arrays.copyOfRange(filename, 0,
+                    filenamelen), "UTF-8");
+            Log.e(TAG, "DownloadingBySubServer: sfilename" + sfilename);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        // 数据包
+        byte[] data = new byte[1024];
+        index = 4 + 4 + 4 + 256;
+        for (int i = index; i < (1296 - 4); i++) {
+            data[i - index] = buffer[i];
+        }
+        byte[] wdata = new byte[ilen];
+        for (int i = 0; i < ilen; i++) {
+            wdata[i] = data[i];
+        }
+        try {
+            String res = new String(Arrays.copyOfRange(data, 0,
+                    filenamelen), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        byte[] check = new byte[4];
+        index = 1292;
+        for (int i = index; i < 1296; i++) {
+            check[i - index] = buffer[i];
+        }
+        Log.e(TAG, "my check===" + ckecksum(buffer, buffer.length - 4));
+        Log.e(TAG, "check[0]===" + check[0]);
+
+        if (ckecksum(buffer, buffer.length - 4) == check[0]) {
+            downLoadByServerRsp.setSuccess(0);
+            downLoadByServerRsp.data = wdata;
+            Log.e(TAG, "数据正确");
+            call.onSuccess(0, downLoadByServerRsp);
+        } else {
+            // 数据校验失败
+            downLoadByServerRsp.setSuccess(1);
+            call.onSuccess(1, downLoadByServerRsp);
+        }
+
+
+    }
+
+    public static int ckecksum(byte[] b, int size) {
+        int result = 0;
+        for (int i = 0; i < size; i++) {
+            result += Math.abs((int) b[i]);
+            result %= 100;
+        }
+        return result;
+    }
+
+    /**
+     * 当通过子服务器请下载的时候
+     *
+     * @param buffer
+     * @param call
+     */
+    public static void DownloadStartBySubServer(byte[] buffer, BlinkNetCardCall call) {
+
+        Log.e(TAG, "DownloadStartBySubServer: buffer的长度：" + buffer.length);
+
+        byte[] temp = new byte[4];
+        temp[0] = buffer[7];
+        temp[1] = buffer[6];
+        temp[2] = buffer[5];
+        temp[3] = buffer[4];
+
+        int itotalblock = DataConverter.byteArrayToInt(temp);
+        Log.e(TAG, "DownloadStartBySubServer: itotalblock = " + itotalblock);
+
+        byte[] file_len = new byte[8];
+        for (int i = 8; i < (8 + file_len.length); i++) {
+            file_len[i - 8] = buffer[i];
+        }
+        long ilen = DataConverter.byteArray2Long(file_len);
+        byte[] data = new byte[256];
+        for (int i = 16; i < (16 + data.length); i++) {
+            data[i - 16] = buffer[i];
+        }
+        int index = Util.lastNullIndex(data);
+        String res = null;
+        DownLoadStartByServerRsp downLoadStartByServerRsp = new DownLoadStartByServerRsp();
+        try {
+            res = new String(Arrays.copyOfRange(data, 0,
+                    index + 1), "UTF-8");
+            downLoadStartByServerRsp.setSuccess(0);
+            downLoadStartByServerRsp.setFileName(res);
+            downLoadStartByServerRsp.setFileSize(ilen);
+            downLoadStartByServerRsp.setTotalBlock(itotalblock);
+
+            Log.e(TAG, "total= " + itotalblock + " filename=" + res + " ilen=" + ilen);
+            Log.e(TAG, "DownloadStartBySubServer: " + "我要开始进行回调了 --- positon:" + position);
+            // 解析数据成功后的回调
+            call.onSuccess(position, downLoadStartByServerRsp);
+            return;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        // 解析数据失同命运
+        downLoadStartByServerRsp.setSuccess(1);
+        call.onFail(position);
+        return;
+
     }
 
     /**
@@ -223,18 +412,16 @@ public class RevicedTools {
         call.onSuccess(position, hellpRsp);
     }
 
-
     /**
      * 心跳处理的数据
      *
      * @param call
      */
-    public static void Heart(BlinkNetCardCall call) {
+    public void Heart(BlinkNetCardCall call) {
         HeartRsp heartRsp = new HeartRsp();
         heartRsp.setSuccess(0);
         call.onSuccess(position, heartRsp);
     }
-
 
     /**
      * 锁屏处理的数据

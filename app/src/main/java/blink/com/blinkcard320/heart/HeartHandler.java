@@ -36,7 +36,6 @@ public class HeartHandler extends Handler {
         switch (result) {
             case SendHeartThread.HEART_CONTINUE:
                 NetCardController.Heart(handler);
-                Log.e(TAG, "handleMessage: " + "开始发送心跳");
                 break;
             case SendHeartThread.HEART_LOSS:
                 // 与服务器失去连接的逻辑

@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 
 import blink.com.blinkcard320.Controller.Activity.FilePreviewActivity;
 import blink.com.blinkcard320.Controller.Activity.Login;
+import blink.com.blinkcard320.Controller.Activity.MainActivity;
 import blink.com.blinkcard320.Controller.ActivityCode;
 import blink.com.blinkcard320.Controller.NetCardController;
 import blink.com.blinkcard320.Moudle.Comment;
@@ -17,6 +18,8 @@ import blink.com.blinkcard320.Moudle.DownorUpload;
 import blink.com.blinkcard320.Tool.Thread.HandlerImpl;
 import blink.com.blinkcard320.View.DownUpCallback;
 import blink.com.blinkcard320.application.MyApplication;
+import blink.com.blinkcard320.heart.SendHeartThread;
+import smart.blink.com.card.API.BlinkWeb;
 import smart.blink.com.card.bean.UploadReq;
 import smart.blink.com.card.bean.UploadStartReq;
 
@@ -49,19 +52,24 @@ public class UploadUtils implements HandlerImpl {
     }
 
     private void StartLoad() {
-        // 这里是之前他写的代码
-//        downorUpload = (DownorUpload) Comment.Uploadlist.get(count);
-//        NetCardController.Upload(downorUpload.getPath(), downorUpload.getName(), this);
-//        count++;
-//        isEnd = false;
+        if (BlinkWeb.STATE == BlinkWeb.TCP) {
+            // 如果当前的连接是与子服务器连接，上传之前就不用发送上传请求了
+            // 在发送下载指令之前，先停止心跳，下载完之后再开启
+            SendHeartThread.isClose = true;
+            synchronized (SendHeartThread.HeartLock) {
+                SendHeartThread.HeartLock.notify();
+            }
 
-        // 这里是我写的代码
-        downorUpload = (DownorUpload) Comment.Uploadlist.get(count);
-        //NetCardController.Upload(downorUpload.getPath(), downorUpload.getName(), this);
-        //NetCardController.UploadStart(s, this);
-        NetCardController.UploadStart(downorUpload.getPath(), downorUpload.getName(), this);
-        count++;
-        isEnd = false;
+            downorUpload = (DownorUpload) Comment.Uploadlist.get(count);
+            Log.e(TAG, "StartLoad: downorUpload.getPath()===" + downorUpload.getPath() + "   downorUpload.getName()===" + downorUpload.getName());
+            NetCardController.Upload(downorUpload.getPath(), downorUpload.getName(), this);
+            count++;
+        } else {
+            downorUpload = (DownorUpload) Comment.Uploadlist.get(count);
+            NetCardController.UploadStart(downorUpload.getPath(), downorUpload.getName(), this);
+            count++;
+            isEnd = false;
+        }
     }
 
     private UploadStartReq uploadStartReq = null;
@@ -84,16 +92,8 @@ public class UploadUtils implements HandlerImpl {
         }
 
         if (position == ActivityCode.Upload) {
-            UploadReq uploadReq = (UploadReq) object;
-
-            MyApplication.getInstance().uploadReq = uploadReq;
-
-            // 传输界面的接口
-            if (downUpCallback != null)
-                downUpCallback.Call(position, uploadReq);
-
-            isEnd = uploadReq.isEnd();
-            if (isEnd) {
+            if (BlinkWeb.STATE == BlinkWeb.TCP) {
+                //----------------------------------------------------------------------------------
                 if (count < Comment.Uploadlist.size()) {
                     //上传完一个暂停一秒再上传下一个
                     Log.e(TAG, "myHandler: " + "再上传一个文件");
@@ -113,7 +113,42 @@ public class UploadUtils implements HandlerImpl {
                             Toast.makeText(activity, "任务上传完毕", Toast.LENGTH_SHORT).show();
                         }
                     });
-                    Log.e(TAG, "myHandler: " + "所有任务都上传完毕");
+                    Log.e(TAG, "myHandler: " + "所有任务都上传完毕,重新开启心跳线程");
+                    SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+                    SendHeartThread.isClose = false;
+                    sendHeartThread.start();
+                }
+
+            } else {
+                UploadReq uploadReq = (UploadReq) object;
+                MyApplication.getInstance().uploadReq = uploadReq;
+                // 传输界面的接口
+                if (downUpCallback != null)
+                    downUpCallback.Call(position, uploadReq);
+
+                isEnd = uploadReq.isEnd();
+                if (isEnd) {
+                    if (count < Comment.Uploadlist.size()) {
+                        //上传完一个暂停一秒再上传下一个
+                        Log.e(TAG, "myHandler: " + "再上传一个文件");
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                        }
+                        StartLoad();
+                    } else {
+                        // 当下载完毕之后清空任务列表
+                        Comment.Uploadlist.clear();
+                        count = 0;  // 清0
+                        final Activity activity = (Activity) this.context;
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(activity, "任务上传完毕", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        Log.e(TAG, "myHandler: " + "所有任务都上传完毕");
+                    }
                 }
             }
         }

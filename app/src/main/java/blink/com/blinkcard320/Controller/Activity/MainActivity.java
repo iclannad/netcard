@@ -87,7 +87,7 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
     private TextView drawerlayout_textview_uid;
     private View view;
     private View leftview;
-    private HeartHandler heartHandler;
+    public static HeartHandler heartHandler;
 
     /**
      * 跳转Fragment
@@ -690,6 +690,7 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
         if (position == ActivityCode.Heart) {
             SendHeartThread.timeCount.set(0);
             //Log.e(TAG, "myHandler: " + "接收到服务器返回的心跳");
+
         }
 
 

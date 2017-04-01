@@ -396,6 +396,27 @@ public class SendTools {
     }
 
     /**
+     * 开始下载的指令
+     *
+     * @param path
+     * @return
+     */
+    public static byte[] DownloadStartBySubServer(String path) {
+        byte[] res = new byte[260];
+        byte[] cmd = new byte[4];
+        cmd[0] = 9;
+        cmd[1] = cmd[2] = cmd[3];
+        for (int i = 0; i < 4; i++) {
+            Arrays.fill(res, i, i + 1, cmd[i]);
+        }
+        byte[] sfile = path.getBytes();
+        for (int i = 0; i < sfile.length; i++) {
+            Arrays.fill(res, i + 4, i + 5, sfile[i]);
+        }
+        return res;
+    }
+
+    /**
      * 下载中的指令
      *
      * @param filename
@@ -414,6 +435,43 @@ public class SendTools {
 
         return restart;
     }
+
+    /**
+     * 下载中的指令 TCP 旧版的请求方法
+     *
+     * @param filename
+     * @return
+     */
+    public static byte[] DownloadingOldVersion(int wantblock, String filename) {
+
+        Log.e(TAG, "DownloadingOldVersion: want==" + wantblock + " filename==" + filename);
+
+        byte[] head = new byte[4];
+        head[0] = 71;                // 这里为了方便先这么写
+        head[1] = head[2] = head[3] = 0;
+        byte[] blockid = new byte[4];
+        int i_blockid = wantblock;  // 要下载的块数
+        blockid = DataConverter.intToByteArray(i_blockid);
+        byte[] filename_old = new byte[256];
+        byte[] temp = filename.getBytes();
+        for (int i = 0; i < temp.length; i++) {
+            filename_old[i] = temp[i];
+        }
+        for (int j = temp.length; j < filename_old.length; j++) {
+            filename_old[j] = 0;
+        }
+        byte[] msg = new byte[4 + 4 + 256];
+        for (int i = 0; i < 4; i++) {
+            msg[i] = head[i];
+        }
+        for (int i = 4; i < 8; i++)
+            msg[i] = blockid[i - 4];
+        for (int i = 8; i < 264; i++)
+            msg[i] = filename_old[i - 8];
+        Log.d("----kuai", "i_blockid==" + i_blockid);
+        return msg;
+    }
+
 
     /**
      * 下载中的指令
@@ -539,6 +597,82 @@ public class SendTools {
             upload[376 + i] = msg[i];
         }
         return upload;
+    }
+
+    /**
+     * 拼装上传的数据  根据旧版的方法改过来
+     *
+     * @param reqBlockId 请求上传的块数
+     * @param wantblock  总块数
+     * @param filename   请求文件的名字
+     * @param file
+     */
+    public static byte[] UploadingOldVersion(int reqBlockId, long wantblock, String filename, File file) {
+        byte[] msg_file_name = new byte[1300];
+        //CMD
+        msg_file_name[0] = 79;
+        msg_file_name[1] = 0;
+        msg_file_name[2] = 0;
+        msg_file_name[3] = 0;
+
+        //block_id
+        byte[] b = DataConverter.intToByteArray(reqBlockId);
+        for (int i = 0; i < b.length; i++) {
+            Arrays.fill(msg_file_name, i + 4, i + 5, b[i]);
+        }
+
+        //total_block
+        int mTotalBlock = (int) wantblock;
+        byte[] bt = DataConverter.intToByteArray(mTotalBlock);
+        for (int i = 0; i < bt.length; i++) {
+            Arrays.fill(msg_file_name, i + 8, i + 9, bt[i]);
+        }
+
+        byte[] data = readFile(reqBlockId,file);
+        //block_length
+        byte[] blen = new byte[4];
+        blen = DataConverter.intToByteArray(blockidlen);
+        for (int i = 0; i < blen.length; i++) {
+            Arrays.fill(msg_file_name, i + 12, i + 13, blen[i]);
+        }
+        byte[] temp = filename.getBytes();
+        for (int i = 0; i < temp.length; i++) {
+            Arrays.fill(msg_file_name, i + 16, i + 17, temp[i]);
+        }
+
+        //data
+        for (int i = 0; i < data.length; i++) {
+            Arrays.fill(msg_file_name, i + 272, i + 273, data[i]);
+        }
+
+        //checksum
+        byte[] cksum = DataConverter.intToByteArray(ckecksum(msg_file_name, msg_file_name.length - 4));
+        for (int i = 0; i < cksum.length; i++) {
+            Arrays.fill(msg_file_name, i + 1296, i + 1297, cksum[i]);
+        }
+
+        return msg_file_name;
+    }
+
+
+    private static int blockidlen = 0;
+
+    private static byte[] readFile(int index, File file) {
+        try {
+            RandomAccessFile raf = new RandomAccessFile(file, "rw");
+            raf.seek(index * 1024);
+            byte[] data = new byte[1024];
+            blockidlen = raf.read(data);
+            if (blockidlen == -1)
+                blockidlen = 0;
+            raf.close();
+            return data;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**

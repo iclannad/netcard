@@ -36,7 +36,6 @@ public class SendHeartThread extends Thread {
 
     @Override
     public void run() {
-        Log.e(TAG, "run: " + "开始发送心跳的线程");
         timeCount.set(0);
         while (timeCount.get() < HeartLossMax && !isClose) {
             try {

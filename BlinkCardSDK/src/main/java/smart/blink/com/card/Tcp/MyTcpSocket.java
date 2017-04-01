@@ -1,6 +1,5 @@
 package smart.blink.com.card.Tcp;
 
-
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -17,10 +16,9 @@ import smart.blink.com.card.BlinkNetCardCall;
 import smart.blink.com.card.Tool.RevicedTools;
 
 /**
- * Created by Ruanjiahui on 2017/1/10.
+ * Created by Administrator on 2017/3/31.
  */
-public class TcpSocket {
-
+public class MyTcpSocket {
     private static final String TAG = TcpSocket.class.getSimpleName();
 
     private static Socket socket = null;
@@ -44,9 +42,9 @@ public class TcpSocket {
      * @param position
      * @param call
      */
-    public TcpSocket(final String ip, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
-        TcpSocket.position = position;
-        TcpSocket.call = call;
+    public MyTcpSocket(final String ip, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
+        MyTcpSocket.position = position;
+        MyTcpSocket.call = call;
 
         bufferList = new ArrayList<>();
         controlList = new ArrayList<>();

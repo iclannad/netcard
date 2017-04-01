@@ -188,7 +188,6 @@ public class BlinkNetCardSDK {
                 UdpUtils.Heart(call);
                 break;
             case BlinkWeb.TCP:
-                Log.e(TAG, "Heart: 我走到了发送心跳TCP的方法中");
                 TcpUtils.Heart(call);
                 break;
             case BlinkWeb.UNONLINE:
@@ -286,8 +285,6 @@ public class BlinkNetCardSDK {
                 break;
             case BlinkWeb.TCP:
                 TcpUtils.DownLoadStart(path, call);
-                // 由于现在新版和旧都是用TCP来传输数据的，所以现在用这个来调试看看
-                //UdpUtils.TCPDownLoadStart(path, call);
                 break;
             case BlinkWeb.UNONLINE:
                 break;

@@ -71,7 +71,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
         this.call = call;
         this.filename = filename;
         downLoadingRsp = null;
-        timer = new Timer();
+        //timer = new Timer();
         this.wantblock = wantblock;
         memory = new byte[51200];
         fileWrite = new FileWrite(path, filename);
@@ -86,7 +86,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
 
     private void Downing() {
         wanting = 0;
-        timer.schedule(new MyTimerTask(this), 0, 5000);
+        //timer.schedule(new MyTimerTask(this), 0, 5000);
         while (isDown) {
             if (isDowning) {
                 isDowning = false;
@@ -99,7 +99,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
 
                     isDown = false;
                     fileWrite.Close();
-                    timer.cancel();
+                    //timer.cancel();
                     return;
                 }
                 //发送数据
@@ -121,7 +121,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                         isDown = false;
                         isDowning = false;
                         fileWrite.Close();
-                        timer.cancel();
+                        //timer.cancel();
                         call.onFail(ErrorNo.ErrorTimeout);
                     }
                 }
@@ -134,7 +134,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
             if (out == null)
                 out = new DataOutputStream(socket.getOutputStream());
             //发送数据
-            out.write(SendTools.Downloading(wanting, filename));
+            out.write(SendTools.DownloadingOldVersion(wanting, filename));
 
             if (in == null)
                 in = new DataInputStream(socket.getInputStream());
@@ -158,34 +158,35 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
 
     @Override
     public void onSuccess(int position, MainObject mainObject) {
-        DownLoadingRsp downLoadingRsp = (DownLoadingRsp) mainObject;
-
-        //每50个字节数组写一次进文本
-        if ((wanting) % 50 == 0 && wanting != 0) {
-            n = 0;
-            fileWrite.Write(memory);
-            memory = null;
-        }
-        //如果内存池的内存为空则创建新的内存
-        if (memory == null)
-            memory = new byte[51200];
-        //将每块字节流写入缓冲池
-        for (int i = 0; i < downLoadingRsp.getData().length; i++) {
-            memory[i + n * 1024] = downLoadingRsp.getData()[i];
-        }
-        //设置还没有下载完成
-        if (Down.downLoadingRsp != null)
-            Down.downLoadingRsp.setEnd(false);
-
-        //如果等于最后一块则写入
-        if (wanting == wantblock - 1) {
-            Down.downLoadingRsp.setEnd(true);
-            byte[] b = new byte[n * 1024 + downLoadingRsp.getData().length];
-            for (int i = 0; i < b.length; i++)
-                b[i] = memory[i];
-            fileWrite.Write(b);
-            CallObject();
-        }
+        Log.e("onSuccess: ", "wantblock: " + wanting);
+//        DownLoadingRsp downLoadingRsp = (DownLoadingRsp) mainObject;
+//
+//        //每50个字节数组写一次进文本
+//        if ((wanting) % 50 == 0 && wanting != 0) {
+//            n = 0;
+//            fileWrite.Write(memory);
+//            memory = null;
+//        }
+//        //如果内存池的内存为空则创建新的内存
+//        if (memory == null)
+//            memory = new byte[51200];
+//        //将每块字节流写入缓冲池
+//        for (int i = 0; i < downLoadingRsp.getData().length; i++) {
+//            memory[i + n * 1024] = downLoadingRsp.getData()[i];
+//        }
+//        //设置还没有下载完成
+//        if (Down.downLoadingRsp != null)
+//            Down.downLoadingRsp.setEnd(false);
+//
+//        //如果等于最后一块则写入
+//        if (wanting == wantblock - 1) {
+//            Down.downLoadingRsp.setEnd(true);
+//            byte[] b = new byte[n * 1024 + downLoadingRsp.getData().length];
+//            for (int i = 0; i < b.length; i++)
+//                b[i] = memory[i];
+//            fileWrite.Write(b);
+//            CallObject();
+//        }
     }
 
     @Override
@@ -202,31 +203,31 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
      */
     @Override
     public void TimerCall() {
-        CallObject();
+        //CallObject();
     }
 
-    private void CallObject() {
-        String DSpeed = (wanting - speed) / 5 + "K/S";
-        if (downLoadingRsp == null)
-            downLoadingRsp = new DownLoadingRsp();
+//    private void CallObject() {
+//        String DSpeed = (wanting - speed) / 5 + "K/S";
+//        if (downLoadingRsp == null)
+//            downLoadingRsp = new DownLoadingRsp();
+//
+//        downLoadingRsp.setSpeed(DSpeed);
+//        downLoadingRsp.setBlockId(wanting);
+//        downLoadingRsp.setTotolSize(wantblock);
+//
+//
+//        Message message = new Message();
+//        handler.sendMessage(message);
+//
+//        speed = wanting;
+//    }
 
-        downLoadingRsp.setSpeed(DSpeed);
-        downLoadingRsp.setBlockId(wanting);
-        downLoadingRsp.setTotolSize(wantblock);
 
-
-        Message message = new Message();
-        handler.sendMessage(message);
-
-        speed = wanting;
-    }
-
-
-    private Handler handler = new Handler() {
-        @Override
-        public void dispatchMessage(Message msg) {
-            super.dispatchMessage(msg);
-            call.onSuccess(Protocol.Downloading, downLoadingRsp);
-        }
-    };
+//    private Handler handler = new Handler() {
+//        @Override
+//        public void dispatchMessage(Message msg) {
+//            super.dispatchMessage(msg);
+//            call.onSuccess(Protocol.Downloading, downLoadingRsp);
+//        }
+//    };
 }
