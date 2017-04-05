@@ -34,7 +34,7 @@ public class SplashActivity extends BaseActivity {
     public void init() {
         // 不设置标题栏
         setTileBar(0);
-        setFitWindows(false);
+        setFitWindows(true);
         view = LayoutInflater.from(this).inflate(R.layout.activity_splash, null);
         splash_linear = (RelativeLayout) view.findViewById(R.id.splash_Linear);
         setContent(view);

@@ -1,15 +1,20 @@
 package blink.com.blinkcard320.Controller.Activity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -24,6 +29,8 @@ import com.example.administrator.ui_sdk.MyBaseActivity.NavActivity;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 import blink.com.blinkcard320.Controller.Activity.slidingmenu.AboutActivity;
 import blink.com.blinkcard320.Controller.Activity.slidingmenu.AlterUserPWDActivity;
@@ -40,6 +47,7 @@ import blink.com.blinkcard320.Controller.Fragment.FragmentFilePhone;
 import blink.com.blinkcard320.Controller.Fragment.FragmentToActivity;
 import blink.com.blinkcard320.Controller.NetCardController;
 import blink.com.blinkcard320.Moudle.Comment;
+import blink.com.blinkcard320.Moudle.DownorUpload;
 import blink.com.blinkcard320.Moudle.Item;
 import blink.com.blinkcard320.Moudle.skin.SkinConfig;
 import blink.com.blinkcard320.R;
@@ -47,6 +55,7 @@ import blink.com.blinkcard320.Tool.Adapter.LGAdapter;
 import blink.com.blinkcard320.Tool.System.MyToast;
 import blink.com.blinkcard320.Tool.System.Tools;
 import blink.com.blinkcard320.Tool.Thread.HandlerImpl;
+import blink.com.blinkcard320.Tool.UploadUtils;
 import blink.com.blinkcard320.Tool.Utils.SharedPrefsUtils;
 import blink.com.blinkcard320.Tool.Utils.UIHelper;
 import blink.com.blinkcard320.Tool.Utils.Utils;
@@ -88,6 +97,9 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
     private View view;
     private View leftview;
     public static HeartHandler heartHandler;
+
+    public String name;
+    public String path;
 
     /**
      * 跳转Fragment
@@ -562,18 +574,100 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
                 if (Tools.isCamera(MainActivity.this)) {
                     try {
                         intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        File f = new File(Tools.getPic(context));
+                        // 设定拍照以后文件的保存路径
+                        name = new DateFormat().format("yyyyMMdd_hhmmss",
+                                Calendar.getInstance(Locale.CHINA))
+                                + ".jpg";
+
+                        path = SharedPrefsUtils.getStringPreference(MainActivity.this, Comment.PICTUREFILE);
+                        if (path == null) {
+                            path = Environment.getExternalStorageDirectory().toString();
+                        }
+                        Log.e(TAG, "onItemClick: path===" + path);
+
+                        File f = new File(path, name);
                         Uri u = Uri.fromFile(f);
                         intent.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, u);
                         startActivityForResult(intent, 1);
                     } catch (Exception e) {
-                        CommonIntent.IntentResActivity(MainActivity.this, CameraActivity.class, 1);
+                        // 如果异常的话就跳转到自己定义CameraActivity
+                        //CommonIntent.IntentResActivity(getActivity(), CameraActivity.class, 1);
+                        Toast.makeText(MainActivity.this, "开启相机时出现异常", Toast.LENGTH_SHORT).show();
                     }
-                } else
-                    Toast.makeText(MainActivity.this, MainActivity.this.getResources().getString(R.string.Camera_no_permission), Toast.LENGTH_SHORT).show();
+                }
             }
         });
+    }
+
+    // 调用拍照功能后的回调
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // TODO Auto-generated method stub
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.e(TAG, "onActivityResult: 拍完相片回调");
+        switch (requestCode) {
+            case 1:
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle(getResources().getString(R.string.photo));
+                View view = LayoutInflater.from(MainActivity.this).inflate(
+                        R.layout.dialog_camera, null);
+
+                if (name == null || path == null) {
+                    Log.e(TAG, "onActivityResult: name==null or path==null");
+                    return;
+                }
+
+                ImageView iv = (ImageView) view
+                        .findViewById(R.id.imageview_dialog_camera);
+                TextView tv = (TextView) view
+                        .findViewById(R.id.textview_dialog_camerapath);
+                Button b = (Button) view.findViewById(R.id.button_dialog_cameradismiss);
+                Button upload = (Button) view
+                        .findViewById(R.id.button_dialog_cameraupload);
+
+                File f = new File(path, name);
+                tv.setText(f.getName());
+                final Bitmap bmp = Tools.getbitmap(f.getPath());
+                if (bmp == null) {
+                    Log.e(TAG, "onActivityResult: bmp==null");
+                    return;
+                }
+                iv.setImageBitmap(Tools.ResizeBitmap(bmp, 480));
+                builder.setView(view);
+                final AlertDialog dialog = builder.show();
+                b.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // TODO Auto-generated method stub
+                        bmp.recycle();
+                        dialog.dismiss();
+                        path = null;
+                        name = null;
+                    }
+                });
+                upload.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        // 上传图片到电脑
+                        DownorUpload downorUpload = new DownorUpload();
+                        downorUpload.setName(name);
+                        downorUpload.setFLAG(DownorUpload.UPLOAD);
+                        downorUpload.setPath(path);
+                        Comment.Uploadlist.add(downorUpload);
+                        new UploadUtils(MainActivity.this);
+
+                        bmp.recycle();
+                        dialog.dismiss();
+                        Toast.makeText(MainActivity.this, "开始上传图片", Toast.LENGTH_SHORT).show();
+                        path = null;
+                        name = null;
+                    }
+                });
+                break;
+        }
+
     }
 
     /**
