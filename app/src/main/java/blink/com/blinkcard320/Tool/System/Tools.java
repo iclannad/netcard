@@ -3,6 +3,9 @@ package blink.com.blinkcard320.Tool.System;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Environment;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -10,6 +13,7 @@ import android.util.Log;
 import com.example.administrator.data_sdk.SystemUtil.SystemTool;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,6 +34,56 @@ import blink.com.blinkcard320.Tool.Adapter.FileListAdapter;
  * Created by Ruanjiahui on 2016/12/5.
  */
 public class Tools {
+
+    public static Bitmap ResizeBitmap(Bitmap bitmap, int newWidth) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        float temp = ((float) height) / ((float) width);
+        int newHeight = (int) ((newWidth) * temp);
+        float scaleWidth = ((float) newWidth) / width;
+        float scaleHeight = ((float) newHeight) / height;
+        Matrix matrix = new Matrix();
+        // resize the bit map
+        matrix.postScale(scaleWidth, scaleHeight);
+        // matrix.postRotate(45);
+        Bitmap resizedBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
+        bitmap.recycle();
+        return resizedBitmap;
+    }
+
+    public static Bitmap getbitmap(String filename) {
+        String sdStatus = Environment.getExternalStorageState();
+        Bitmap mBitmap = null;
+        if (!sdStatus.equals(Environment.MEDIA_MOUNTED)) { // ���sd�Ƿ����
+            Log.i("TestFile",
+                    "SD card is not avaiable/writeable right now.");
+            return null;
+        }
+
+        FileInputStream b = null;
+
+        try {
+            b = new FileInputStream(new String(filename));
+            BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+            bitmapOptions.inSampleSize = 4;
+            mBitmap = BitmapFactory.decodeStream(b, null, bitmapOptions);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (b == null)
+                    return null;
+                b.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        return mBitmap;
+
+    }
+
 
     public static String getSystemPath(Context context) {
         return "data/data/" + Tools.getPackageName(context) + "/";

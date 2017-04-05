@@ -69,6 +69,7 @@ public class UploadUtils implements HandlerImpl {
             NetCardController.Upload(downorUpload.getPath(), downorUpload.getName(), this);
             count++;
         } else {
+            // TODO: 2017/4/5
             downorUpload = (DownorUpload) Comment.Uploadlist.get(count);
             NetCardController.UploadStart(downorUpload.getPath(), downorUpload.getName(), this);
             count++;

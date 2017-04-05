@@ -1,14 +1,20 @@
 package blink.com.blinkcard320.Controller.Fragment;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +22,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.administrator.data_sdk.CommonIntent;
@@ -25,12 +34,19 @@ import com.example.administrator.ui_sdk.DensityUtil;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 import blink.com.blinkcard320.Controller.Activity.MainActivity;
 import blink.com.blinkcard320.Controller.ActivityCode;
 import blink.com.blinkcard320.Controller.NetCardController;
+import blink.com.blinkcard320.Moudle.Comment;
+import blink.com.blinkcard320.Moudle.DownorUpload;
 import blink.com.blinkcard320.Moudle.Item;
 import blink.com.blinkcard320.Moudle.skin.SkinConfig;
 import blink.com.blinkcard320.R;
@@ -38,6 +54,7 @@ import blink.com.blinkcard320.Tool.Adapter.LGAdapter;
 import blink.com.blinkcard320.Tool.Protocol;
 import blink.com.blinkcard320.Tool.System.Tools;
 import blink.com.blinkcard320.Tool.Thread.HandlerImpl;
+import blink.com.blinkcard320.Tool.UploadUtils;
 import blink.com.blinkcard320.Tool.Utils.SharedPrefsUtils;
 import blink.com.blinkcard320.Tool.Utils.UIHelper;
 import blink.com.blinkcard320.View.DialogClick;
@@ -93,6 +110,7 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
 
     private LGAdapter adapter = null;
     private GridView fragmentdevice_gridview = null;
+    private static String name;
 
 //    @Override
 //    public void onAttach(Activity activity) {
@@ -220,13 +238,19 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
                 if (Tools.isCamera(getActivity())) {
                     try {
                         intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        File f = new File(Tools.getPic(context));
+                        // 设定拍照以后文件的保存路径
+                        name = new DateFormat().format("yyyyMMdd_hhmmss",
+                                Calendar.getInstance(Locale.CHINA))
+                                + ".jpg";
+                        File f = new File(Environment.getExternalStorageDirectory().toString(), name);
                         Uri u = Uri.fromFile(f);
                         intent.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, u);
                         startActivityForResult(intent, 1);
                     } catch (Exception e) {
-                        CommonIntent.IntentResActivity(getActivity(), CameraActivity.class, 1);
+                        // 如果异常的话就跳转到自己定义CameraActivity
+                        //CommonIntent.IntentResActivity(getActivity(), CameraActivity.class, 1);
+                        Toast.makeText(getActivity(), "开启相机时出现异常", Toast.LENGTH_SHORT).show();
                     }
                 } else
                     Toast.makeText(getActivity(), getResources().getString(R.string.Camera_no_permission), Toast.LENGTH_SHORT).show();
@@ -239,54 +263,72 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
         }
     }
 
+    // 调用拍照功能后的回调
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
 
-//        if (mCameraManager.getInstance().getpath() == null) {
-//            return;
-//        }
-//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//        builder.setTitle(R.string.phone_update);
-//        View view = LayoutInflater.from(getActivity()).inflate(
-//                R.layout.dialog_camera, null);
-//        ImageView iv = (ImageView) view
-//                .findViewById(R.id.imageview_dialog_camera);
-//        TextView tv = (TextView) view
-//                .findViewById(R.id.textview_dialog_camerapath);
-//        Button b = (Button) view.findViewById(R.id.button_dialog_cameradismiss);
-//        Button upload = (Button) view.findViewById(R.id.button_dialog_cameraupload);
-//        tv.setText(mCameraManager.getInstance().getpath());
-//        final File f = new File(mCameraManager.getInstance().getpath());
-//        bmp = mCameraManager.getInstance().getbitmap(f.getPath());
-//        if (bmp == null) {
-//            return;
-//        }
-//        iv.setImageBitmap(mCameraManager.getInstance().ResizeBitmap(bmp, 480));
-//        builder.setView(view);
-//        final AlertDialog dialog = builder.create();
-//        b.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // TODO Auto-generated method stub
-////                bmp.recycle();
-//                dialog.dismiss();
-//            }
-//        });
-//        upload.setOnClickListener(new View.OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                // TODO Auto-generated method stub
-//                TransportManagement.getInstance().initUpload(new MainHandler(getActivity()), getActivity());
-//                TransportManagement.getInstance().getUpload().addFile(f);
-////                bmp.recycle();
-//                dialog.dismiss();
-//            }
-//        });
-//        dialog.show();
+        switch (requestCode) {
+            case 1:
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(getResources().getString(R.string.photo));
+                View view = LayoutInflater.from(getActivity()).inflate(
+                        R.layout.dialog_camera, null);
+
+                if (name == null) {
+                    return;
+                }
+
+                ImageView iv = (ImageView) view
+                        .findViewById(R.id.imageview_dialog_camera);
+                TextView tv = (TextView) view
+                        .findViewById(R.id.textview_dialog_camerapath);
+                Button b = (Button) view.findViewById(R.id.button_dialog_cameradismiss);
+                Button upload = (Button) view
+                        .findViewById(R.id.button_dialog_cameraupload);
+
+                File f = new File(Environment.getExternalStorageDirectory().toString(), name);
+                tv.setText(f.getName());
+                final Bitmap bmp = Tools.getbitmap(f.getPath());
+                if (bmp == null) {
+                    return;
+                }
+                iv.setImageBitmap(Tools.ResizeBitmap(bmp, 480));
+                builder.setView(view);
+                final AlertDialog dialog = builder.show();
+                b.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // TODO Auto-generated method stub
+                        bmp.recycle();
+                        dialog.dismiss();
+                        name = null;
+                    }
+                });
+                upload.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        // 上传图片到电脑
+                        DownorUpload downorUpload = new DownorUpload();
+                        downorUpload.setName(name);
+                        downorUpload.setFLAG(DownorUpload.UPLOAD);
+                        downorUpload.setPath(Environment.getExternalStorageDirectory().toString());
+                        Comment.Uploadlist.add(downorUpload);
+                        new UploadUtils(getActivity());
+
+                        bmp.recycle();
+                        dialog.dismiss();
+                        Toast.makeText(getActivity(), "开始上传图片", Toast.LENGTH_SHORT).show();
+                        name = null;
+                    }
+                });
+                break;
+        }
+
     }
+
 
     @Override
     public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,

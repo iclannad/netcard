@@ -60,6 +60,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
             /* SurfaceHolder设定 */
         mSurfaceView = (SurfaceView) findViewById(R.id.mSurfaceView);
 
+        Log.e(TAG, "onCreate: 进来拍照界面");
 
         context = this;
         WindowManager wm = (WindowManager) this
@@ -75,7 +76,8 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
         c = Calendar.getInstance();
   
             /* Button初始化 */
-//        mButton = (TextView) findViewById(R.id.myButton);
+        //TextView mButton = (TextView) findViewById(R.id.myButton);
+
         cameraImage = (LinearLayout) findViewById(R.id.cameraImage);
         mButton1 = (TextView) findViewById(R.id.myButton);
         mButton2 = (TextView) findViewById(R.id.myButton2);
@@ -84,6 +86,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
         cameraImage.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View arg0) {
+
                 if (mCamera != null) {
                     //点击拍照
                     mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
@@ -96,7 +99,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
         mButton1.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                /**********************************出来图片的方法 ***********/
+                Log.e(TAG, "onClick: /**********************************出来图片的方法 ***********/");
                 if (bmp != null) {
                     ImageTransformation.savePictureByte(bmp, Tools.getPic(context));
                 }
@@ -108,6 +111,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
         mButton2.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e(TAG, "onClick: 继续拍照");
                 bmp = null;
                 initCamera(width, height);
                 cameraImage.setVisibility(View.VISIBLE);
