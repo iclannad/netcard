@@ -7,6 +7,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import blink.com.blinkcard320.Controller.Activity.FilePreviewActivity;
 import blink.com.blinkcard320.Controller.Activity.Login;
@@ -15,6 +17,8 @@ import blink.com.blinkcard320.Controller.ActivityCode;
 import blink.com.blinkcard320.Controller.NetCardController;
 import blink.com.blinkcard320.Moudle.Comment;
 import blink.com.blinkcard320.Moudle.DownorUpload;
+import blink.com.blinkcard320.R;
+import blink.com.blinkcard320.Tool.Dao.MsgDAO;
 import blink.com.blinkcard320.Tool.Thread.HandlerImpl;
 import blink.com.blinkcard320.View.DownUpCallback;
 import blink.com.blinkcard320.application.MyApplication;
@@ -103,6 +107,17 @@ public class UploadUtils implements HandlerImpl {
 
                 isEnd = uploadReq.isEnd();
                 if (isEnd) {
+                    // 当下载完成的时候，将数据保存在本地数据库中
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    MsgDAO msgdao = new MsgDAO(UploadUtils.this.context);
+                    msgdao.insertdb(df.format(new Date()),
+                            UploadUtils.this.context.getResources().getString(R.string.phone),
+                            UploadUtils.this.context.getResources().getString(R.string.send),
+                            UploadUtils.this.context.getResources().getString(R.string.pc),
+                            null);
+                    msgdao.close();
+                    Log.e(TAG, "myHandler: 上传完成一个任务就保存在数据库中");
+
                     if (count < Comment.Uploadlist.size()) {
                         //上传完一个暂停一秒再上传下一个
                         Log.e(TAG, "myHandler: " + "再上传一个文件");
@@ -139,6 +154,18 @@ public class UploadUtils implements HandlerImpl {
 
                 isEnd = uploadReq.isEnd();
                 if (isEnd) {
+
+                    // 当下载完成的时候，将数据保存在本地数据库中
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    MsgDAO msgdao = new MsgDAO(UploadUtils.this.context);
+                    msgdao.insertdb(df.format(new Date()),
+                            UploadUtils.this.context.getResources().getString(R.string.phone),
+                            UploadUtils.this.context.getResources().getString(R.string.send),
+                            UploadUtils.this.context.getResources().getString(R.string.pc),
+                            null);
+                    msgdao.close();
+                    Log.e(TAG, "myHandler: 上传完成一个任务就保存在数据库中");
+
                     if (count < Comment.Uploadlist.size()) {
                         //上传完一个暂停一秒再上传下一个
                         Log.e(TAG, "myHandler: " + "再上传一个文件");

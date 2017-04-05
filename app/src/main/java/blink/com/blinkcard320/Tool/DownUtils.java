@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import blink.com.blinkcard320.Controller.Activity.FilePreviewActivity;
 import blink.com.blinkcard320.Controller.Activity.Login;
@@ -20,6 +22,8 @@ import blink.com.blinkcard320.Controller.ActivityCode;
 import blink.com.blinkcard320.Controller.NetCardController;
 import blink.com.blinkcard320.Moudle.Comment;
 import blink.com.blinkcard320.Moudle.DownorUpload;
+import blink.com.blinkcard320.R;
+import blink.com.blinkcard320.Tool.Dao.MsgDAO;
 import blink.com.blinkcard320.Tool.Thread.HandlerImpl;
 import blink.com.blinkcard320.Tool.Utils.SharedPrefsUtils;
 import blink.com.blinkcard320.View.DownUpCallback;
@@ -145,8 +149,20 @@ public class DownUtils implements HandlerImpl {
                     return;
                 }
 
+                // 当下载完成的时候，将数据保存在本地数据库中
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                MsgDAO msgdao = new MsgDAO(DownUtils.this.context);
+                msgdao.insertdb(df.format(new Date()),
+                        DownUtils.this.context.getResources().getString(R.string.pc),
+                        DownUtils.this.context.getResources().getString(R.string.send),
+                        DownUtils.this.context.getResources().getString(R.string.phone),
+                        null);
+                msgdao.close();
+                Log.e(TAG, "myHandler: 下载完成一个任务就保存在数据库中");
+
                 //Comment.list.remove(0); // 删除任务列表中的第一个任务
                 if (count < Comment.list.size()) {
+
                     //下载完一个暂停一秒再下下一个
                     try {
                         Thread.sleep(1000);
@@ -187,6 +203,18 @@ public class DownUtils implements HandlerImpl {
                 Log.e("Ruan", downLoadingRsp.getSpeed() + "--");
                 isEnd = downLoadingRsp.isEnd();
                 if (isEnd) {
+
+                    // 当下载完成的时候，将数据保存在本地数据库中
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    MsgDAO msgdao = new MsgDAO(DownUtils.this.context);
+                    msgdao.insertdb(df.format(new Date()),
+                            DownUtils.this.context.getResources().getString(R.string.pc),
+                            DownUtils.this.context.getResources().getString(R.string.send),
+                            DownUtils.this.context.getResources().getString(R.string.phone),
+                            null);
+                    msgdao.close();
+                    Log.e(TAG, "myHandler: 下载完成一个任务就保存在数据库中");
+
                     //Comment.list.remove(0); // 删除任务列表中的第一个任务
                     if (count < Comment.list.size()) {
                         //下载完一个暂停一秒再下下一个
