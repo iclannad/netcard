@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/splash_Linear"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/MainColorBlue"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/splashLoad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="@dimen/margin"
+        android:paddingBottom="@dimen/marginBig"
+        android:text="正在加载...."
+        android:textColor="@color/WhiteSmoke"
+        android:textSize="@dimen/textSize" />
+
+    <ImageView
+        android:id="@+id/imageView_splash"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/SplashSize"
+        android:layout_centerVertical="true"
+        android:paddingBottom="@dimen/CodeSize"
+        android:paddingLeft="@dimen/marginBiggest"
+        android:src="@mipmap/computer" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/imageView_splash"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/marginMoreBig"
+        android:text="@string/start_go"
+        android:textColor="@color/White"
+        android:textSize="@dimen/textSizeBig" />
+
+
+    <ImageView
+        android:id="@+id/imageView_welcome"
+        android:layout_width="@dimen/SplashSize1"
+        android:layout_height="@dimen/SplashSize2"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="@dimen/LogoSize"
+        android:src="@mipmap/welcome" />
+
+    <!--<TextView-->
+    <!--android:id="@+id/textView2"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignLeft="@+id/textView1"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_marginBottom="@dimen/x140"-->
+    <!--android:text="@string/speed_up10"-->
+    <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+    <!--android:textColor="@android:color/white" />-->
+
+    <!--<TextView-->
+    <!--android:id="@+id/textView3"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignTop="@+id/textView2"-->
+    <!--android:layout_centerHorizontal="true"-->
+    <!--android:layout_marginTop="29dp"-->
+    <!--android:text="@string/WLNB"-->
+    <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+    <!--android:textColor="@android:color/white" />-->
+
+</RelativeLayout>

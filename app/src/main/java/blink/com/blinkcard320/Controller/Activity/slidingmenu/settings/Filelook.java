@@ -233,13 +233,14 @@ public class Filelook extends MyBaseActivity implements AdapterView.OnItemClickL
     }
 
     private void phoneOnclick(int position) {
-        MyPersonalProgressDIalog.getInstance(this).setContent("正读取文件").showProgressDialog();
+
         String tmp = list.get(position).getA().toString() + "/";
         Log.d("run", "currentfile---" + tmp);
         File f = new File(tmp);
         if (!f.isDirectory()) {
             return;
         }
+        MyPersonalProgressDIalog.getInstance(this).setContent("正读取文件").showProgressDialog();
         mFilePathLineayout.pushView(f.getName(), f.getPath(), this);
         list = FileUtils.GetFilechild(f, list);
         currentfile = tmp;

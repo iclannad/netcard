@@ -27,15 +27,17 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".Controller.Activity.Login"
-            android:launchMode="singleTask">
+        <activity android:name=".Controller.Activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Controller.Activity.LeadActivity"></activity>
+        <activity
+            android:name=".Controller.Activity.Login"
+            android:launchMode="singleTask"></activity>
 
         <activity
             android:name=".Controller.Activity.MainActivity"

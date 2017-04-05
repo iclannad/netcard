@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/lead_Viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/origin"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:layout_alignParentBottom="true">
+
+        <ImageView
+            android:id="@+id/leadImg1"
+            android:layout_width="@dimen/originSize"
+            android:layout_height="@dimen/originSize"
+            android:src="@mipmap/dot"
+            android:layout_marginRight="@dimen/originmargin"
+            android:layout_marginLeft="@dimen/originmargin"/>
+
+
+        <ImageView
+            android:id="@+id/leadImg2"
+            android:layout_width="@dimen/originSize"
+            android:layout_height="@dimen/originSize"
+            android:src="@mipmap/dot"
+            android:layout_marginRight="@dimen/originmargin"
+            android:layout_marginLeft="@dimen/originmargin"/>
+
+
+        <ImageView
+            android:id="@+id/leadImg3"
+            android:layout_width="@dimen/originSize"
+            android:layout_height="@dimen/originSize"
+            android:src="@mipmap/dot"
+            android:layout_marginRight="@dimen/originmargin"
+            android:layout_marginLeft="@dimen/originmargin"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -111,6 +111,7 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
     private LGAdapter adapter = null;
     private GridView fragmentdevice_gridview = null;
     private static String name;
+    private String path;
 
 //    @Override
 //    public void onAttach(Activity activity) {
@@ -242,7 +243,14 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
                         name = new DateFormat().format("yyyyMMdd_hhmmss",
                                 Calendar.getInstance(Locale.CHINA))
                                 + ".jpg";
-                        File f = new File(Environment.getExternalStorageDirectory().toString(), name);
+
+                        path = SharedPrefsUtils.getStringPreference(getActivity(), Comment.PICTUREFILE);
+                        if (path == null) {
+                            path = Environment.getExternalStorageDirectory().toString();
+                        }
+                        Log.e(TAG, "onItemClick: path===" + path);
+
+                        File f = new File(path, name);
                         Uri u = Uri.fromFile(f);
                         intent.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
                         intent.putExtra(MediaStore.EXTRA_OUTPUT, u);
@@ -268,7 +276,7 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
-
+        Log.e(TAG, "onActivityResult: 拍完相片回调");
         switch (requestCode) {
             case 1:
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -276,7 +284,8 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
                 View view = LayoutInflater.from(getActivity()).inflate(
                         R.layout.dialog_camera, null);
 
-                if (name == null) {
+                if (name == null || path == null) {
+                    Log.e(TAG, "onActivityResult: name==null or path==null");
                     return;
                 }
 
@@ -288,10 +297,11 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
                 Button upload = (Button) view
                         .findViewById(R.id.button_dialog_cameraupload);
 
-                File f = new File(Environment.getExternalStorageDirectory().toString(), name);
+                File f = new File(path, name);
                 tv.setText(f.getName());
                 final Bitmap bmp = Tools.getbitmap(f.getPath());
                 if (bmp == null) {
+                    Log.e(TAG, "onActivityResult: bmp==null");
                     return;
                 }
                 iv.setImageBitmap(Tools.ResizeBitmap(bmp, 480));
@@ -303,6 +313,7 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
                         // TODO Auto-generated method stub
                         bmp.recycle();
                         dialog.dismiss();
+                        path = null;
                         name = null;
                     }
                 });
@@ -314,13 +325,14 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
                         DownorUpload downorUpload = new DownorUpload();
                         downorUpload.setName(name);
                         downorUpload.setFLAG(DownorUpload.UPLOAD);
-                        downorUpload.setPath(Environment.getExternalStorageDirectory().toString());
+                        downorUpload.setPath(path);
                         Comment.Uploadlist.add(downorUpload);
                         new UploadUtils(getActivity());
 
                         bmp.recycle();
                         dialog.dismiss();
                         Toast.makeText(getActivity(), "开始上传图片", Toast.LENGTH_SHORT).show();
+                        path = null;
                         name = null;
                     }
                 });
