@@ -28,6 +28,7 @@ import java.io.File;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
 
+import blink.com.blinkcard320.Controller.Activity.MainActivity;
 import blink.com.blinkcard320.Controller.ActivityCode;
 import blink.com.blinkcard320.Controller.NetCardController;
 import blink.com.blinkcard320.Moudle.Item;
@@ -42,6 +43,7 @@ import blink.com.blinkcard320.Tool.Utils.UIHelper;
 import blink.com.blinkcard320.View.DialogClick;
 import blink.com.blinkcard320.View.MyProgressDIalog;
 import blink.com.blinkcard320.camera.CameraActivity;
+import blink.com.blinkcard320.heart.SendHeartThread;
 import smart.blink.com.card.API.BlinkWeb;
 import smart.blink.com.card.bean.ChangePcPwdRsp;
 import smart.blink.com.card.bean.LookPCRsp;
@@ -188,6 +190,13 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
         Intent intent = new Intent();
         switch (arg2) {
             case 4:
+                // 访部电脑文件的时候，先暂时关闭发送心跳的线程
+                // 释放心跳线程的资源
+                SendHeartThread.isClose = true;
+                synchronized (SendHeartThread.HeartLock) {
+                    SendHeartThread.HeartLock.notify();
+                }
+
                 // 和旧版对比，已作过修改
                 MyProgressDIalog.CreateChangePCPWDialog(getActivity(), ActivityCode.ChangePcPwd, this);
                 break;
@@ -290,17 +299,35 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
     public void Enter(int position) {
         //锁屏的操作
         if (position == ActivityCode.LOOKPC) {
+            // 访部电脑文件的时候，先暂时关闭发送心跳的线程
+            // 释放心跳线程的资源
+            SendHeartThread.isClose = true;
+            synchronized (SendHeartThread.HeartLock) {
+                SendHeartThread.HeartLock.notify();
+            }
             //锁屏
             NetCardController.LOOKPC(this);
         }
         //重启
         if (position == ActivityCode.Restart) {
+            // 访部电脑文件的时候，先暂时关闭发送心跳的线程
+            // 释放心跳线程的资源
+            SendHeartThread.isClose = true;
+            synchronized (SendHeartThread.HeartLock) {
+                SendHeartThread.HeartLock.notify();
+            }
             //重启
             NetCardController.Restart(0, this);
         }
 
         //立即关机
         if (position == ActivityCode.Shutdown) {
+            // 访部电脑文件的时候，先暂时关闭发送心跳的线程
+            // 释放心跳线程的资源
+            SendHeartThread.isClose = true;
+            synchronized (SendHeartThread.HeartLock) {
+                SendHeartThread.HeartLock.notify();
+            }
             //关机
             NetCardController.Shutdown(0, this);
         }
@@ -321,6 +348,11 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
     public void myHandler(int position, Object object) {
 
         if (position == ActivityCode.LOOKPC) {
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
             LookPCRsp lookPCRsp = (LookPCRsp) object;
             if (lookPCRsp.getSuccess() == 0) {
                 if (BlinkWeb.STATE == BlinkWeb.TCP) {
@@ -339,6 +371,11 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
 
         // 电脑重启返回的结果
         if (position == ActivityCode.Restart) {
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
             RestartRsp restartRsp = (RestartRsp) object;
             if (restartRsp.getSuccess() == 0) {
                 if (BlinkWeb.STATE == BlinkWeb.TCP) {
@@ -357,6 +394,11 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
 
         // 电脑关机返回的结果
         if (position == ActivityCode.Shutdown) {
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
             ShutdownRsp shutdownRsp = (ShutdownRsp) object;
             if (shutdownRsp.getSuccess() == 0) {
                 //MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_shutdown_recved);
@@ -366,6 +408,11 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
 
         // 修改pc密码返回的结果
         if (position == ActivityCode.ChangePcPwd) {
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
             ChangePcPwdRsp changePcPwdRsp = (ChangePcPwdRsp) object;
             int value = changePcPwdRsp.getSuccess();
             if (value == 0) {

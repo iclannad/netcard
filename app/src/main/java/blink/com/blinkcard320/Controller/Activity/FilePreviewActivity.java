@@ -41,6 +41,7 @@ import blink.com.blinkcard320.Tool.UploadUtils;
 import blink.com.blinkcard320.Tool.Utils.Mime;
 import blink.com.blinkcard320.View.FilePathLineayout;
 import blink.com.blinkcard320.View.MyPersonalProgressDIalog;
+import blink.com.blinkcard320.heart.SendHeartThread;
 import smart.blink.com.card.API.BlinkLog;
 import smart.blink.com.card.bean.LookFileRsp;
 
@@ -109,6 +110,13 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                         mFilePathLineayout.pullViewString(mCurrentPath);
                         onclickfiledir(new File(msg.obj.toString()));
                     } else {
+                        // 访部电脑文件的时候，先暂时关闭发送心跳的线程
+                        // 释放心跳线程的资源
+                        SendHeartThread.isClose = true;
+                        synchronized (SendHeartThread.HeartLock) {
+                            SendHeartThread.HeartLock.notify();
+                        }
+
                         MyPersonalProgressDIalog.getInstance(FilePreviewActivity.this).setContent("正读取文件").showProgressDialog();
 //                        if ("/".equals(mCurrentPath))
 //                            mCurrentPath = "";
@@ -349,7 +357,6 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
         }
     }
 
-
     /**
      * 将选择的下标储存起来
      *
@@ -557,6 +564,7 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (type == ActivityCode.ComputerFile) {
+
             MyPersonalProgressDIalog.getInstance(this).setContent("正读取文件").showProgressDialog();
             //跳转到下一级
             //如果是文件夹的话
@@ -567,6 +575,14 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
             }
             if ("/".equals(mCurrentPath))
                 mCurrentPath = "";
+
+            // 访部电脑文件的时候，先暂时关闭发送心跳的线程
+            // 释放心跳线程的资源
+            SendHeartThread.isClose = true;
+            synchronized (SendHeartThread.HeartLock) {
+                SendHeartThread.HeartLock.notify();
+            }
+
             NetCardController.LookFileMsg(mCurrentPath + pair.getA() + "\\", this);
             mFilePathLineayout.pushView(pair.getA(), mCurrentPath + pair.getA() + "\\", this);
             mCurrentPath += pair.getA() + "\\";
@@ -915,8 +931,12 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
     @Override
     public void myHandler(int position, Object object) {
         if (position == ActivityCode.LookFileMsg) {
-            LookFileRsp lookFileRsp = (LookFileRsp) object;
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
 
+            LookFileRsp lookFileRsp = (LookFileRsp) object;
             BlinkLog.Print(lookFileRsp.toString());
 
             name = new ArrayList<>();

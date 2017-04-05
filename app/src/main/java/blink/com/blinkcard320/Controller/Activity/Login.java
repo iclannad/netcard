@@ -315,12 +315,19 @@ public class Login extends BaseActivity implements HandlerImpl {
                     public void run() {
                         synchronized (this) {
                             wantCount.set(0);
+                            Login.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MyPersonalProgressDIalog.getInstance(Login.this).dissmissProgress();
+                                }
+                            });
                             Log.e(TAG, "run: " + "我已经清除了标志位");
                             this.cancel();
                         }
                     }
                 }, 250, 250);
             }
+
 
             switch (wantRsp.getSuccess()) {
                 case 0:

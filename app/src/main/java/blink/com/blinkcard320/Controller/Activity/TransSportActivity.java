@@ -229,9 +229,14 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
      */
     private void updateUpLoadProgress() {
         UploadReq uploadReq = MyApplication.getInstance().uploadReq;
-        if (uploadReq == null) {
+
+        if (MyApplication.getInstance().uploadReq == null) {
+            Log.e(TAG, "updateUpLoadProgress: MyApplication.uploadReq == null");
             return;
+        } else {
+            Log.e(TAG, "updateUpLoadProgress: MyApplication.uploadReq != null");
         }
+
         DecimalFormat df = new DecimalFormat("0.00");
         // 这条语句会报错 接下来会catch一下
         String db = df.format((double) uploadReq.getBlockID() / (double) uploadReq.getBlockSize());

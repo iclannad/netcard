@@ -478,6 +478,13 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
         imageview_quitstart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 访部电脑文件的时候，先暂时关闭发送心跳的线程
+                // 释放心跳线程的资源
+                SendHeartThread.isClose = true;
+                synchronized (SendHeartThread.HeartLock) {
+                    SendHeartThread.HeartLock.notify();
+                }
+
                 MyProgressDIalog.CreateDialogTime(
                         MainActivity.this.getResources().getString(R.string.instruction_wshutdown),
                         MainActivity.this,
@@ -581,13 +588,34 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
     public void Enter(int position) {
         Log.e(TAG, "Enter: " + position);
         if (position == ActivityCode.LOOKPC) {
+            // 访部电脑文件的时候，先暂时关闭发送心跳的线程
+            // 释放心跳线程的资源
+            SendHeartThread.isClose = true;
+            synchronized (SendHeartThread.HeartLock) {
+                SendHeartThread.HeartLock.notify();
+            }
+
             //锁屏
             NetCardController.LOOKPC(this);
         }
         if (position == ActivityCode.Restart) {
+            // 访部电脑文件的时候，先暂时关闭发送心跳的线程
+            // 释放心跳线程的资源
+            SendHeartThread.isClose = true;
+            synchronized (SendHeartThread.HeartLock) {
+                SendHeartThread.HeartLock.notify();
+            }
+
             NetCardController.Restart(0, this);
         }
         if (position == ActivityCode.Shutdown) {
+            // 访部电脑文件的时候，先暂时关闭发送心跳的线程
+            // 释放心跳线程的资源
+            SendHeartThread.isClose = true;
+            synchronized (SendHeartThread.HeartLock) {
+                SendHeartThread.HeartLock.notify();
+            }
+
             NetCardController.Shutdown(0, this);
         }
     }
@@ -650,6 +678,11 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
 
         // 参考Fragment里面的代码
         if (position == ActivityCode.LOOKPC) {
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
             LookPCRsp lookPCRsp = (LookPCRsp) object;
             if (lookPCRsp.getSuccess() == 0) {
                 MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_lock_recved);
@@ -658,6 +691,11 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
 
         // 电脑重启返回的结果
         if (position == ActivityCode.Restart) {
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
             RestartRsp restartRsp = (RestartRsp) object;
             if (restartRsp.getSuccess() == 0) {
                 MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_restart_recved);
@@ -666,6 +704,11 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
 
         // 电脑关机返回的结果
         if (position == ActivityCode.Shutdown) {
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
             ShutdownRsp shutdownRsp = (ShutdownRsp) object;
             if (shutdownRsp.getSuccess() == 0) {
                 //MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_shutdown_recved);
@@ -675,6 +718,11 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
 
         // 修改pc密码返回的结果
         if (position == ActivityCode.ChangePcPwd) {
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
             ChangePcPwdRsp changePcPwdRsp = (ChangePcPwdRsp) object;
             int value = changePcPwdRsp.getSuccess();
             if (value == 0) {

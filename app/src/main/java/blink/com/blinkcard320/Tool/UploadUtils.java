@@ -94,31 +94,42 @@ public class UploadUtils implements HandlerImpl {
         if (position == ActivityCode.Upload) {
             if (BlinkWeb.STATE == BlinkWeb.TCP) {
                 //----------------------------------------------------------------------------------
-                if (count < Comment.Uploadlist.size()) {
-                    //上传完一个暂停一秒再上传下一个
-                    Log.e(TAG, "myHandler: " + "再上传一个文件");
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                    }
-                    StartLoad();
-                } else {
-                    // 当下载完毕之后清空任务列表
-                    Comment.Uploadlist.clear();
-                    count = 0;  // 清0
-                    final Activity activity = (Activity) this.context;
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(activity, "任务上传完毕", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    Log.e(TAG, "myHandler: " + "所有任务都上传完毕,重新开启心跳线程");
-                    SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-                    SendHeartThread.isClose = false;
-                    sendHeartThread.start();
+                UploadReq uploadReq = (UploadReq) object;
+                // 传输界面的接口
+                if (downUpCallback != null) {
+                    MyApplication.getInstance().uploadReq = uploadReq;
+                    downUpCallback.Call(position, uploadReq);
                 }
 
+                isEnd = uploadReq.isEnd();
+                if (isEnd) {
+                    if (count < Comment.Uploadlist.size()) {
+                        //上传完一个暂停一秒再上传下一个
+                        Log.e(TAG, "myHandler: " + "再上传一个文件");
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                        }
+                        StartLoad();
+                    } else {
+                        // 当下载完毕之后清空任务列表
+                        Comment.Uploadlist.clear();
+                        count = 0;  // 清0
+                        MyApplication.getInstance().uploadReq = null;
+
+                        final Activity activity = (Activity) this.context;
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(activity, "任务上传完毕", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        Log.e(TAG, "myHandler: " + "所有任务都上传完毕,重新开启心跳线程");
+                        SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+                        SendHeartThread.isClose = false;
+                        sendHeartThread.start();
+                    }
+                }
             } else {
                 UploadReq uploadReq = (UploadReq) object;
                 MyApplication.getInstance().uploadReq = uploadReq;
@@ -140,6 +151,7 @@ public class UploadUtils implements HandlerImpl {
                         // 当下载完毕之后清空任务列表
                         Comment.Uploadlist.clear();
                         count = 0;  // 清0
+                        MyApplication.getInstance().uploadReq = null;
                         final Activity activity = (Activity) this.context;
                         activity.runOnUiThread(new Runnable() {
                             @Override

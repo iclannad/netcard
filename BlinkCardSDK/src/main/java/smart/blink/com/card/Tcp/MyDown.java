@@ -1,6 +1,7 @@
 package smart.blink.com.card.Tcp;
 
 import android.util.Log;
+import android.view.LayoutInflater;
 
 import java.util.Timer;
 
@@ -10,7 +11,6 @@ import smart.blink.com.card.Tool.FileWriteStream;
 import smart.blink.com.card.Tool.MyTimerTask;
 import smart.blink.com.card.Tool.SendTools;
 import smart.blink.com.card.Tool.TimerTaskCall;
-import smart.blink.com.card.bean.DownLoadByServerRsp;
 import smart.blink.com.card.bean.DownLoadingRsp;
 import smart.blink.com.card.bean.MainObject;
 
@@ -29,6 +29,9 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
     String filename;
     int wantblock;
     public static int reqBlockId = 0;
+    public static int lastReqBlockId = 0;
+
+    String transport_filename = "";
 
     /**
      * 构造方法
@@ -43,6 +46,13 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
         this.filename = filename;
         this.wantblock = wantblock;
         this.call = call;
+
+        // 获取下载文件的名字
+        String[] strings = filename.split("\\\\");
+        int length = strings.length - 1;
+        this.transport_filename = strings[length];
+        Log.e(TAG, "MyDown: transport_filename===" + transport_filename);
+
         timer = new Timer();
         timer.schedule(new MyTimerTask(this), 0, 5000);
 
@@ -68,7 +78,10 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
                 // 最后一次下载成功
                 downLoadingRsp.setBlockId(reqBlockId);
                 downLoadingRsp.setTotolSize(wantblock);
-                String speed = (double) (wantblock - reqBlockId) / 5 + "k/s";
+                String speed = (double) (reqBlockId - lastReqBlockId) / 5 + "k/s";
+                lastReqBlockId = 0;
+                downLoadingRsp.setFilename(transport_filename);
+                transport_filename = "";
                 downLoadingRsp.setEnd(true);
                 downLoadingRsp.setSpeed(speed);
 
@@ -76,6 +89,10 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
                 FileWriteStream.writebigblockfileEnd((reqBlockId - 1) % 100, wdata);
                 call.onSuccess(0, downLoadingRsp);
                 reqBlockId = 0;
+
+                // 关闭定时器
+                timer.cancel();
+                timer = null;
             } else {
                 // 将获取到数据包写入文件中
                 FileWriteStream.writebigblockfile((reqBlockId - 1) % 100, wdata);
@@ -99,7 +116,9 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
         downLoadingRsp.setBlockId(reqBlockId);
         downLoadingRsp.setTotolSize(wantblock);
         // 这里速度不能这么算，这个星期要修改
-        String speed = (double) (wantblock - reqBlockId) / 5 + "k/s";
+        String speed = (double) (reqBlockId - lastReqBlockId) / 5 + "k/s";
+        lastReqBlockId = reqBlockId;
+        downLoadingRsp.setFilename(transport_filename);
         downLoadingRsp.setSpeed(speed);
         // 该次回调只会更新ui，不会开启下一个任务
         downLoadingRsp.setEnd(false);

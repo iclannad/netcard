@@ -157,6 +157,7 @@ public class DownUtils implements HandlerImpl {
                     // 当下载完毕之后将所有的任务都清空
                     Comment.list.clear();
                     count = 0;  // 重新清0
+                    MyApplication.getInstance().downLoadingRsp = null;
                     final Activity activity = (Activity) this.context;
                     activity.runOnUiThread(new Runnable() {
                         @Override
@@ -198,6 +199,7 @@ public class DownUtils implements HandlerImpl {
                         // 当下载完毕之后将所有的任务都清空
                         Comment.list.clear();
                         count = 0;  // 重新清0
+                        MyApplication.getInstance().downLoadingRsp = null;
                         final Activity activity = (Activity) this.context;
                         activity.runOnUiThread(new Runnable() {
                             @Override
