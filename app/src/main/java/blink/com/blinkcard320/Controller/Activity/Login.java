@@ -111,8 +111,8 @@ public class Login extends BaseActivity implements HandlerImpl {
         setContent(view);
 
         // 调试代码用，会删除
-        //initActivityEditText.setText("112233445566");
-        //activityInitEditPasswd.setText("123456");
+        initActivityEditText.setText("112233445566");
+        activityInitEditPasswd.setText("123456");
 
         initActivityButtonWant.setOnClickListener(this);
 
@@ -293,7 +293,6 @@ public class Login extends BaseActivity implements HandlerImpl {
                         return;
                     }
                     Log.e("qrcode:", "pw=====" + bundle.getString("result"));
-                    initActivityEditText.setText("");
                     initActivityEditText.setText(bundle.getString("result"));
                     activityInitEditPasswd.setText("123456");
                 }

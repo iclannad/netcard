@@ -564,8 +564,6 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (type == ActivityCode.ComputerFile) {
-
-            MyPersonalProgressDIalog.getInstance(this).setContent("正读取文件").showProgressDialog();
             //跳转到下一级
             //如果是文件夹的话
             FileListAdapter.Pair<String, Integer> pair = list.get(position);
@@ -573,6 +571,7 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                 MyToast.Toast(context, R.string.frag_remote_file_long_click);
                 return;
             }
+            MyPersonalProgressDIalog.getInstance(this).setContent("正读取文件").showProgressDialog();
             if ("/".equals(mCurrentPath))
                 mCurrentPath = "";
 

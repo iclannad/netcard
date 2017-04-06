@@ -121,7 +121,7 @@ public class ReqDownUp {
         //上传的请求
         //下面就是下载的请求
         if (ReqDownUp.buffer[0] == Protocol.UploadStart && !isError) {
-
+            Log.e(TAG, "Reviced: 请求上传返回的结果：buffer===" + buffer[0]);
             RevicedTools.UploadStart(buffer, position, call);
         }
 

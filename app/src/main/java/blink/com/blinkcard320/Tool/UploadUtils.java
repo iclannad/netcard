@@ -69,7 +69,11 @@ public class UploadUtils implements HandlerImpl {
             NetCardController.Upload(downorUpload.getPath(), downorUpload.getName(), this);
             count++;
         } else {
-            // TODO: 2017/4/5
+            SendHeartThread.isClose = true;
+            synchronized (SendHeartThread.HeartLock) {
+                SendHeartThread.HeartLock.notify();
+            }
+
             downorUpload = (DownorUpload) Comment.Uploadlist.get(count);
             NetCardController.UploadStart(downorUpload.getPath(), downorUpload.getName(), this);
             count++;
@@ -93,6 +97,40 @@ public class UploadUtils implements HandlerImpl {
             if (success == 0) {
                 // 开始上传数据
                 NetCardController.Upload(downorUpload.getPath(), downorUpload.getName(), this);
+            }
+            // 文件已经存在的逻辑
+            if (success == 34) {
+                final Activity activity = (Activity) this.context;
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(activity, "文件在电脑已存在，没有权限覆盖", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+                SendHeartThread.isClose = false;
+                sendHeartThread.start();
+
+                Comment.Uploadlist.remove(downorUpload);
+                count--;
+                // 说明上传任务列表中有任务
+                if (count < Comment.Uploadlist.size()) {
+                    //上传完一个暂停一秒再上传下一个
+                    Log.e(TAG, "如果任务列表中有任务就继续开启下一个任务");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                    }
+                    StartLoad();
+                } else {
+                    Log.e(TAG, "myHandler: 没有任务直接清空");
+                    isEnd = true;
+                    // 当下载完毕之后清空任务列表
+                    Comment.Uploadlist.clear();
+                    count = 0;  // 清0
+                    MyApplication.getInstance().uploadReq = null;
+                }
+
             }
         }
 
@@ -187,7 +225,10 @@ public class UploadUtils implements HandlerImpl {
                                 Toast.makeText(activity, "任务上传完毕", Toast.LENGTH_SHORT).show();
                             }
                         });
-                        Log.e(TAG, "myHandler: " + "所有任务都上传完毕");
+                        Log.e(TAG, "myHandler: " + "所有任务都上传完毕,重新开启心跳线程");
+                        SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+                        SendHeartThread.isClose = false;
+                        sendHeartThread.start();
                     }
                 }
             }

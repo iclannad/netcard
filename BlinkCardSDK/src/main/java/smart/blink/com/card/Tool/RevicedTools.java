@@ -801,6 +801,10 @@ public class RevicedTools {
         }
         if (buffer[0] == Protocol.ErrorUploadStart)
             uploadStartReq.setSuccess(Protocol.ErrorUploadStart);
+        // 如果文件已经存在
+        if (buffer[0] == 34) {
+            uploadStartReq.setSuccess(34);
+        }
 
         call.onSuccess(position, uploadStartReq);
     }
