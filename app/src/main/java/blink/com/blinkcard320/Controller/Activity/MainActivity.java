@@ -215,7 +215,11 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
         activity_ll_myfiles.setOnClickListener(this);
         activity_ll_devices.setOnClickListener(this);
 
+        Log.e(TAG, "onClick: 开启屏幕常亮");
+        getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         initHeartThread();
+
 
     }
 
@@ -870,10 +874,12 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
                     Toast.LENGTH_SHORT).show();
             exitTime = System.currentTimeMillis();
         } else {
+            getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             // 退出当前的程序
             moveTaskToBack(true);
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(1);
+
         }
     }
 }

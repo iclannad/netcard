@@ -88,6 +88,7 @@ public class Filelook extends MyBaseActivity implements AdapterView.OnItemClickL
     };
 
     private void onclickfiledir(File f) {
+        MyPersonalProgressDIalog.getInstance(Filelook.this).setContent("正读取文件").showProgressDialog();
         currentfile = f.getPath();
         list = FileUtils.GetFilechild(f,
                 (ArrayList<Pair<String, Integer>>) list);
@@ -99,6 +100,7 @@ public class Filelook extends MyBaseActivity implements AdapterView.OnItemClickL
         attr.put("path", f.getPath());
         list_dao.add(attr);
         mFileDAOAdapter.notifyDataSetChanged();
+        MyPersonalProgressDIalog.getInstance(Filelook.this).dissmissProgress();
     }
 
     /**

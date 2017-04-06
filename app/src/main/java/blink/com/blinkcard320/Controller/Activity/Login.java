@@ -240,8 +240,14 @@ public class Login extends BaseActivity implements HandlerImpl {
 //            }
 //            //首先获取内外网IP和端口
 //            NetCardController.WANT(ID, password, this);
+            boolean isOnline = Tools.isOnline(this);
+            if (isOnline) {
+                startWantRequest();
+            } else {
+                Toast.makeText(this, "当前网络不可用,请检查连接", Toast.LENGTH_SHORT).show();
+            }
 
-            startWantRequest();
+
         }
 
         // 下面为checkbox登录选择框逻辑
@@ -486,11 +492,14 @@ public class Login extends BaseActivity implements HandlerImpl {
                     Toast.LENGTH_SHORT).show();
             exitTime = System.currentTimeMillis();
         } else {
+            Log.e(TAG, "onBackPressed: 关闭屏幕常亮");
+            getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             finish();
             // 退出当前的程序
             moveTaskToBack(true);
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(1);
+
         }
     }
 

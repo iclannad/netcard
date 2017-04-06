@@ -16,6 +16,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 
+import blink.com.blinkcard320.Controller.Activity.MainActivity;
 import blink.com.blinkcard320.Controller.Activity.base.MyBaseActivity;
 import blink.com.blinkcard320.Controller.ActivityCode;
 import blink.com.blinkcard320.Controller.NetCardController;
@@ -31,6 +32,7 @@ import blink.com.blinkcard320.Tool.Utils.SharedPrefsUtils;
 import blink.com.blinkcard320.View.FilePathLineayout;
 import blink.com.blinkcard320.Tool.Adapter.FileListAdapter.Pair;
 import blink.com.blinkcard320.View.MyPersonalProgressDIalog;
+import blink.com.blinkcard320.heart.SendHeartThread;
 import smart.blink.com.card.bean.GetUploadDirRsp;
 import smart.blink.com.card.bean.LookFileRsp;
 
@@ -103,7 +105,14 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
 //                        Log.e(TAG, "handleMessage: " + "跳转到电脑的根目录，现暂时不处理");
 //                        return;
 //                    }
+
                     mFilePathLineayout.pullViewString(currentfile);
+                    SendHeartThread.isClose = true;
+                    synchronized (SendHeartThread.HeartLock) {
+                        SendHeartThread.HeartLock.notify();
+                    }
+                    // 弹出提示框
+                    MyPersonalProgressDIalog.getInstance(FilelookPC.this).setContent("正读取文件").showProgressDialog();
                     // 请求currentfile目录下面的文件
                     NetCardController.LookFileMsg(currentfile, FilelookPC.this);
 
@@ -137,6 +146,11 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
 
         mFilePathLineayout.addhead("/");
 
+
+        SendHeartThread.isClose = true;
+        synchronized (SendHeartThread.HeartLock) {
+            SendHeartThread.HeartLock.notify();
+        }
         // 从服务器请求上传目录
         NetCardController.GetUploadDir(this);
     }
@@ -172,6 +186,13 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
 
         // 弹出提示框
         MyPersonalProgressDIalog.getInstance(this).setContent("正读取文件").showProgressDialog();
+
+        // 关闭心跳
+        SendHeartThread.isClose = true;
+        synchronized (SendHeartThread.HeartLock) {
+            SendHeartThread.HeartLock.notify();
+        }
+
         // 请求查看电脑的文件
         NetCardController.LookFileMsg(currentfile + pair.getA() + "\\", this);
         mFilePathLineayout.pushView(pair.getA(), currentfile + pair.getA() + "\\", this);
@@ -207,6 +228,11 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
             // 关闭提示框
             MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
 
+            // 开启心跳
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
             LookFileRsp lookFileRsp = (LookFileRsp) object;
 
             name = new ArrayList<>();
@@ -225,7 +251,8 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
                 }
             } else {
                 // 这条代码有问题
-                int length = control.size() > name.size() ? control.size() : control.size();
+                //int length = control.size() > name.size() ? control.size() : control.size();
+                int length = control.size() > name.size() ? name.size() : control.size();
 
                 for (int i = 0; i < length; i++) {
                     Pair<String, Integer> pair = new Pair<>();

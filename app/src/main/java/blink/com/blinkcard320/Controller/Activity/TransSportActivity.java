@@ -72,6 +72,9 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
         taskDownText.setOnClickListener(this);
         taskUploadText.setOnClickListener(this);
 
+        Log.e(TAG, "onClick: 开启屏幕常亮");
+        getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         setContent(view);
     }
 

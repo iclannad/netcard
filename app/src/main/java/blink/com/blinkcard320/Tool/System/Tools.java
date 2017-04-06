@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Environment;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -34,6 +36,13 @@ import blink.com.blinkcard320.Tool.Adapter.FileListAdapter;
  * Created by Ruanjiahui on 2016/12/5.
  */
 public class Tools {
+
+    public static boolean isOnline(Context context) {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
 
     public static Bitmap ResizeBitmap(Bitmap bitmap, int newWidth) {
         int width = bitmap.getWidth();
