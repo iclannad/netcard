@@ -106,7 +106,6 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                         return;
                     }
                     if (type != ActivityCode.ComputerFile) {
-                        MyPersonalProgressDIalog.getInstance(FilePreviewActivity.this).setContent("正读取文件").showProgressDialog();
                         mFilePathLineayout.pullViewString(mCurrentPath);
                         onclickfiledir(new File(msg.obj.toString()));
                     } else {
@@ -607,12 +606,11 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
      * @param position
      */
     private void onclickfile(int position) {
-        // 提示
-        MyPersonalProgressDIalog.getInstance(FilePreviewActivity.this).setContent("正读取文件").showProgressDialog();
         String filepath;
         filepath = Tools.GetFilePath(list.get(position).getA(), positionFile);
         File f = new File(filepath);
         if (f.isDirectory()) {
+
             onclickfiledir(f);
             mFilePathLineayout.pushView(f.getName(), f.getPath(), this);
         } else {
@@ -632,6 +630,8 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
      * @param f
      */
     private void onclickfiledir(File f) {
+        // 提示
+        MyPersonalProgressDIalog.getInstance(FilePreviewActivity.this).setContent("正读取文件").showProgressDialog();
         Log.d("run", "path===" + f.getPath());
         Map<String, Object> attr = new HashMap<>();
         attr.put("name", f.getName());

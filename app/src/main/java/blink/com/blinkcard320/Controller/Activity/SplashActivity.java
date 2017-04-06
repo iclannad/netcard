@@ -1,6 +1,7 @@
 package blink.com.blinkcard320.Controller.Activity;
 
 import android.content.Intent;
+import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,10 +9,12 @@ import android.widget.RelativeLayout;
 
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
+import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import blink.com.blinkcard320.Controller.Activity.base.MyBaseActivity;
+import blink.com.blinkcard320.Moudle.Comment;
 import blink.com.blinkcard320.Moudle.skin.SkinConfig;
 import blink.com.blinkcard320.R;
 import blink.com.blinkcard320.Tool.Utils.SharedPrefsUtils;
@@ -62,6 +65,27 @@ public class SplashActivity extends BaseActivity {
                 timer.cancel();
             }
         }, 1500, 1500);
+
+        // 创建需要的文件夹
+        String downFileDir = SharedPrefsUtils.getStringPreference(this, Comment.DOWNFILE);
+        if (downFileDir == null) {
+            downFileDir = Environment.getExternalStorageDirectory().toString();
+        }
+        File fileDown = new File(downFileDir);
+        if (!fileDown.exists()) {
+            fileDown.mkdirs();
+            Log.e(TAG, "init: 已经创建了文件下载的文件夹");
+        }
+
+        String picFileDir = SharedPrefsUtils.getStringPreference(this, Comment.PICTUREFILE);
+        if (picFileDir == null) {
+            picFileDir = Environment.getExternalStorageDirectory().toString();
+        }
+        File filePic = new File(picFileDir);
+        if (!filePic.exists()) {
+            filePic.mkdirs();
+            Log.e(TAG, "init: 已经创建了文件上传的文件夹");
+        }
 
     }
 

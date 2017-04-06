@@ -110,10 +110,6 @@ public class Login extends BaseActivity implements HandlerImpl {
 
         setContent(view);
 
-        // 调试代码用，会删除
-        initActivityEditText.setText("112233445566");
-        activityInitEditPasswd.setText("123456");
-
         initActivityButtonWant.setOnClickListener(this);
 
         // 防止服务器多次发送数据过来引起的逻辑混乱
@@ -138,6 +134,10 @@ public class Login extends BaseActivity implements HandlerImpl {
         if (isRemeberPwd) {
             loginUserName = SharedPrefsUtils.getStringPreference(this, Comment.USERNAME);
             loginPwd = SharedPrefsUtils.getStringPreference(this, Comment.PASSWORD);
+
+            // 调试代码用，会删除
+            initActivityEditText.setText(loginUserName);
+            activityInitEditPasswd.setText(loginPwd);
         } else {
             // 调用代码用
             initActivityEditText.setText("");
