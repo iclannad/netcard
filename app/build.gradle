@@ -28,4 +28,5 @@ dependencies {
     compile project(':Widgets')
     compile files('libs/meterial_library.jar')
     compile project(':BlinkCardSDK')
+    compile files('libs/zxing.jar')
 }

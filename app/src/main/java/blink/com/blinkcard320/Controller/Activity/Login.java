@@ -1,6 +1,8 @@
 package blink.com.blinkcard320.Controller.Activity;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.zxing.MipcaActivityCapture;
 import com.example.administrator.data_sdk.CommonIntent;
 import com.example.administrator.ui_sdk.Applications;
 import com.example.administrator.ui_sdk.DensityUtil;
@@ -27,6 +30,7 @@ import blink.com.blinkcard320.Moudle.Comment;
 import blink.com.blinkcard320.Moudle.skin.SkinConfig;
 import blink.com.blinkcard320.R;
 import blink.com.blinkcard320.Tool.System.MyToast;
+import blink.com.blinkcard320.Tool.System.Tools;
 import blink.com.blinkcard320.Tool.Thread.HandlerImpl;
 import blink.com.blinkcard320.Tool.Utils.SharedPrefsUtils;
 import blink.com.blinkcard320.View.MyPersonalProgressDIalog;
@@ -98,6 +102,7 @@ public class Login extends BaseActivity implements HandlerImpl {
         initDownImage = (ImageView) view.findViewById(R.id.init_downImage);
         loginLogo = (ImageView) view.findViewById(R.id.loginLogo);
         initActivityButtonSweep = (Button) view.findViewById(R.id.init_activity_button_sweep);
+        initActivityButtonSweep.setOnClickListener(this);
 
         // 给布局设置高度，用代码设置方便屏幕适配
         DensityUtil.setHeight(loginEditRelative, BaseActivity.height / 5 * 3);
@@ -106,8 +111,8 @@ public class Login extends BaseActivity implements HandlerImpl {
         setContent(view);
 
         // 调试代码用，会删除
-        initActivityEditText.setText("112233445566");
-        activityInitEditPasswd.setText("123456");
+        //initActivityEditText.setText("112233445566");
+        //activityInitEditPasswd.setText("123456");
 
         initActivityButtonWant.setOnClickListener(this);
 
@@ -255,6 +260,44 @@ public class Login extends BaseActivity implements HandlerImpl {
                 isAutoLogin = false;
             }
             Log.e(TAG, "Click: activity_checkbox_remeberpassword " + activityCheckboxRemeberpassword.isChecked());
+        }
+
+        if (v.getId() == R.id.init_activity_button_sweep) {
+            Log.e(TAG, "Click: 扫描二维码");
+            Log.e(TAG, "onClick: 扫描二维码");
+            Log.e("Ruan", Tools.isCamera(this) + "");
+            if (Tools.isCamera(this)) {
+                Intent intent = new Intent();
+                intent.setClass(this, MipcaActivityCapture.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivityForResult(intent, 1);
+            } else {
+                Toast.makeText(this, R.string.Camera, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.e(TAG, "onActivityResult: ");
+        switch (requestCode) {
+            case 1:
+                Log.e(TAG, "onActivityResult: case 1");
+                if (resultCode == RESULT_OK) {
+                    Bundle bundle = data.getExtras();
+                    String reslut = bundle.getString("result");
+                    if (reslut.length() > 20) {
+                        //UIHelper.ToastMessageNetError(context, R.string.error_input_long);
+                        Toast.makeText(this, R.string.error_input_long, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Log.e("qrcode:", "pw=====" + bundle.getString("result"));
+                    initActivityEditText.setText("");
+                    initActivityEditText.setText(bundle.getString("result"));
+                    activityInitEditPasswd.setText("123456");
+                }
+                break;
         }
     }
 

@@ -38,7 +38,7 @@
         <activity
             android:name=".Controller.Activity.Login"
             android:launchMode="singleTask"></activity>
-
+        <activity android:name="com.app.zxing.MipcaActivityCapture"/>
         <activity
             android:name=".Controller.Activity.MainActivity"
             android:launchMode="singleTask" />
