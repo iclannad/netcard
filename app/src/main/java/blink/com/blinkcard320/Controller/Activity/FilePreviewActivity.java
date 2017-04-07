@@ -104,17 +104,23 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                     } catch (Exception e) {
                         return;
                     }
+                    // 隐藏掉选择框
+                    setCheckboxCancel();
                     if (type != ActivityCode.ComputerFile) {
                         mFilePathLineayout.pullViewString(mCurrentPath);
                         onclickfiledir(new File(msg.obj.toString()));
                     } else {
-                        // 访部电脑文件的时候，先暂时关闭发送心跳的线程
                         // 释放心跳线程的资源
                         SendHeartThread.isClose = true;
                         synchronized (SendHeartThread.HeartLock) {
                             SendHeartThread.HeartLock.notify();
                         }
 
+                        // 释放心跳线程的资源
+                        SendHeartThread.isClose = true;
+                        synchronized (SendHeartThread.HeartLock) {
+                            SendHeartThread.HeartLock.notify();
+                        }
                         MyPersonalProgressDIalog.getInstance(FilePreviewActivity.this).setContent("正读取文件").showProgressDialog();
 //                        if ("/".equals(mCurrentPath))
 //                            mCurrentPath = "";
@@ -211,7 +217,6 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
             for (int i = 0; i < deArray.size(); i++) {
                 //删除文件                                           // 文件夹                 文件名
                 FileTool.deleteFolderFile(Tools.GetFilePath(list.get(deArray.get(i)).getA(), positionFile), true);
-                //list.remove(list.get(deArray.get(i)));
             }
             List<FileListAdapter.Pair<String, Integer>> newList = new ArrayList<>(list);
             for (int i = 0; i < deArray.size(); i++) {
@@ -267,13 +272,9 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                 Toast.makeText(this, "添加" + (Comment.Uploadlist.size() - uploadCount) + "任务到上传列表", Toast.LENGTH_SHORT).show();
             }
 
-
-            // 暂时注释
             if (type == ActivityCode.ComputerFile) {
-                //Log.e(TAG, "Click: " + "选择框被点击了");
                 new DownUtils(this);
             } else {
-                //Log.e(TAG, "Click: " + "选择框被点击了");
                 new UploadUtils(this);
             }
             // 隐藏掉选择框
@@ -365,6 +366,8 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        // 隐藏掉四个选择按钮
+        setCheckboxCancel();
         if (type == ActivityCode.ComputerFile) {
             //跳转到下一级
             //如果是文件夹的话
@@ -541,7 +544,6 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                 });
 
             }
-
         }
     }
 

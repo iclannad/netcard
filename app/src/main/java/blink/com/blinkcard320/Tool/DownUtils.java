@@ -256,7 +256,7 @@ public class DownUtils implements HandlerImpl {
         Log.e(TAG, "handleDownload: ");
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             try {
-                Log.e(TAG, "handleDownload: true_name" + true_name);
+                Log.e(TAG, "handleDownload: true_name===" + true_name);
                 // 获取下载的路径
                 String temp = SharedPrefsUtils.getStringPreference(context, Comment.DOWNFILE);
                 String res = temp + "/" + true_name;
@@ -264,7 +264,14 @@ public class DownUtils implements HandlerImpl {
                 // 如果文件存在的话就重命名
                 int i = 1;
                 while (true_file.exists()) {
-                    true_file = new File(res + "(" + i + ")");
+                    // 获取文件的后缀名
+                    String prefix = true_name.substring(true_name.lastIndexOf(".") + 1);
+                    // 获取文件后缀名前面的部分
+                    String name = true_name.substring(0, true_name.lastIndexOf("."));
+                    String newFileName = temp + "/" + name + "(" + i + ")" + "." + prefix;
+                    Log.e(TAG, "handleDownload: 新的名字是newFileName===" + newFileName);
+                    true_file = new File(newFileName);
+                    //true_file = new File(res + "(" + i + ")");
                     i++;
                 }
                 if (true_file.length() != 0) {

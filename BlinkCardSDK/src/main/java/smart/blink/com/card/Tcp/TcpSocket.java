@@ -11,8 +11,12 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.TooManyListenersException;
 
 import smart.blink.com.card.API.BlinkLog;
+import smart.blink.com.card.API.Protocol;
 import smart.blink.com.card.BlinkNetCardCall;
 import smart.blink.com.card.Tool.RevicedTools;
 
@@ -34,6 +38,7 @@ public class TcpSocket {
 
     public static ArrayList<byte[]> bufferList = null;
     public static ArrayList<Integer> controlList = null;
+    //private static Timer timer;
 
     /**
      * 封装tcp连接
@@ -81,6 +86,23 @@ public class TcpSocket {
                         BlinkLog.Error(e.toString());
                     }
                 }
+                /**
+                 * 如果当前是电脑目录的话做特殊处理，如果7s内没有数据返回的就说明当明访问失败
+                 */
+//                if (position == Protocol.LookFileMsgReviced) {
+//                    timer = new Timer();
+//                    timer.schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            Log.e(TAG, "run: 访问电脑目录失败");
+//                            if (timer != null) {
+//                                Log.e(TAG, "send: 取消了定时器");
+//                                timer.cancel();
+//                                timer = null;
+//                            }
+//                        }
+//                    }, 5000);
+//                }
                 Send(buffer);
             }
         });
@@ -111,6 +133,16 @@ public class TcpSocket {
             // 没有数据来的话就会在这里阻塞
             length = in.read(buffer);
             BlinkLog.Print("received: " + Arrays.toString(buffer));
+
+//            // 访问文件时做特殊处理
+//            if (position == Protocol.LookFileMsgReviced) {
+//                if (timer != null) {
+//                    Log.e(TAG, "Write: 取消了定时器");
+//                    timer.cancel();
+//                    timer = null;
+//                }
+//            }
+
         } catch (IOException e) {
             BlinkLog.Error(e.toString());
         }

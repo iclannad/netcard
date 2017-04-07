@@ -89,6 +89,7 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
                 FileWriteStream.writebigblockfileEnd((reqBlockId - 1) % 100, wdata);
                 call.onSuccess(0, downLoadingRsp);
                 reqBlockId = 0;
+                lastReqBlockId = 0;
 
                 // 关闭定时器
                 timer.cancel();

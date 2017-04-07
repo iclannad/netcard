@@ -8,6 +8,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import smart.blink.com.card.API.BlinkLog;
 import smart.blink.com.card.API.BlinkWeb;
@@ -49,6 +51,8 @@ public class RevicedTools {
 
     private static final String TAG = RevicedTools.class.getSimpleName();
     private static int position = 0;
+
+    public static int receivedDataCount = 0;
 
     public RevicedTools(int position, byte[] buffer, int length, BlinkNetCardCall call) {
         RevicedTools.position = position;
@@ -143,6 +147,25 @@ public class RevicedTools {
             case 80:
                 // 与子服务器进行连接时，上传中返回的结果
                 UploadingBySubServer(0, 0, buffer, call);
+                break;
+            case 0:
+                // 1500内只能接受一次失败的信息
+//                if (position == Protocol.LookFileMsg && receivedDataCount == 0) {
+//                    Log.e(TAG, "RevicedTools: 访问电脑目录失败");
+//                    receivedDataCount++;
+//                    final Timer timer = new Timer();
+//                    timer.schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            if (timer != null) {
+//                                receivedDataCount = 0;
+//                                Log.e(TAG, "run: receivedDataCount重新清0，允许下一次失败数据的接收");
+//                                timer.cancel();
+//                            }
+//                        }
+//                    }, 1500, 1500);
+//                    LookFileMsgFail(call);
+//                }
                 break;
 
         }
@@ -530,6 +553,7 @@ public class RevicedTools {
 
     /**
      * 查看电脑文件失败
+     *
      * @param call
      */
     public static void LookFileMsgFail(BlinkNetCardCall call) {
