@@ -134,111 +134,111 @@ public class DownUtils implements HandlerImpl {
         }
 
         if (position == ActivityCode.Downloading) {
-            if (BlinkWeb.STATE == BlinkWeb.TCP) {
-                Log.e(TAG, "myHandler: 下载成功的回调,再次开启心跳线程");
-                // ---------------------------------------------------------------------------------
-                DownLoadingRsp downLoadingRsp = (DownLoadingRsp) object;
-                // 存放在全局变量中
-                MyApplication.getInstance().downLoadingRsp = downLoadingRsp;
-                // 更新界面调用
-                if (downUpCallback != null) {
-                    downUpCallback.Call(position, downLoadingRsp);
-                }
-                // 如果当前的回调只是更新ui，那么不会开启一个任务
-                if (!downLoadingRsp.isEnd()) {
-                    return;
-                }
-
-                // 当下载完成的时候，将数据保存在本地数据库中
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                MsgDAO msgdao = new MsgDAO(DownUtils.this.context);
-                msgdao.insertdb(df.format(new Date()),
-                        DownUtils.this.context.getResources().getString(R.string.pc),
-                        DownUtils.this.context.getResources().getString(R.string.send),
-                        DownUtils.this.context.getResources().getString(R.string.phone),
-                        null);
-                msgdao.close();
-                Log.e(TAG, "myHandler: 下载完成一个任务就保存在数据库中");
-
-                //Comment.list.remove(0); // 删除任务列表中的第一个任务
-                if (count < Comment.list.size()) {
-
-                    //下载完一个暂停一秒再下下一个
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                    }
-                    StartLoad();
-                } else {
-                    // 当下载完毕之后将所有的任务都清空
-                    Comment.list.clear();
-                    count = 0;  // 重新清0
-                    MyApplication.getInstance().downLoadingRsp = null;
-                    final Activity activity = (Activity) this.context;
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(activity, "任务下载完毕", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                    // 下载完毕，已经没有任务在下载
-                    isEnd = true;
-
-                    SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-                    SendHeartThread.isClose = false;
-                    sendHeartThread.start();
-                }
-
-            } else {
-                DownLoadingRsp downLoadingRsp = (DownLoadingRsp) object;
-                // 存放在全局变量中
-                MyApplication.getInstance().downLoadingRsp = downLoadingRsp;
-                // 更新界面调用
-                if (downUpCallback != null) {
-
-                    downUpCallback.Call(position, downLoadingRsp);
-                }
-
-                Log.e("Ruan", downLoadingRsp.getSpeed() + "--");
-                isEnd = downLoadingRsp.isEnd();
-                if (isEnd) {
-
-                    // 当下载完成的时候，将数据保存在本地数据库中
-                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    MsgDAO msgdao = new MsgDAO(DownUtils.this.context);
-                    msgdao.insertdb(df.format(new Date()),
-                            DownUtils.this.context.getResources().getString(R.string.pc),
-                            DownUtils.this.context.getResources().getString(R.string.send),
-                            DownUtils.this.context.getResources().getString(R.string.phone),
-                            null);
-                    msgdao.close();
-                    Log.e(TAG, "myHandler: 下载完成一个任务就保存在数据库中");
-
-                    //Comment.list.remove(0); // 删除任务列表中的第一个任务
-                    if (count < Comment.list.size()) {
-                        //下载完一个暂停一秒再下下一个
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                        }
-                        StartLoad();
-                    } else {
-                        // 当下载完毕之后将所有的任务都清空
-                        Comment.list.clear();
-                        count = 0;  // 重新清0
-                        MyApplication.getInstance().downLoadingRsp = null;
-                        final Activity activity = (Activity) this.context;
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(activity, "任务下载完毕", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                }
+//            if (BlinkWeb.STATE == BlinkWeb.TCP) {
+//                Log.e(TAG, "myHandler: 下载成功的回调,再次开启心跳线程");
+            // ---------------------------------------------------------------------------------
+            DownLoadingRsp downLoadingRsp = (DownLoadingRsp) object;
+            // 存放在全局变量中
+            MyApplication.getInstance().downLoadingRsp = downLoadingRsp;
+            // 更新界面调用
+            if (downUpCallback != null) {
+                downUpCallback.Call(position, downLoadingRsp);
             }
+            // 如果当前的回调只是更新ui，那么不会开启一个任务
+            if (!downLoadingRsp.isEnd()) {
+                return;
+            }
+
+            // 当下载完成的时候，将数据保存在本地数据库中
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            MsgDAO msgdao = new MsgDAO(DownUtils.this.context);
+            msgdao.insertdb(df.format(new Date()),
+                    DownUtils.this.context.getResources().getString(R.string.pc),
+                    DownUtils.this.context.getResources().getString(R.string.send),
+                    DownUtils.this.context.getResources().getString(R.string.phone),
+                    null);
+            msgdao.close();
+            Log.e(TAG, "myHandler: 下载完成一个任务就保存在数据库中");
+
+            //Comment.list.remove(0); // 删除任务列表中的第一个任务
+            if (count < Comment.list.size()) {
+
+                //下载完一个暂停一秒再下下一个
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                }
+                StartLoad();
+            } else {
+                // 当下载完毕之后将所有的任务都清空
+                Comment.list.clear();
+                count = 0;  // 重新清0
+                MyApplication.getInstance().downLoadingRsp = null;
+                final Activity activity = (Activity) this.context;
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(activity, "任务下载完毕", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                Log.e(TAG, "myHandler: 任务下载完毕，重新开启心跳线程");
+                // 下载完毕，已经没有任务在下载
+                isEnd = true;
+
+                SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+                SendHeartThread.isClose = false;
+                sendHeartThread.start();
+            }
+
+//            } else {
+//                DownLoadingRsp downLoadingRsp = (DownLoadingRsp) object;
+//                // 存放在全局变量中
+//                MyApplication.getInstance().downLoadingRsp = downLoadingRsp;
+//                // 更新界面调用
+//                if (downUpCallback != null) {
+//
+//                    downUpCallback.Call(position, downLoadingRsp);
+//                }
+//
+//                Log.e("Ruan", downLoadingRsp.getSpeed() + "--");
+//                isEnd = downLoadingRsp.isEnd();
+//                if (isEnd) {
+//
+//                    // 当下载完成的时候，将数据保存在本地数据库中
+//                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//                    MsgDAO msgdao = new MsgDAO(DownUtils.this.context);
+//                    msgdao.insertdb(df.format(new Date()),
+//                            DownUtils.this.context.getResources().getString(R.string.pc),
+//                            DownUtils.this.context.getResources().getString(R.string.send),
+//                            DownUtils.this.context.getResources().getString(R.string.phone),
+//                            null);
+//                    msgdao.close();
+//                    Log.e(TAG, "myHandler: 下载完成一个任务就保存在数据库中");
+//
+//                    //Comment.list.remove(0); // 删除任务列表中的第一个任务
+//                    if (count < Comment.list.size()) {
+//                        //下载完一个暂停一秒再下下一个
+//                        try {
+//                            Thread.sleep(1000);
+//                        } catch (InterruptedException e) {
+//                        }
+//                        StartLoad();
+//                    } else {
+//                        // 当下载完毕之后将所有的任务都清空
+//                        Comment.list.clear();
+//                        count = 0;  // 重新清0
+//                        MyApplication.getInstance().downLoadingRsp = null;
+//                        final Activity activity = (Activity) this.context;
+//                        activity.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Toast.makeText(activity, "任务下载完毕", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//                    }
+//
+//                }
+//            }
 
         }
     }

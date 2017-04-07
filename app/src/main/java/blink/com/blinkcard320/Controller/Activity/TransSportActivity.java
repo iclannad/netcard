@@ -288,20 +288,23 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
                 int present = (int) d;
                 list.set(0, getItem(getResources().getDrawable(R.mipmap.download), downLoadingRsp.getFilename(), downLoadingRsp.getSpeed(), present + "%", present));
             }
+
         }
         if (position == ActivityCode.Upload && list.size() != 0) {
             UploadReq uploadReq = (UploadReq) object;
             if (uploadReq.isEnd()) {
+                // 删除第一个下载完成的任务
                 list.remove(0);
             } else {
                 DecimalFormat df = new DecimalFormat("0.00");
-                // 这条语句会报错 接下来会catch一下
                 String db = df.format((double) uploadReq.getBlockID() / (double) uploadReq.getBlockSize());
                 double d = Double.parseDouble(db) * 100;
                 int present = (int) d;
                 list.set(0, getItem(getResources().getDrawable(R.mipmap.upload), uploadReq.getFilename(), uploadReq.getSpeed(), String.valueOf(present) + "%", present));
             }
+
         }
+
 
         runOnUiThread(new Runnable() {
             @Override

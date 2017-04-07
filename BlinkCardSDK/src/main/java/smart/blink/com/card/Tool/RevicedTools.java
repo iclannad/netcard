@@ -529,6 +529,17 @@ public class RevicedTools {
 
 
     /**
+     * 查看电脑文件失败
+     * @param call
+     */
+    public static void LookFileMsgFail(BlinkNetCardCall call) {
+        LookFileRsp lookFileRsp = new LookFileRsp();
+        lookFileRsp.setSuccess(1);
+        // -1代表什么都不表示
+        call.onSuccess(-1, lookFileRsp);
+    }
+
+    /**
      * 查看文件或者文件夹
      *
      * @param buffer
@@ -804,6 +815,9 @@ public class RevicedTools {
         // 如果文件已经存在
         if (buffer[0] == 34) {
             uploadStartReq.setSuccess(34);
+        }
+        if (buffer[0] == 23) {
+            uploadStartReq.setSuccess(23);
         }
 
         call.onSuccess(position, uploadStartReq);

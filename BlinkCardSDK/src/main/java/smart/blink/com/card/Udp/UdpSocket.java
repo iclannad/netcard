@@ -46,7 +46,7 @@ public class UdpSocket {
     //private  Timer timer = null;
     private Timer wantTimer = null;
 
-    public UdpSocket(final String ip, final int PORT, final byte[] buffer, final int position, BlinkNetCardCall call) {
+    public UdpSocket(final String ip, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
         UdpSocket.position = position;
         UdpSocket.call = call;
         bufferList = new ArrayList<>();
@@ -85,6 +85,9 @@ public class UdpSocket {
 
                 } else if (UdpSocket.position == Protocol.SetUploadDir) {
                     Log.e(TAG, "run: " + "设置上传目录失败");
+                } else if (UdpSocket.position == Protocol.LookFileMsg) {
+                    Log.e(TAG, "run: 该问电脑文件目录失败");
+                    RevicedTools.LookFileMsgFail(call);
                 } else {
                     BlinkLog.Error("-----------");
                     if (buffer[0] == 5) {

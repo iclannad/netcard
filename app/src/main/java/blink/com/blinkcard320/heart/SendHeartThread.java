@@ -46,7 +46,7 @@ public class SendHeartThread extends Thread {
                 msg.what = HEART_CONTINUE;
                 handler.sendMessage(msg);
                 synchronized (HeartLock) {
-                    HeartLock.wait(7000);
+                    HeartLock.wait(8000);
                 }
                 timeCount.getAndIncrement();
             } catch (InterruptedException e) {

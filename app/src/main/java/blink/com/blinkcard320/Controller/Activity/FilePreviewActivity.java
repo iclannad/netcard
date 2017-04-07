@@ -930,43 +930,56 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
     @Override
     public void myHandler(int position, Object object) {
         if (position == ActivityCode.LookFileMsg) {
+            LookFileRsp lookFileRsp = (LookFileRsp) object;
+            BlinkLog.Print(lookFileRsp.toString());
+
             // 重新开启一个心跳线程
             SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
             SendHeartThread.isClose = false;
             sendHeartThread.start();
 
-            LookFileRsp lookFileRsp = (LookFileRsp) object;
-            BlinkLog.Print(lookFileRsp.toString());
+            if (lookFileRsp.getSuccess() == 0) {
+                name = new ArrayList<>();
+                control = new ArrayList<>();
+                list.clear();
 
-            name = new ArrayList<>();
-            control = new ArrayList<>();
-            list.clear();
+                name = lookFileRsp.getList();
+                control = lookFileRsp.getProtrolList();
 
-            name = lookFileRsp.getList();
-            control = lookFileRsp.getProtrolList();
-
-            if (control.size() == 1 && control.get(0) == ActivityCode.PAN) {
-                for (int i = 0; i < name.size(); i++) {
-                    FileListAdapter.Pair<String, Integer> pair = new FileListAdapter.Pair<>();
-                    pair.setA(name.get(i) + ":");
-                    pair.setB(ActivityCode.PAN);
-                    list.add(pair);
+                if (control.size() == 1 && control.get(0) == ActivityCode.PAN) {
+                    for (int i = 0; i < name.size(); i++) {
+                        FileListAdapter.Pair<String, Integer> pair = new FileListAdapter.Pair<>();
+                        pair.setA(name.get(i) + ":");
+                        pair.setB(ActivityCode.PAN);
+                        list.add(pair);
+                    }
+                } else {
+                    int length = control.size() > name.size() ? control.size() : control.size();
+                    for (int i = 0; i < length; i++) {
+                        FileListAdapter.Pair<String, Integer> pair = new FileListAdapter.Pair<>();
+                        pair.setA(name.get(i));
+                        if (control.get(i) == ActivityCode.DIR)
+                            pair.setB(ActivityCode.DIR);
+                        if (control.get(i) == ActivityCode.FL)
+                            pair.setB(ActivityCode.FL);
+                        list.add(pair);
+                    }
                 }
-            } else {
-                int length = control.size() > name.size() ? control.size() : control.size();
-                for (int i = 0; i < length; i++) {
-                    FileListAdapter.Pair<String, Integer> pair = new FileListAdapter.Pair<>();
-                    pair.setA(name.get(i));
-                    if (control.get(i) == ActivityCode.DIR)
-                        pair.setB(ActivityCode.DIR);
-                    if (control.get(i) == ActivityCode.FL)
-                        pair.setB(ActivityCode.FL);
-                    list.add(pair);
-                }
+                fileListAdapter.setList(list);
+                // 关闭对话框
+                MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
+            } else if (lookFileRsp.getSuccess() == 1) {
+                this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 关闭对话框
+                        MyPersonalProgressDIalog.getInstance(FilePreviewActivity.this).dissmissProgress();
+                        Toast.makeText(FilePreviewActivity.this, "访问失败，请点返回再次进入", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
-            fileListAdapter.setList(list);
-            // 关闭对话框
-            MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
+
         }
     }
 

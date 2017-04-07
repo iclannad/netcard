@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
@@ -161,7 +162,7 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
         if (v.getId() == R.id.activity_save_filepath) {
             // 可能文档会有错误,请注意
             Log.e(TAG, "onClick: " + "当前的位置是" + currentfile);
-            NetCardController.SetUploadDir(currentfile, FilelookPC.this);
+            //NetCardController.SetUploadDir(currentfile, FilelookPC.this);
         }
     }
 
@@ -216,7 +217,6 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
         if (position == ActivityCode.GetUploadDir) {
             GetUploadDirRsp uploadDirRsp = (GetUploadDirRsp) object;
 
-
             // 获取电脑上传文件的目录
             currentfile = uploadDirRsp.getPath();
             // 获得上传目录之后就可以向服务器请求其子文件和子文件夹
@@ -224,54 +224,65 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
         }
 
         if (position == ActivityCode.LookFileMsg) {
-
-            // 关闭提示框
-            MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
+            LookFileRsp lookFileRsp = (LookFileRsp) object;
 
             // 开启心跳
             SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
             SendHeartThread.isClose = false;
             sendHeartThread.start();
 
-            LookFileRsp lookFileRsp = (LookFileRsp) object;
+            if (lookFileRsp.getSuccess() == 0) {
+                // 关闭提示框
+                MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
+                name = new ArrayList<>();
+                control = new ArrayList<>();
+                list.clear();
 
-            name = new ArrayList<>();
-            control = new ArrayList<>();
-            list.clear();
+                name = lookFileRsp.getList();
+                control = lookFileRsp.getProtrolList();
 
-            name = lookFileRsp.getList();
-            control = lookFileRsp.getProtrolList();
+                if (control.size() == 1 && control.get(0) == ActivityCode.PAN) {
+                    for (int i = 0; i < name.size(); i++) {
+                        Pair<String, Integer> pair = new Pair<>();
+                        pair.setA(name.get(i) + ":");
+                        pair.setB(ActivityCode.PAN);
+                        list.add(pair);
+                    }
+                } else {
+                    // 这条代码有问题
+                    //int length = control.size() > name.size() ? control.size() : control.size();
+                    int length = control.size() > name.size() ? name.size() : control.size();
 
-            if (control.size() == 1 && control.get(0) == ActivityCode.PAN) {
-                for (int i = 0; i < name.size(); i++) {
-                    Pair<String, Integer> pair = new Pair<>();
-                    pair.setA(name.get(i) + ":");
-                    pair.setB(ActivityCode.PAN);
-                    list.add(pair);
+                    for (int i = 0; i < length; i++) {
+                        Pair<String, Integer> pair = new Pair<>();
+                        pair.setA(name.get(i));
+
+                        if (control.get(i) == ActivityCode.DIR)
+                            pair.setB(ActivityCode.DIR);
+                        if (control.get(i) == ActivityCode.FL)
+                            pair.setB(ActivityCode.FL);
+                        list.add(pair);
+                    }
                 }
-            } else {
-                // 这条代码有问题
-                //int length = control.size() > name.size() ? control.size() : control.size();
-                int length = control.size() > name.size() ? name.size() : control.size();
 
-                for (int i = 0; i < length; i++) {
-                    Pair<String, Integer> pair = new Pair<>();
-                    pair.setA(name.get(i));
-
-                    if (control.get(i) == ActivityCode.DIR)
-                        pair.setB(ActivityCode.DIR);
-                    if (control.get(i) == ActivityCode.FL)
-                        pair.setB(ActivityCode.FL);
-                    list.add(pair);
+                // 重新刷新一下界面
+                mFileListAdapter.setList(list);
+                if (isFirstTimer) {
+                    updatedir(currentfile);
+                    isFirstTimer = false;
                 }
+            } else if (lookFileRsp.getSuccess() == 1) {
+                this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 关闭提示框
+                        MyPersonalProgressDIalog.getInstance(FilelookPC.this).dissmissProgress();
+                        Toast.makeText(FilelookPC.this, "访问失败，请点返回再次进入", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             }
 
-            // 重新刷新一下界面
-            mFileListAdapter.setList(list);
-            if (isFirstTimer) {
-                updatedir(currentfile);
-                isFirstTimer = false;
-            }
 
         }
 

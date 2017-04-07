@@ -202,18 +202,34 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
         //如果下载完成模块数等于总模块数说明下载完成
         if (total == count) {
             //如果downList队列里面没有下载模块说明就是下载完成
-            //这个时候取消定时器
             if (timer != null) {
                 timer.cancel();
                 timer = null;
             }
             // 更新一下值，允许下一次任务的添加
             Log.e(TAG, "WaitStart: " + "允许下一次任务的添加");
-            uploadReq.setEnd(true);
-            //最后一次返回数据给界面
-            totalSpeed();
+//            uploadReq.setEnd(true);
+//            //最后一次返回数据给界面
+            //           totalSpeed();
             //关闭写入流
             fileRead.Close();
+
+            int totalSize = 0;
+            int lateSize = 0;
+            for (int i = 1; i < count + 1; i++) {
+                totalSize += countArray[i];
+                lateSize += speedArray[i];
+                speedArray[i] = countArray[i];
+            }
+            int speed = totalSize - lateSize;
+            UploadReq uploadReq = new UploadReq();
+            uploadReq.setSpeed(speed / 5 + "K/S");
+            uploadReq.setBlockID(totalSize);
+            uploadReq.setBlockSize((int) size);
+            uploadReq.setFilename(fileRead.getFilename());
+            uploadReq.setEnd(true);
+            call.onSuccess(Protocol.Downloading, uploadReq);
+            Log.e(TAG, "WaitStart: 完成一个任务");
         }
     }
 
@@ -256,7 +272,6 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                 BlinkLog.Print("上传完成");
                 CloseSocket(position);
                 WaitStart();
-
             }
         } else {
             if (countArray[position] == downSize) {
@@ -279,33 +294,52 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
      */
     @Override
     public void TimerCall() {
-        totalSpeed();
-    }
+        //totalSpeed();
+        // 我写的代码
+        int totalSize = 0;
+        int lateSize = 0;
 
-    private int speed = 0;
-    private int totalSize = 0;
-    private int lateSize = 0;
-
-    /**
-     * 统计下载速度和下载进度
-     */
-    private void totalSpeed() {
-        totalSize = 0;
-        lateSize = 0;
         for (int i = 1; i < count + 1; i++) {
             totalSize += countArray[i];
             lateSize += speedArray[i];
             speedArray[i] = countArray[i];
         }
-
-        Log.e(TAG, "totalSpeed: setBlockID" +  totalSize);
-        Log.e(TAG, "totalSpeed: setBlockSize" +  (int)size);
-
-        speed = totalSize - lateSize;
+        int speed = totalSize - lateSize;
+        UploadReq uploadReq = new UploadReq();
         uploadReq.setSpeed(speed / 5 + "K/S");
         uploadReq.setBlockID(totalSize);
         uploadReq.setBlockSize((int) size);
         uploadReq.setFilename(fileRead.getFilename());
+        uploadReq.setEnd(false);
         call.onSuccess(Protocol.Downloading, uploadReq);
+
     }
+
+//    private int speed = 0;
+//    private int totalSize = 0;
+//    private int lateSize = 0;
+
+    /**
+     * 统计下载速度和下载进度
+     */
+//    private void totalSpeed() {
+//        totalSize = 0;
+//        lateSize = 0;
+//        for (int i = 1; i < count + 1; i++) {
+//            totalSize += countArray[i];
+//            lateSize += speedArray[i];
+//            speedArray[i] = countArray[i];
+//        }
+//
+//        Log.e(TAG, "totalSpeed: setBlockID" + totalSize);
+//        Log.e(TAG, "totalSpeed: setBlockSize" + (int) size);
+//
+//        speed = totalSize - lateSize;
+//        uploadReq.setSpeed(speed / 5 + "K/S");
+//        uploadReq.setBlockID(totalSize);
+//        uploadReq.setBlockSize((int) size);
+//        uploadReq.setFilename(fileRead.getFilename());
+//        uploadReq.setEnd(false);
+//        call.onSuccess(Protocol.Downloading, uploadReq);
+//    }
 }
