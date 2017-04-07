@@ -74,8 +74,7 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
     public String mCurrentPath;
     public String mTCurrentPath;
     private String mheadCurrentPath;
-    //    public static Queue<ListItem> taskQueue = new LinkedList<ListItem>();
-//    public static LinkedList<ListItem> taskQueueList = new LinkedList<ListItem>();
+
     public static volatile boolean started = false;
     private ArrayList<Map<String, Object>> mFileListPath;
     private RelativeLayout mRelativeLayout_titleclick;
@@ -120,43 +119,10 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
 //                        if ("/".equals(mCurrentPath))
 //                            mCurrentPath = "";
                         mFilePathLineayout.pullViewString(mCurrentPath);
-                        //读取页面
+                        // 访问电脑的文件夹
                         NetCardController.LookFileMsg(mCurrentPath, handler);
                     }
-                    //else {
-//                        MyProgressDIalog md = MyProgressDIalog
-//                                .getInstance(FilePreviewActivity.this);
-//                        md.init();
-//                        md.showProgressDialog();
-//                        if (MainActivity.connectionType == Protocol.UDP) {
-//                            mThreadSend = new SendLookThread(InitActivity.mPc_ip,
-//                                    InitActivity.mPc_port, mDatagramSock,
-//                                    mCurrentPath, mHandler);
-//                            mThreadSend.start();
-//                        } else {
-//                            MyProgressDIalog.OpenCountTimeThread(mHandler,
-//                                    Protocol.LOOK_FALIED);
-//                            new LookAndOthers(Protocol.LOOK, mCurrentPath).start();
-//                        }
-//                    }
                     break;
-//                case Protocol.LOOK:
-//                    if (!mSelectedPath.equals("")) {
-//                        mCurrentPath = mTCurrentPath;
-//                    }
-//                    //第一次进入
-//                    if (StringUtils.IsInActivity(mCurrentPath)) {
-//                        mFilePathLineayout.pullViewString(mCurrentPath);
-//                        break;
-//                    }
-//                    //什么都没选，点击目录进行了返回
-//                    if (mSelectedPath.equals("")) {
-//                        mFilePathLineayout.pullViewString(mCurrentPath);
-//                        break;
-//                    }
-//                    mFilePathLineayout.pushView(mSelectedPath, mCurrentPath,
-//                            FilePreviewActivity.this);
-//                    break;
                 default:
                     break;
             }
@@ -181,7 +147,6 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
         list = new ArrayList<>();
         mFileListPath = new ArrayList<>();
 
-
         activityButtonCancel = (Button) view.findViewById(R.id.activity_button_cancel);
         activityButtonSend = (Button) view.findViewById(R.id.activity_button_send);
         activityButtonDelete = (Button) view.findViewById(R.id.activity_button_delete);
@@ -200,20 +165,12 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
         activityButtonDelete.setOnClickListener(this);
         activityButtonAllin.setOnClickListener(this);
 
-//        if (type == ActivityCode.ComputerFile) {
-//            PcGetListinit();
-//        }
         initdata();
 
         if (type == ActivityCode.ComputerFile) {
             MyPersonalProgressDIalog.getInstance(this).setContent("正读取文件").showProgressDialog();
             //获取电脑路径
             NetCardController.LookFileMsg(mCurrentPath, this);
-//            getPcList();
-//            mButton_delete.setVisibility(View.GONE);
-//            buttonCancel.setOnClickListener(new OnDownButtonClick());
-//            mButton_send.setOnClickListener(new OnDownButtonClick());
-//            return;
         } else if (type == ActivityCode.PhoneFile) {
             AllFile();
         } else {
@@ -228,37 +185,6 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
 
         setContent(view);
     }
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        // TODO Auto-generated method stub
-//        super.onCreate(savedInstanceState);
-//        initBackToolbar();
-//        setContentView(R.layout.activity_file_browse);
-//        setTitle(R.string.file_pre);
-//        type = getIntent().getIntExtra(Protocol.FILE_TYPE, -1);
-//        initdata();
-//        findview();
-//        viewdata();
-//        initview();
-//    }
-
-//    @Override
-//    public void reconnect() {
-    // TODO Auto-generated method stub
-//        super.reconnect();
-//        initview();
-//    }
-
-//    private void sendHeartThread() {
-//        Handler heartHandler = new HeartHandler(this);
-//        SendHeartThread msSendHeartThread = SendHeartThread.GetInstance(
-//                InitActivity.mPc_ip, InitActivity.mPc_port,
-//                UdpSocket.getState(), heartHandler);
-//        if (!msSendHeartThread.isAlive()) {
-//            msSendHeartThread.start();
-//        }
-//    }
 
     @Override
     public void Click(View v) {
@@ -393,129 +319,6 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
         setpath = false;
     }
 
-//    private void findview() {
-//        mlinearlayout = (LinearLayout) findViewById(R.id.activity_ll_downll);
-//        mButton_all_in = (Button) findViewById(R.id.activity_button_allin);
-//        mButton_delete = (Button) findViewById(R.id.activity_button_delete);
-//        mButton_send = (Button) findViewById(R.id.activity_button_send);
-//        list = new ArrayList<>();
-//        listview = (ListView) findViewById(R.id.activity_listview);
-//        buttonCancel = (Button) findViewById(R.id.activity_button_cancel);
-//        buttonSure = (Button) findViewById(R.id.activity_button_sure);
-//    mFilePathLineayout=(FilePathLineayout)
-//
-//    findViewById(R.id.activity_myfilepath);
-//
-//    mFilePathLineayout.setBackgroundResource(SkinConfig.getInstance().
-//
-//    getColor()
-//
-//    );
-//    }
-
-//    private void viewdata() {
-//        mButton_all_in.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // TODO Auto-generated method stub
-//                fileListAdapter.allInSelect();
-//            }
-//        });
-//        mButton_delete.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // TODO Auto-generated method stub
-//                isAllChoose = false;
-//                deleteboolean = !deleteboolean;
-//                deletefile();
-//            }
-//        });
-//        mFilePathLineayout.sethandler(filepathhandler);
-//        mFileListPath = new ArrayList<>();
-//        fileListAdapter = new FileListAdapter(list, this);
-//        listview.setAdapter(fileListAdapter);
-//
-//        mListItems = new ArrayList<Map<String, Object>>();
-//
-//        mHandler = new MainHandler(this);
-//        if (type == Protocol.FILE_PC) {
-//            PcGetListinit();
-//        }
-//
-//    }
-
-//    private void initview() {
-//        mFilePathLineayout.addhead(mCurrentPath);
-//        if (type == Protocol.FILE_PC) {
-//            getPcList();
-//            mButton_delete.setVisibility(View.GONE);
-//            buttonCancel.setOnClickListener(new OnDownButtonClick());
-//            mButton_send.setOnClickListener(new OnDownButtonClick());
-//            return;
-//        } else if (type == Protocol.FILE_PHONE) {
-//            AllFile();
-//        } else {
-//            SingleFile();
-//        }
-//        if (MainActivity.connectionType == Protocol.TCP) {
-//            TcpReceiver tcpre = TcpReceiver.getInstance(mHandler, this,
-//                    listviewhandler);
-//            if (!tcpre.isAlive()) {
-//                Log.d("run", "tcp is start");
-//                MyApplication.getInstance().addThread(tcpre);
-//                tcpre.start();
-//            }
-//        }
-//        sendHeartThread();
-//        mButton_send.setOnClickListener(new OnUploadButtonClick());
-//        listview.setOnItemLongClickListener(new OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-//                                           int arg2, long arg3) {
-//                // TODO Auto-generated method stub
-//                isAllChoose = true;
-//                setCheckbox();
-//                return false;
-//            }
-//        });
-//        buttonCancel.setOnClickListener(new OnUploadButtonClick());
-//    }
-
-    //    private void setOnclickButton_send() {
-//        if (sendboolean) {
-//            deleteboolean = false;
-//            mButton_send.setBackgroundColor(getResources().getColor(
-//                    R.color.back));
-//        } else {
-//            mButton_send.setBackgroundResource(R.drawable.circlebuttonclick);
-//        }
-//        if (deleteboolean) {
-//            mButton_delete.setBackgroundColor(getResources().getColor(
-//                    R.color.back));
-//            sendboolean = false;
-//        } else {
-//            mButton_delete.setBackgroundResource(R.drawable.circlebuttonclick);
-//        }
-//    }
-//
-//    private void setOnclickButton_delete() {
-//
-//        if (deleteboolean) {
-//            mButton_delete.setBackgroundColor(getResources().getColor(
-//                    R.color.toolback));
-//            sendboolean = false;
-//        } else {
-//            mButton_delete.setBackgroundResource(R.drawable.circlebuttonclick);
-//        }
-//        if (sendboolean) {
-//            deleteboolean = false;
-//            mButton_send.setBackgroundColor(getResources().getColor(
-//                    R.color.toolback));
-//        } else {
-//            mButton_send.setBackgroundResource(R.drawable.circlebuttonclick);
-//        }
-//    }
-//
 
     /**
      * 获取手机的部分文件和文件夹
@@ -574,7 +377,6 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
             if ("/".equals(mCurrentPath))
                 mCurrentPath = "";
 
-            // 访部电脑文件的时候，先暂时关闭发送心跳的线程
             // 释放心跳线程的资源
             SendHeartThread.isClose = true;
             synchronized (SendHeartThread.HeartLock) {
@@ -665,246 +467,6 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
         return true;
     }
 
-    //    @Override
-//    protected void onDestroy() {
-//        // TODO Auto-generated method stub
-//        try {
-//            TransportManagement.getInstance().getDownload().onDestory();
-//        } catch (Exception e) {
-//            // TODO: handle exception
-//            e.printStackTrace();
-//        }
-//        super.onDestroy();
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        // TODO Auto-generated method stub
-//        super.onResume();
-//
-//    }
-//
-//
-//    public static FilePreviewListHandler listviewhandler = null;
-//
-//    /**
-//     * 获取PC端盘符的列表的列表
-//     */
-//    private void getPcList() {
-//        mDatagramSock = UdpSocket.getState();
-//        TransportManagement.getInstance()
-//                .initDownload(mHandler, listview, this);
-//        listviewhandler = new FilePreviewListHandler(list, newlist,
-//                fileListAdapter, filepathhandler);
-//        mSelectedPath = "";
-//        if (MainActivity.connectionType == Protocol.UDP) {
-//            MyProgressDIalog md = MyProgressDIalog
-//                    .getInstance(FilePreviewActivity.this);
-//            md.init();
-//            md.showProgressDialog();
-//            TransportManagement.getInstance().sendHeadThread(mHandler, this);
-//            setListener_udp();
-//            LG.i(getClass(), "mCurrentPath---------" + mCurrentPath);
-//            mThreadSend = new SendLookThread(InitActivity.mPc_ip,
-//                    InitActivity.mPc_port, mDatagramSock, mCurrentPath,
-//                    mHandler);
-//            mThreadSend.start();
-//            RecvThread recv = RecvThread.getInstance(mDatagramSock, mHandler,
-//                    this, listviewhandler);
-//            if (!recv.isAlive()) {
-//                recv.start();
-//            }
-//        } else {
-//            MyProgressDIalog md = MyProgressDIalog
-//                    .getInstance(FilePreviewActivity.this);
-//            md.init();
-//            md.showProgressDialog();
-//            MyProgressDIalog
-//                    .OpenCountTimeThread(mHandler, Protocol.LOOK_FALIED);
-//            new LookAndOthers(Protocol.LOOK, mCurrentPath).start();
-//            TcpReceiver tcpre = TcpReceiver.getInstance(mHandler, this,
-//                    listviewhandler);
-//            if (!tcpre.isAlive()) {
-//                Log.d("run", "tcp is start");
-//                MyApplication.getInstance().addThread(tcpre);
-//                tcpre.start();
-//            }
-//            setListener_tcp();
-//        }
-//        sendHeartThread();
-//        Map<String, Object> map = new HashMap<String, Object>();
-//        map.put("path", mCurrentPath);
-//        map.put("name", getResources().getString(R.string.dir));
-//        mFileListPath.add(map);
-//    }
-//
-//    private void setlistener_udp_listview(int arg2) {
-//
-//        Pair<String, Integer> pair = list.get(arg2);
-//        if (pair.getB() == Protocol.DIR || pair.getB() == Protocol.PAN) {
-//            mTCurrentPath = mCurrentPath;
-//            mSelectedPath = pair.getA();
-//            if (pair.getB() == Protocol.PAN) {
-//                mTCurrentPath = pair.getA() + "\\";
-//            } else {
-//                mTCurrentPath = Util.forWard(mTCurrentPath, mSelectedPath);
-//            }
-//
-//			/*
-//             * mFilePathLineayout.pushView(mSelectedPath, mCurrentPath,
-//			 * FilePreviewActivity.this);
-//			 */
-//            mThreadSend = new SendLookThread(InitActivity.mPc_ip,
-//                    InitActivity.mPc_port, mDatagramSock, mTCurrentPath,
-//                    mHandler);
-//            mThreadSend.start();
-//            MyProgressDIalog md = MyProgressDIalog
-//                    .getInstance(FilePreviewActivity.this);
-//            md.init();
-//            md.showProgressDialog();
-//            System.out.println("send dir request " + mCurrentPath);
-//        } else {
-//            Toast.makeText(
-//                    FilePreviewActivity.this,
-//                    FilePreviewActivity.this.getResources().getString(
-//                            R.string.frag_remote_file_long_click),
-//                    Toast.LENGTH_SHORT).show();
-//        }
-//    }
-//
-//    private void downfile_udp(int arg2) {
-//        Pair<String, Integer> pair = list.get(arg2);
-//        String str = pair.getA();
-//        mFileDownload = Util.forWard(mCurrentPath, str);
-//        mFileDownload = mFileDownload.substring(0, mFileDownload.length() - 1);
-//        if (pair.getB() == Protocol.FL) {
-//            if (Environment.getExternalStorageState().equals(
-//                    Environment.MEDIA_MOUNTED)) {
-//                TransportManagement
-//                        .getInstance()
-//                        .getDownload()
-//                        .addFile(mFileDownload,
-//                                Util.getTrueName(mFileDownload),
-//                                Protocol.DOWNLOAD_WAIT);
-//                thread = MTaskManager.getInstance(mHandler, mDatagramSock);
-//                if (!thread.isAlive()) {
-//                    thread.start();
-//                }
-//            } else
-//                UIHelper.ToastMessageNetError(FilePreviewActivity.this, FilePreviewActivity.this.getResources().getString(
-//                        R.string.frag_remote_file_sd_unmounted));
-//        } else {
-//            String msg = mFileDownload + getResources().getString(R.string.error_downfile);
-//            UIHelper.ToastMessageNetError(FilePreviewActivity.this, msg);
-//        }
-//    }
-//
-//    private void setListener_udp() {
-//
-//        listview.setOnItemClickListener(new OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-//                                    long arg3) {
-//                if (isAllChoose == true)
-//                    return;
-//                setlistener_udp_listview(arg2);
-//            }
-//
-//        });
-//
-//
-//        listview.setOnItemLongClickListener(new OnItemLongClickListener() {
-//
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-//                                           int arg2, long arg3) {
-//                isAllChoose = true;
-//                setCheckbox();
-//                return false;
-//            }
-//        });
-//
-//    }
-//
-//    private void setListener_tcp() {
-//        listview.setOnItemClickListener(new OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-//                                    long arg3) {
-//                // ÿ�β鿴ǰ�������ʱ��
-//                if (isAllChoose == true)
-//                    return;
-//                Pair<String, Integer> pair = list.get(arg2);
-//
-//                if (pair.getB() == Protocol.DIR || pair.getB() == Protocol.PAN) {
-//                    mTCurrentPath = mCurrentPath;
-//                    mSelectedPath = pair.getA();
-//                    Log.d("run", "mpath----------" + mCurrentPath);
-//                    if (pair.getB() == Protocol.PAN) {
-//                        mTCurrentPath = pair.getA() + "\\";
-//                    } else
-//                        mTCurrentPath = Util
-//                                .forWard(mTCurrentPath, mSelectedPath);
-//
-//                    new LookAndOthers(Protocol.LOOK, mTCurrentPath).start();
-//                    MyProgressDIalog md = MyProgressDIalog
-//                            .getInstance(FilePreviewActivity.this);
-//                    md.init();
-//                    md.showProgressDialog();
-//                    MyProgressDIalog.OpenCountTimeThread(mHandler,
-//                            Protocol.LOOK_FALIED);
-//                    System.out.println("send dir request " + mCurrentPath);
-//
-//                } else {
-//                    Toast.makeText(
-//                            FilePreviewActivity.this,
-//                            FilePreviewActivity.this.getResources().getString(
-//                                    R.string.frag_remote_file_long_click),
-//                            Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//
-//        });
-//
-//
-//        listview.setOnItemLongClickListener(new OnItemLongClickListener() {
-//
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-//                                           int arg2, long arg3) {
-//                isAllChoose = true;
-//                setCheckbox();
-//
-//                return false;
-//            }
-//        });
-//    }
-//
-//    private void downfile_tcp(int arg2) {
-//        Pair<String, Integer> pair = list.get(arg2);
-//        String str = pair.getA();
-//        LG.i(getClass(), "str===" + str + "i===" + arg2);
-//        mFileDownload = Util.forWard(mCurrentPath, str);
-//        mFileDownload = mFileDownload.substring(0, mFileDownload.length() - 1);
-//        if (pair.getB() == Protocol.FL) {
-//            TransportManagement
-//                    .getInstance()
-//                    .getDownload()
-//                    .addFile(mFileDownload, Util.getTrueName(mFileDownload),
-//                            Protocol.DOWNLOAD_WAIT);
-//            thread = MTaskManager.getInstance(mHandler, mDatagramSock);
-//            if (!thread.isAlive()) {
-//                thread.start();
-//            }
-//            synchronized (TransportManagement.enqueueLock) {
-//                TransportManagement.enqueueLock.notifyAll();
-//            }
-//        } else {
-//            String msg = mFileDownload + getResources().getString(R.string.error_downfile);
-//            UIHelper.ToastMessageNetError(FilePreviewActivity.this, msg);
-//        }
-//    }
-//
 
     /**
      * 设置弹出复选框
@@ -1002,177 +564,6 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
             fileListAdapter.notifyDataSetChanged();
         }
     }
-//
-//    private void setCheckboxSureDown() {
-//        mlinearlayout.setVisibility(View.GONE);
-//        mFilePathLineayout.setVisibility(View.VISIBLE);
-//        fileListAdapter.setSelect(false);
-//        fileListAdapter.notifyDataSetChanged();
-//        ArrayList<Integer> tmpchebox = new ArrayList<>();
-//        int[] tmp = fileListAdapter.getcheboxSelectList();
-//        for (int j = 0; j < tmp.length; j++) {
-//            if (tmp[j] == 1) {
-//                tmpchebox.add(j);
-//            }
-//        }
-//        if (tmpchebox.size() == 0) {
-//            UIHelper.ToastMessageNetError(this, R.string.no_choosefile);
-//            return;
-//        }
-//        if (MainActivity.connectionType == Protocol.UDP) {
-//            for (int i = 0; i < tmpchebox.size(); i++) {
-//                downfile_udp(tmpchebox.get(i));
-//            }
-//        } else {
-//            for (int i = 0; i < tmpchebox.size(); i++) {
-//                downfile_tcp(tmpchebox.get(i));
-//            }
-//        }
-//    }
-//
-//    String tfilename;
-//
-//    private void deletefile() {
-//        ArrayList<Integer> tmpchebox = new ArrayList<>();
-//        int[] tmp = fileListAdapter.getcheboxSelectList();
-//        for (int j = 0; j < tmp.length; j++) {
-//            if (tmp[j] == 1) {
-//                tmpchebox.add(j);
-//            }
-//        }
-//        if (tmpchebox.size() == 0) {
-//            UIHelper.ToastMessageNetError(this, R.string.no_choosefile);
-//            return;
-//        }
-//
-//        final ArrayList<String> filename = new ArrayList<>();
-//        Handler deletehandler = new Handler() {
-//
-//            @Override
-//            public void handleMessage(Message msg) {
-//                // TODO Auto-generated method stub
-//                switch (msg.what) {
-//                    case Protocol.YES:
-//                        for (int i = 0; i < filename.size(); i++) {
-//                            for (int j = 0; j < list.size(); j++) {
-//                                if (list.get(j).getA().equals(filename.get(i))) {
-//                                    list.remove(j);
-//                                    //				nlist.remove(j);
-//                                    break;
-//                                }
-//                            }
-//                            mdeleteFile(filename.get(i));
-//                        }
-//                        mlinearlayout.setVisibility(View.GONE);
-//                        mFilePathLineayout.setVisibility(View.VISIBLE);
-//                        fileListAdapter.setSelect(false);
-//                        fileListAdapter.notifyDataSetChanged();
-//                        break;
-//                    case Protocol.NO:
-//                        break;
-//                    default:
-//                        break;
-//                }
-//            }
-//        };
-//        for (int i = 0; i < tmpchebox.size(); i++) {
-//            tfilename = list.get(tmpchebox.get(i)).getA();
-//            filename.add(tfilename);
-//        }
-//        String msg = getResources().getString(R.string.confirm) +
-//                getResources().getString(R.string.delete_file);
-//        MyProgressDIalog.CreateYesNoDialog(this, R.string.tips,
-//                msg,
-//                R.string.yes, R.string.no, deletehandler);
-//        fileListAdapter.notifyDataSetChanged();
-//    }
-//
-//    private void setCheckboxSureUpload() {
-//        mlinearlayout.setVisibility(View.GONE);
-//        mFilePathLineayout.setVisibility(View.VISIBLE);
-//        // mRelativeLayout_titleclick.setVisibility(View.GONE);
-//        fileListAdapter.setSelect(false);
-//        fileListAdapter.notifyDataSetChanged();
-//        ArrayList<Integer> tmpchebox = new ArrayList<>();
-//        int[] tmp = fileListAdapter.getcheboxSelectList();
-//        for (int j = 0; j < tmp.length; j++) {
-//            if (tmp[j] == 1) {
-//                tmpchebox.add(j);
-//            }
-//        }
-//        if (tmpchebox.size() == 0) {
-//            UIHelper.ToastMessageNetError(this, R.string.no_choosefile);
-//            return;
-//        }
-//        for (int i = 0; i < tmpchebox.size(); i++) {
-//            uploadFile(tmpchebox.get(i));
-//        }
-//    }
-//
-//    private void mdeleteFile(String name) {
-//        File f = new File(name);
-//        Log.d("run", "delete file-----------" + f.getPath());
-//        Log.e("Ruan", f.exists() + "--");
-//        if (f.exists())
-//            if (f.delete()) {
-//                fileListAdapter.notifyDataSetChanged();
-//                String msg = name + " " + getResources().getString(R.string.activity_delete);
-//                UIHelper.ToastSetSuccess(this,
-//                        msg);
-//            } else {
-//                String msg = name + " " + R.string.activity_delete_error;
-//                UIHelper.ToastMessageNetError(this, msg);
-//            }
-//    }
-//
-//    private void uploadFile(int arg2) {
-//        File f = new File(list.get(arg2).getA());
-//        mHandler = new MainHandler(this);
-//        TransportManagement.getInstance().initUpload(mHandler, this);
-//        TransportManagement.getInstance().getUpload().addFile(f);
-//        synchronized (TransportManagement.enqueueLock) {
-//            TransportManagement.enqueueLock.notifyAll();
-//        }
-//    }
-//
-//    class OnUploadButtonClick implements View.OnClickListener {
-//
-//        @Override
-//        public void onClick(View v) {
-//            // TODO Auto-genswitch (key) {
-//            switch (v.getId()) {
-//                case R.id.activity_button_send:
-//                    isAllChoose = false;
-//                    setCheckboxSureUpload();
-//                    break;
-//                case R.id.activity_button_cancel:
-//                    isAllChoose = false;
-//                    setCheckboxCancel();
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
-//    }
-//
-//    class OnDownButtonClick implements View.OnClickListener {
-//
-//        @Override
-//        public void onClick(View v) {
-//            // TODO Auto-genswitch (key) {
-//            switch (v.getId()) {
-//                case R.id.activity_button_send:
-//                    isAllChoose = false;
-//                    setCheckboxSureDown();
-//                    break;
-//                case R.id.activity_button_cancel:
-//                    isAllChoose = false;
-//                    setCheckboxCancel();
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
-//    }
+
 
 }

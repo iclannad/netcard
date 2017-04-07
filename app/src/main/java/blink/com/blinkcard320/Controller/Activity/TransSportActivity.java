@@ -152,41 +152,6 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
         taskUploadText.setTextColor(getResources().getColor(skinValue));
     }
 
-    //	@Override
-//	protected void onCreate(Bundle savedInstanceState) {
-//		// TODO Auto-generated method stub
-//		super.onCreate(savedInstanceState);
-//		initBackToolbar();
-//		setContentView(R.layout.task_manager);
-//		setTitle(R.string.activity_tranlist);
-//		init();
-//	}
-
-//	@Override
-//	protected void onResume() {
-//		// TODO Auto-generated method stub
-//		super.onResume();
-//		TransportManagement.getInstance().registerObserver(this);
-//		sendHeartThread();
-//	}
-//
-//	@Override
-//	protected void onPause() {
-//		// TODO Auto-generated method stub
-//		super.onPause();
-//		TransportManagement.getInstance().removeObserver();
-//	}
-
-//	private void sendHeartThread() {
-//		Handler heartHandler = new HeartHandler(this);
-//		SendHeartThread msSendHeartThread = SendHeartThread.GetInstance(
-//				InitActivity.mPc_ip, InitActivity.mPc_port,
-//				UdpSocket.getState(), heartHandler);
-//		if (!msSendHeartThread.isAlive()) {
-//			msSendHeartThread.start();
-//		}
-//	}
-
 
     @Override
     public void Click(View v) {
@@ -241,7 +206,6 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
         }
 
         DecimalFormat df = new DecimalFormat("0.00");
-        // 这条语句会报错 接下来会catch一下
         String db = df.format((double) uploadReq.getBlockID() / (double) uploadReq.getBlockSize());
         double d = Double.parseDouble(db) * 100;
         int present = (int) d;
@@ -274,12 +238,14 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
      * @param object   下载DownLoadingRsp这个类   上传UploadReq这个类
      */
     @Override
+
     public void Call(int position, Object object) {
         if (position == ActivityCode.Downloading && list.size() != 0) {
+            // 重新获取当前的列表
+            getDownorUpload(ActivityCode.Downloading);
             DownLoadingRsp downLoadingRsp = (DownLoadingRsp) object;
             // 判断是否到了结尾
             if (downLoadingRsp.isEnd()) {
-                //Comment.list.remove(0); // 删除任务列表中的第一个任务
                 list.remove(0);
             } else {
                 DecimalFormat df = new DecimalFormat("0.00");
@@ -288,12 +254,14 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
                 int present = (int) d;
                 list.set(0, getItem(getResources().getDrawable(R.mipmap.download), downLoadingRsp.getFilename(), downLoadingRsp.getSpeed(), present + "%", present));
             }
-
         }
         if (position == ActivityCode.Upload && list.size() != 0) {
+            // 重新获取当前的列表
+            getDownorUpload(ActivityCode.Upload);
+
             UploadReq uploadReq = (UploadReq) object;
             if (uploadReq.isEnd()) {
-                // 删除第一个下载完成的任务
+                // 删除第一个下载完成的任务，更新界面
                 list.remove(0);
             } else {
                 DecimalFormat df = new DecimalFormat("0.00");
@@ -304,8 +272,6 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
             }
 
         }
-
-
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -313,8 +279,6 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
                 adapter.Redata(list);
             }
         });
-        // 重新刷新界面
-        //adapter.Redata(list);
     }
 
     /**
@@ -326,166 +290,5 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
     public void Fail(int position) {
 
     }
-
-//	private void init() {
-//		final String[] taskinfo = {
-//				this.getResources().getString(R.string.delete_task),
-//				this.getResources().getString(R.string.restart_task),
-//				this.getResources().getString(R.string.jump_task) };
-//		listView = (ExpandableListView) findViewById(R.id.expandable_list_view);
-//		download_manager_clear = (Button) findViewById(R.id.download_manager_clear);
-//		lists = TransportManagement.getInstance().getlinklist();
-//		adapter = new MyExpandableAdapter(this, lists,new MainHandler(this));
-//		listView.setGroupIndicator(null);
-//		listView.setAdapter(adapter);
-//		/*listView.setOnItemLongClickListener(new OnItemLongClickListener() {
-//
-//			@Override
-//			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
-//					int arg2, long arg3) {
-//				// TODO Auto-generated method stub
-//				LG.i(getClass(), "长按listview  arg2===" + arg2);
-//				arg2=arg2-1;
-//				position = arg2;
-//				ArrayList<String> s = new ArrayList<>();
-//				if (TransportManagement.getInstance().getlinklist().get(arg2)
-//						.getState() == ListItem.RUNNING) {
-//					s.add(taskinfo[0]);
-//					s.add(taskinfo[2]);
-//				}
-//				if (TransportManagement.getInstance().getlinklist().get(arg2)
-//						.getState() == ListItem.FAILED) {
-//					s.add(taskinfo[1]);
-//					s.add(taskinfo[0]);
-//				}
-//				if (TransportManagement.getInstance().getlinklist().get(arg2)
-//						.getState() == ListItem.WAITING) {
-//					s.add(taskinfo[0]);
-//				}
-//				final ListDialog dialog = new ListDialog(
-//						TransSportActivity.this, s);
-//				dialog.setOnLongItemClick(new OnItemClickListener() {
-//
-//					@Override
-//					public void onItemClick(AdapterView<?> arg0, View arg1,
-//							int arg2, long arg3) {
-//						// TODO Auto-generated method stub
-//						LG.i(getClass(), "arg2==" + arg2);
-//						ListItem current = TransportManagement.getInstance()
-//								.getlinklist().get(position);
-//						switch (arg2) {
-//						case 0:
-//							if (current.getState() == ListItem.FAILED) {
-//								Util.removeListItem(current);
-//								Util.removeQueueItem(current);
-//							} else {
-//								TransportManagement.getInstance().getQueue()
-//								.add(current);
-//						current.setState(ListItem.WAITING);
-//							}
-//						update(TransportManagement.getInstance().getlinklist());
-//							dialog.dismiss();
-//							break;
-//						case 1:
-//							current.setState(ListItem.WAITING);
-//							Util.removeQueueItem(current);
-//							TransportManagement.getInstance().getQueue().add(current);
-//							synchronized (TransportManagement.currentLock) {
-//								TransportManagement.currentLock.notifyAll();
-//							}
-//							update(TransportManagement.getInstance().getlinklist());
-//							dialog.dismiss();
-//							break;
-//						default:
-//							break;
-//						}
-//					}
-//				});
-//				dialog.show();
-//				return false;
-//			}
-//		})；*/
-//	}
-
-//	private void onMyClick(View view) {
-//		switch (view.getId()) {
-//		case R.id.download_manager_clear:
-//			new AlertDialog.Builder(this)
-//					.setTitle(this.getResources().getString(R.string.tip))
-//					.setMessage(
-//							this.getResources().getString(
-//									R.string.frag_more_ask_clear))
-//					.setNegativeButton(
-//							this.getResources().getString(R.string.confirm),
-//							new OnClickListener() {
-//								public void onClick(DialogInterface dialog,
-//										int which) {
-//									TransportManagement.getInstance()
-//											.getlinklist().clear();
-//									TransportManagement.getInstance()
-//											.getQueue().clear();
-//									TransportManagement.getInstance()
-//											.getDownload();
-//									download_manager_clear
-//											.setVisibility(View.GONE);
-//									download_manager_edit
-//											.setText(TransSportActivity.this
-//													.getResources().getString(
-//															R.string.edit));
-//								}
-//							})
-//					.setPositiveButton(
-//							this.getResources().getString(R.string.cancel),
-//							new OnClickListener() {
-//
-//								public void onClick(DialogInterface dialog,
-//										int which) {
-//
-//								}
-//							}).show();
-//			break;
-//
-//		default:
-//			break;
-//		}
-//	}
-//
-//	@Override
-//	public void showdate() {
-//		// TODO Auto-generated method stub
-//
-//	}
-//
-//	private Handler mHandler = new Handler() {
-//
-//		public void handleMessage(Message msg) {
-//
-//			switch (msg.what) {
-//			case 100:
-//				if (lists != null) {
-//					if (adapter != null) {
-//						adapter.setLists(lists);
-//						adapter.notifyDataSetChanged();
-//					} else {
-//						adapter = new MyExpandableAdapter(
-//								TransSportActivity.this, lists,null);
-//					}
-//				}
-//				break;
-//
-//			default:
-//				break;
-//			}
-//
-//		};
-//
-//	};
-//
-//	@Override
-//	public void update(LinkedList<ListItem> list) {
-//		// TODO Auto-generated method stub
-//		lists = list;
-//		mHandler.sendEmptyMessage(100);
-//	}
 
 }

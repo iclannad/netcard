@@ -148,9 +148,9 @@ public class QuickStartActivity extends MyBaseActivity implements AdapterView.On
                 UIHelper.ToastSetSuccess(QuickStartActivity.this, tip);
                 break;
             default:
-                SharedPrefsUtils.setIntegerPreference(context, Comment.QUICK_START, Comment.DEFAULT);
-                tip = QuickStartActivity.this.getResources().getString(R.string.reset_quick_start);
-                UIHelper.ToastSetSuccess(QuickStartActivity.this, tip);
+//                SharedPrefsUtils.setIntegerPreference(context, Comment.QUICK_START, Comment.DEFAULT);
+//                tip = QuickStartActivity.this.getResources().getString(R.string.reset_quick_start);
+//                UIHelper.ToastSetSuccess(QuickStartActivity.this, tip);
                 break;
         }
     }
