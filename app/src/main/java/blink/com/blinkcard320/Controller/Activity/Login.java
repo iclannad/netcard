@@ -1,8 +1,8 @@
 package blink.com.blinkcard320.Controller.Activity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +35,8 @@ import blink.com.blinkcard320.Tool.Thread.HandlerImpl;
 import blink.com.blinkcard320.Tool.Utils.SharedPrefsUtils;
 import blink.com.blinkcard320.View.MyPersonalProgressDIalog;
 import blink.com.blinkcard320.View.MyProgressDIalog;
+import blink.com.blinkcard320.View.pop.Dao.LoginDAO;
+import blink.com.blinkcard320.View.pop.DropDownPopWindows;
 import blink.com.blinkcard320.application.MyApplication;
 import smart.blink.com.card.bean.ConnectPcRsp;
 import smart.blink.com.card.bean.RelayMsgRsp;
@@ -77,6 +79,46 @@ public class Login extends BaseActivity implements HandlerImpl {
     private String loginUserName = "";
     private String loginPwd = "";
 
+    private DropDownPopWindows mDownPopWindows;
+    private RelativeLayout init_idLinear = null;
+
+    private Handler handler = new Handler() {
+        public void handleMessage(android.os.Message msg) {
+            Bundle data = msg.getData();
+            switch (msg.what) {
+                case 1:
+                    int selIndex = data.getInt("selIndex");
+                    initActivityEditText.setText(mDownPopWindows.getdatas(selIndex));
+                    //LoginSetData.getIntance(Login.this).setPasswd(initActivityEditText, activityInitEditPasswd);
+                    mDownPopWindows.dismiss();
+                    Log.e(TAG, "handleMessage: 点击条目了");
+                    break;
+                case 2:
+                    int delIndex = data.getInt("delIndex");
+                    String removeuser = mDownPopWindows.getdatas(delIndex);
+                    mDownPopWindows.removedatasItem(delIndex);
+
+                    mDownPopWindows.AdapterUpdate();
+                    initActivityEditText.setText("");
+                    activityInitEditPasswd.setText("");
+
+                    Log.e(TAG, "handleMessage: 删除的操作");
+                    break;
+//                case Read_SharePerence:
+//                    if ((boolean) msg.obj) {
+//                        Intent intent = new Intent(InitActivity.this,
+//                                MainActivity.class);
+//                        startActivity(intent);
+//                    } else {
+//                        // imageview_load.setVisibility(View.GONE);
+//                    }
+//                    break;
+            }
+        }
+
+        ;
+    };
+
     /**
      * Start()
      */
@@ -85,6 +127,11 @@ public class Login extends BaseActivity implements HandlerImpl {
         View view = LayoutInflater.from(context).inflate(R.layout.netcard_login, null);
 
         setTileBar(0);
+
+        init_idLinear = (RelativeLayout) view.findViewById(R.id.init_idLinear);
+        if (init_idLinear == null) {
+            Log.e(TAG, "init: init_idLinear空指针");
+        }
 
         loginEditRelative = (RelativeLayout) view.findViewById(R.id.loginEditRelative);
         loginScanRelative = (RelativeLayout) view.findViewById(R.id.loginScanRelative);
@@ -96,13 +143,19 @@ public class Login extends BaseActivity implements HandlerImpl {
 
         activityCheckboxRemeberpassword = (CheckBox) view.findViewById(R.id.activity_checkbox_remeberpassword);
         initPassword = (TextView) view.findViewById(R.id.init_password);
+
         activityInitEditPasswd = (EditText) view.findViewById(R.id.activity_init_edit_passwd);
+
         initIdLinear = (RelativeLayout) view.findViewById(R.id.init_idLinear);
+
         initActivityEditText = (EditText) view.findViewById(R.id.init_activity_edit_text);
+
         initDownImage = (ImageView) view.findViewById(R.id.init_downImage);
         loginLogo = (ImageView) view.findViewById(R.id.loginLogo);
         initActivityButtonSweep = (Button) view.findViewById(R.id.init_activity_button_sweep);
         initActivityButtonSweep.setOnClickListener(this);
+        initDownImage.setOnClickListener(this);
+
 
         // 给布局设置高度，用代码设置方便屏幕适配
         DensityUtil.setHeight(loginEditRelative, BaseActivity.height / 5 * 3);
@@ -281,6 +334,14 @@ public class Login extends BaseActivity implements HandlerImpl {
                 Toast.makeText(this, R.string.Camera, Toast.LENGTH_SHORT).show();
             }
         }
+
+        if (v.getId() == R.id.init_downImage) {
+
+            mDownPopWindows = new DropDownPopWindows(Login.this, handler, init_idLinear.getWidth());
+            mDownPopWindows.initPopuWindow(initActivityEditText, activityInitEditPasswd);
+            mDownPopWindows.popupWindwShowing(initActivityEditText);
+            Log.e(TAG, "Click: 弹出pop窗口");
+        }
     }
 
     @Override
@@ -410,6 +471,10 @@ public class Login extends BaseActivity implements HandlerImpl {
             MyApplication.userName = ID;
             MyApplication.userPassword = password;
 
+            // 登录成功的话就往数据库中插入数据
+            LoginDAO loginDAO = new LoginDAO(this);
+            loginDAO.add(ID);
+
             MyProgressDIalog.dissmissProgress();
 
             MyToast.Toast(context, R.string.login_success);
@@ -445,6 +510,10 @@ public class Login extends BaseActivity implements HandlerImpl {
                 // 记住用户名和密码
                 MyApplication.userName = ID;
                 MyApplication.userPassword = password;
+
+                // 登录成功的话就往数据库中插入数据
+                LoginDAO loginDAO = new LoginDAO(this);
+                loginDAO.add(ID);
 
                 // 关闭掉对话框
                 MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
