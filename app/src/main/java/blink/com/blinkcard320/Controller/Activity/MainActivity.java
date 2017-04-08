@@ -2,8 +2,10 @@ package blink.com.blinkcard320.Controller.Activity;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -31,6 +33,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import blink.com.blinkcard320.Controller.Activity.slidingmenu.AboutActivity;
 import blink.com.blinkcard320.Controller.Activity.slidingmenu.AlterUserPWDActivity;
@@ -46,6 +50,7 @@ import blink.com.blinkcard320.Controller.Fragment.FragmentFilePC;
 import blink.com.blinkcard320.Controller.Fragment.FragmentFilePhone;
 import blink.com.blinkcard320.Controller.Fragment.FragmentToActivity;
 import blink.com.blinkcard320.Controller.NetCardController;
+import blink.com.blinkcard320.Controller.receiver.NetWorkStateReceiver;
 import blink.com.blinkcard320.Moudle.Comment;
 import blink.com.blinkcard320.Moudle.DownorUpload;
 import blink.com.blinkcard320.Moudle.Item;
@@ -61,6 +66,7 @@ import blink.com.blinkcard320.Tool.Utils.UIHelper;
 import blink.com.blinkcard320.Tool.Utils.Utils;
 import blink.com.blinkcard320.View.DialogClick;
 import blink.com.blinkcard320.View.MyDialog;
+import blink.com.blinkcard320.View.MyPersonalProgressDIalog;
 import blink.com.blinkcard320.View.MyProgressDIalog;
 import blink.com.blinkcard320.application.MyApplication;
 import blink.com.blinkcard320.camera.CameraActivity;
@@ -68,7 +74,9 @@ import blink.com.blinkcard320.heart.HeartHandler;
 import blink.com.blinkcard320.heart.SendHeartThread;
 import smart.blink.com.card.API.Protocol;
 import smart.blink.com.card.bean.ChangePcPwdRsp;
+import smart.blink.com.card.bean.ConnectPcRsp;
 import smart.blink.com.card.bean.LookPCRsp;
+import smart.blink.com.card.bean.RelayMsgRsp;
 import smart.blink.com.card.bean.RestartRsp;
 import smart.blink.com.card.bean.ShutdownRsp;
 import smart.blink.com.card.bean.WantRsp;
@@ -736,6 +744,29 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
 
             MyApplication.wantCount.getAndIncrement();
             WantRsp wantRsp = (WantRsp) object;
+
+            // 请求不成功，250ms后重新标志位清0
+            if (wantRsp.getSuccess() != 0) {
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        synchronized (this) {
+                            MyApplication.wantCount.set(0);
+                            MainActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MyPersonalProgressDIalog.getInstance(MainActivity.this).dissmissProgress();
+                                    MainActivity.this.startActivity(new Intent(MainActivity.this, Login.class));
+                                    MyApplication.getInstance().exit();
+                                }
+                            });
+                            Log.e(TAG, "run: " + "我已经清除了标志位");
+                            this.cancel();
+                        }
+                    }
+                }, 250, 250);
+            }
+
             switch (wantRsp.getSuccess()) {
                 case 0:
                     //返回成功之后
@@ -768,10 +799,10 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
             MyApplication.helloCount.getAndIncrement();
             //打洞成功
             CommonIntent.IntentActivity(context, MainActivity.class);
+            MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
             Log.e(TAG, "myHandler: " + "重连成功");
             UIHelper.ToastSetSuccess(this, R.string.reconnect_success);
             initHeartThread();
-            Log.e(TAG, "myHandler: " + "重新初始化线程");
         }
 
         // 参考Fragment里面的代码
@@ -839,7 +870,25 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
 
         }
 
+        // 申请与子服务器成功后会走这个方法，通过TCP方法与服务器连接
+        if (position == ActivityCode.RelayMsg) {
+            Log.e(TAG, "onSuccess: " + "申请与子服务器成功");
+            NetCardController.CONNECT_TO_SUBSERVER(this);
+        }
 
+        // 与子服务器连接成功
+        if (position == ActivityCode.ConnectPC) {
+            ConnectPcRsp connectPcRsp = (ConnectPcRsp) object;
+            Log.e(TAG, "myHandler: result位为：" + connectPcRsp.getSuccess());
+            if (connectPcRsp.getSuccess() == 0) {
+                MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
+                Log.e(TAG, "myHandler: " + "重连成功");
+                UIHelper.ToastSetSuccess(this, R.string.reconnect_success);
+                //打洞成功
+                CommonIntent.IntentActivity(context, MainActivity.class);
+                initHeartThread();
+            }
+        }
     }
 
     /**
@@ -850,12 +899,92 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
      */
     @Override
     public void myError(int position, int error) {
+        if (position == ActivityCode.HELLO) {
+            //打洞失败则申请子服务器
+            MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
+            MyPersonalProgressDIalog.getInstance(this).setContent("正通过服务器连接").showProgressDialog();
+            NetCardController.RelayMsg(this);
+        }
 
+        if (position == ActivityCode.LOOKPC) {
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_lock_lost, MainActivity.this);
+                }
+            });
+        }
+        if (position == ActivityCode.Restart) {
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_restart_lost, MainActivity.this);
+                }
+            });
+        }
+
+        if (position == ActivityCode.Shutdown) {
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_shutdown_lost, MainActivity.this);
+                }
+            });
+        }
+
+        if (position == ActivityCode.ChangePcPwd) {
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_change_lost, MainActivity.this);
+                }
+            });
+        }
+    }
+
+    NetWorkStateReceiver netWorkStateReceiver;
+
+    @Override
+    protected void onResume() {
+        if (netWorkStateReceiver == null) {
+            netWorkStateReceiver = new NetWorkStateReceiver();
+        }
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(netWorkStateReceiver, filter);
+        Log.e(TAG, "onResume: " + "注册了一个广播接收者");
+        super.onResume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (netWorkStateReceiver != null) {
+            unregisterReceiver(netWorkStateReceiver);
+            netWorkStateReceiver = null;
+            Log.e(TAG, "onDestroy: 关闭广播接收者");
+        }
+
         // 释放心跳线程的资源
         SendHeartThread.isClose = true;
         synchronized (SendHeartThread.HeartLock) {

@@ -5,15 +5,20 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 import blink.com.blinkcard320.Controller.Activity.Login;
 import blink.com.blinkcard320.Controller.Activity.MainActivity;
 import blink.com.blinkcard320.Controller.NetCardController;
 import blink.com.blinkcard320.R;
 import blink.com.blinkcard320.Tool.Protocol;
+import blink.com.blinkcard320.Tool.System.Tools;
 import blink.com.blinkcard320.Tool.Thread.HandlerImpl;
+import blink.com.blinkcard320.View.MyPersonalProgressDIalog;
 import blink.com.blinkcard320.View.ReconnectDialog;
 import blink.com.blinkcard320.application.MyApplication;
+import smart.blink.com.card.Tcp.TcpSocket;
+import smart.blink.com.card.Udp.UdpSocket;
 
 /**
  * Created by Administrator on 2017/3/21.
@@ -45,6 +50,12 @@ public class HeartHandler extends Handler {
                 // 重新登录的逻辑，先暂时这么写，测试能不能登录
                 MyApplication.wantCount.set(0);
                 MyApplication.helloCount.set(0);
+
+                // 释放Tcp资源
+                TcpSocket.closeTcpSocket();
+                // 释放Udp的资源
+                UdpSocket.closeUdpSocket();
+
                 // 弹出重新连接的对话框
                 try {
                     ReconnectDialog.CreateYesNoDialog(context, context
@@ -66,7 +77,15 @@ public class HeartHandler extends Handler {
                 MyApplication.getInstance().exit();
                 break;
             case Protocol.NO:
-                Log.e(TAG, "handleMessage: Protocol.NO");
+                if (!Tools.isOnline(context)) {
+                    Toast.makeText(context, "当前网络不可用，请检查连接", Toast.LENGTH_SHORT).show();
+                    // 重新跳到登录界面
+                    context.startActivity(new Intent(context, Login.class));
+                    MyApplication.getInstance().exit();
+                    return;
+                }
+
+                MyPersonalProgressDIalog.getInstance(context).setContent("正重新连接").showProgressDialog();
                 NetCardController.WANT(MyApplication.userName, MyApplication.userPassword, handler);
                 break;
             case Protocol.RECONNECT_LOSS:

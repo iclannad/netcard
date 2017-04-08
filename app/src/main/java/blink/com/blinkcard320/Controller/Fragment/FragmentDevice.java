@@ -488,7 +488,60 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
      */
     @Override
     public void myError(int position, int error) {
-        Log.e(TAG, "myError: 错误的操作");
+        if (position == ActivityCode.LOOKPC) {
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
+            FragmentDevice.this.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_lock_lost, FragmentDevice.this.getActivity());
+                }
+            });
+        }
+        if (position == ActivityCode.Restart) {
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
+            FragmentDevice.this.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_restart_lost, FragmentDevice.this.getActivity());
+                }
+            });
+        }
+
+        if (position == ActivityCode.Shutdown) {
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
+            FragmentDevice.this.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_shutdown_lost, FragmentDevice.this.getActivity());
+                }
+            });
+        }
+
+        if (position == ActivityCode.ChangePcPwd) {
+            // 重新开启一个心跳线程
+            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+            SendHeartThread.isClose = false;
+            sendHeartThread.start();
+
+            FragmentDevice.this.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_change_lost, FragmentDevice.this.getActivity());
+                }
+            });
+        }
     }
 
     @Override

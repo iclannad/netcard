@@ -1,6 +1,8 @@
 package smart.blink.com.card.Udp;
 
 
+import android.graphics.Bitmap;
+import android.nfc.tech.IsoDep;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -13,6 +15,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.SimpleTimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -46,9 +49,34 @@ public class UdpSocket {
     //private  Timer timer = null;
     private Timer wantTimer = null;
 
+    public static boolean isOpen;
+
+    /**
+     * 释放资源的接口
+     */
+    public static void closeUdpSocket() {
+
+        if (inThread != null) {
+            inThread = null;
+        }
+        if (socket != null) {
+            socket.close();
+            socket = null;
+            isOpen = false;
+        }
+
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
     public UdpSocket(final String ip, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
         UdpSocket.position = position;
         UdpSocket.call = call;
+
+        isOpen = true;
+
         bufferList = new ArrayList<>();
         controlList = new ArrayList<>();
         //　先开启一个接收线程
@@ -58,7 +86,7 @@ public class UdpSocket {
                 inThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        while (true) {
+                        while (isOpen) {
                             try {
                                 Thread.sleep(0);
                             } catch (InterruptedException e) {
@@ -84,36 +112,18 @@ public class UdpSocket {
                 if (UdpSocket.position == Protocol.Heart) {
 
                 } else if (UdpSocket.position == Protocol.SetUploadDir) {
-                    Log.e(TAG, "run: " + "设置上传目录失败");
+
                 } else if (UdpSocket.position == Protocol.LookFileMsg) {
                     Log.e(TAG, "run: 该问电脑文件目录失败");
                     RevicedTools.LookFileMsgFail(call);
                 } else {
-                    BlinkLog.Error("-----------");
-                    if (buffer[0] == 5) {
-                        Message message = new Message();
-                        message.obj = new byte[]{5};
-                        message.what = 0;
-                        handler.sendMessage(message);
-                    } else {
-                        //处理返回的结果
-                        Message message = new Message();
-                        message.obj = buffer;
-                        message.what = length;
-                        handler.sendMessage(message);
-                    }
+                    Log.e(TAG, "run: 已经连接不到服务器了");
+                    RevicedTools.failEventHandlerByUdp(position, UdpSocket.call);
                 }
 
-
-                // 有bug
-//                Message message = new Message();
-//                message.obj = new byte[]{5};
-//                message.what = 0;
-//                handler.sendMessage(message);
-                Log.e(TAG, "run: " + "接收不到服务器的信息");
                 CloseTime();
             }
-        }, 2000, 2000);
+        }, 2000);
 
         //　然后再开启一个发送线程
         thread = null;

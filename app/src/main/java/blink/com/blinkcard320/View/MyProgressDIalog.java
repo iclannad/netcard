@@ -61,6 +61,17 @@ public class MyProgressDIalog {
         return Instance;
     }
 
+    public static void seetDialogTimeOver(int text, Context context) {
+        if (sProgressdialog != null) {
+            sProgressdialog.changeAlertType(SweetAlertDialog.WARNING_TYPE);
+            sProgressdialog.setTitleText("");
+            sProgressdialog.setContentText(context.getResources().getString(text));
+        } else {
+            dissmissProgress();
+            UIHelper.ToastMessageNetError(context, text);
+        }
+    }
+
     public static void CreateNolmalDialog(final Context context, String title,
                                           String msg) {
         Dialog dialog = new Dialog(context, title, msg);

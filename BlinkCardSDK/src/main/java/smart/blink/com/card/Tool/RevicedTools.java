@@ -149,9 +149,8 @@ public class RevicedTools {
                 UploadingBySubServer(0, 0, buffer, call);
                 break;
             case 0:
-                // 1500内只能接受一次失败的信息
-//                if (position == Protocol.LookFileMsg && receivedDataCount == 0) {
-//                    Log.e(TAG, "RevicedTools: 访问电脑目录失败");
+                if (position == Protocol.LookFileMsg) {
+                    Log.e(TAG, "RevicedTools: 访问电脑目录失败");
 //                    receivedDataCount++;
 //                    final Timer timer = new Timer();
 //                    timer.schedule(new TimerTask() {
@@ -165,10 +164,21 @@ public class RevicedTools {
 //                        }
 //                    }, 1500, 1500);
 //                    LookFileMsgFail(call);
-//                }
+                }
                 break;
 
         }
+    }
+
+    /**
+     * 失败事件的处理
+     *
+     * @param position
+     * @param call
+     */
+    public static void failEventHandlerByUdp(int position, BlinkNetCardCall call) {
+        Log.e(TAG, "failEventHandlerByUdp: 失败事件的处理");
+        call.onFail(position);
     }
 
     /**

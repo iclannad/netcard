@@ -30,6 +30,7 @@ public class TcpSocket {
     private static Socket socket = null;
     private DataOutputStream out = null;
     private static DataInputStream in = null;
+    //private DataInputStream in = null;
     private static byte[] buf = null;
     private Thread thread = null;
     private static Thread readThread = null;
@@ -38,7 +39,36 @@ public class TcpSocket {
 
     public static ArrayList<byte[]> bufferList = null;
     public static ArrayList<Integer> controlList = null;
-    //private static Timer timer;
+    private static Timer timer;
+    private static boolean isOpen = false;
+
+    /**
+     * 关闭TCP的资源
+     */
+    public static void closeTcpSocket() {
+
+        if (in != null) {
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG, "closeTcpSocket: in error");
+            }
+            in = null;
+        }
+
+        if (socket != null) {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG, "closeTcpSocket: socket error");
+            }
+            socket = null;
+        }
+
+        isOpen = false;
+    }
 
     /**
      * 封装tcp连接
@@ -58,6 +88,8 @@ public class TcpSocket {
 
         thread = null;
 
+        isOpen = true;
+
         thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -71,7 +103,7 @@ public class TcpSocket {
                             @Override
                             public void run() {
                                 // 接收数据
-                                while (true) {
+                                while (isOpen) {
                                     try {
                                         Thread.sleep(0);
                                     } catch (InterruptedException e) {
@@ -84,25 +116,26 @@ public class TcpSocket {
                         readThread.start();
                     } catch (IOException e) {
                         BlinkLog.Error(e.toString());
+                        Log.e(TAG, "run: 发生错误了");
                     }
                 }
-                /**
-                 * 如果当前是电脑目录的话做特殊处理，如果7s内没有数据返回的就说明当明访问失败
-                 */
-//                if (position == Protocol.LookFileMsgReviced) {
-//                    timer = new Timer();
-//                    timer.schedule(new TimerTask() {
-//                        @Override
-//                        public void run() {
-//                            Log.e(TAG, "run: 访问电脑目录失败");
-//                            if (timer != null) {
-//                                Log.e(TAG, "send: 取消了定时器");
-//                                timer.cancel();
-//                                timer = null;
-//                            }
-//                        }
-//                    }, 5000);
-//                }
+
+                // 发送数据之前开启一个定时器，如果5s内没有接收到数据就判读获取数据失败
+                if (position != Protocol.Heart) {
+                    timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            if (timer != null) {
+                                Log.e(TAG, "run: 访问超时，将跳转到错误的处理方法");
+                                RevicedTools.failEventHandlerByUdp(position, TcpSocket.call = call);
+                                timer.cancel();
+                                timer = null;
+                            }
+                        }
+                    }, 5000);
+                    Log.e(TAG, "run: 我在TcpSocket里开启一个定时器");
+                }
                 Send(buffer);
             }
         });
@@ -114,37 +147,42 @@ public class TcpSocket {
         return socket;
     }
 
-
     private void Send(byte[] buffer) {
         BlinkLog.Print("send: " + Arrays.toString(buffer));
-        try {
-            out = new DataOutputStream(socket.getOutputStream());
-            out.write(buffer);
-            out.flush();
-        } catch (IOException e) {
-            BlinkLog.Error(e.toString());
+        if (socket != null) {
+            try {
+                out = new DataOutputStream(socket.getOutputStream());
+                out.write(buffer);
+                out.flush();
+            } catch (IOException e) {
+                BlinkLog.Error(e.toString());
+            }
         }
     }
-
 
     private void Write(byte[] buffer) {
         int length = 0;
         try {
-            // 没有数据来的话就会在这里阻塞
-            length = in.read(buffer);
-            BlinkLog.Print("received: " + Arrays.toString(buffer));
-
-//            // 访问文件时做特殊处理
-//            if (position == Protocol.LookFileMsgReviced) {
-//                if (timer != null) {
-//                    Log.e(TAG, "Write: 取消了定时器");
-//                    timer.cancel();
-//                    timer = null;
-//                }
-//            }
-
+            if (in != null) {
+                length = in.read(buffer);
+            }
         } catch (IOException e) {
             BlinkLog.Error(e.toString());
+        }
+
+        if (buffer[0] == 0) {
+            return;
+        }
+
+        BlinkLog.Print("received: " + Arrays.toString(buffer));
+
+        if (position != Protocol.Heart) {
+            // 如果接收到数据就把定时器给关掉
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+                Log.e(TAG, "Write: 我接收到数据现在要关闭时定时器");
+            }
         }
 
         /**
@@ -158,9 +196,16 @@ public class TcpSocket {
                 handler.sendMessage(message);
                 return;
             } else {
+                // 访问文件的数据添加到集合中
                 bufferList.add(Arrays.copyOfRange(buffer, 0, buffer.length));
                 controlList.add((int) buffer[4]);
             }
+        } else if (position == Protocol.Heart) {
+            // 在主线程用中调用方法
+            Message message = Message.obtain();
+            message.obj = buffer;
+            message.what = length;
+            handler.sendMessage(message);
         } else {
             // 在主线程用中调用方法
             Message message = Message.obtain();
@@ -168,7 +213,7 @@ public class TcpSocket {
             message.what = length;
             handler.sendMessage(message);
         }
-
+        buf = new byte[1296];
 
     }
 

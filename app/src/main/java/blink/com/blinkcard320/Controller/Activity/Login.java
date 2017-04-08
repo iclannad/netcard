@@ -536,10 +536,16 @@ public class Login extends BaseActivity implements HandlerImpl {
     @Override
     public void myError(int position, int error) {
         if (position == ActivityCode.HELLO) {
-            //打洞失败则申请子服务器
-            MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
-            MyPersonalProgressDIalog.getInstance(this).setContent("正通过服务器连接").showProgressDialog();
-            NetCardController.RelayMsg(this);
+            Login.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //打洞失败则申请子服务器
+                    MyPersonalProgressDIalog.getInstance(Login.this).dissmissProgress();
+                    MyPersonalProgressDIalog.getInstance(Login.this).setContent("正通过服务器连接").showProgressDialog();
+                    NetCardController.RelayMsg(Login.this);
+                }
+            });
+
         }
 
         if (position == ActivityCode.WANT) {
