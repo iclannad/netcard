@@ -120,8 +120,7 @@ public class TcpSocket {
                     }
                 }
 
-//                // 发送数据之前开启一个定时器，如果5s内没有接收到数据就判读获取数据失败
-//                if (position != Protocol.Heart) {
+                if (position != Protocol.Heart) {
                     timer = new Timer();
                     timer.schedule(new TimerTask() {
                         @Override
@@ -132,9 +131,8 @@ public class TcpSocket {
                                 timer = null;
                             }
                         }
-                    }, 7000);
-//                    Log.e(TAG, "run: 我在TcpSocket里开启一个定时器");
-//                }
+                    }, 5000);
+                }
                 Send(buffer);
             }
         });
@@ -156,7 +154,7 @@ public class TcpSocket {
             } catch (IOException e) {
                 BlinkLog.Error(e.toString());
                 closeTcpSocket();
-                Log.e(TAG, "Send: TcpSocket占用的资源");
+//                Log.e(TAG, "Send: TcpSocket占用的资源");
             }
         }
     }
@@ -172,7 +170,7 @@ public class TcpSocket {
             BlinkLog.Error(e.toString());
             // 释放资源
             closeTcpSocket();
-            Log.e(TAG, "Write: 服务器挂了");
+//            Log.e(TAG, "Write: 服务器挂了");
         }
 
         if (buffer[0] == 0) {
@@ -180,14 +178,14 @@ public class TcpSocket {
         }
         BlinkLog.Print("received: " + Arrays.toString(buffer));
 
-//        if (position != Protocol.Heart) {
+        if (position != Protocol.Heart) {
             // 如果接收到数据就把定时器给关掉
             if (timer != null) {
                 timer.cancel();
                 timer = null;
                 Log.e(TAG, "Write: 我接收到数据现在要关闭时定时器");
             }
-//        }
+        }
 
         /**
          * Tcp访问电脑文件的逻辑

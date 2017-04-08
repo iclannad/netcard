@@ -899,6 +899,9 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
      */
     @Override
     public void myError(int position, int error) {
+
+        Log.e(TAG, "myError: ===" + position );
+
         if (position == ActivityCode.HELLO) {
             //打洞失败则申请子服务器
             MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
