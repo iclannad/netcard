@@ -116,26 +116,25 @@ public class TcpSocket {
                         readThread.start();
                     } catch (IOException e) {
                         BlinkLog.Error(e.toString());
-                        Log.e(TAG, "run: 发生错误了");
+                        closeTcpSocket();
                     }
                 }
 
-                // 发送数据之前开启一个定时器，如果5s内没有接收到数据就判读获取数据失败
-                if (position != Protocol.Heart) {
+//                // 发送数据之前开启一个定时器，如果5s内没有接收到数据就判读获取数据失败
+//                if (position != Protocol.Heart) {
                     timer = new Timer();
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
                             if (timer != null) {
-                                Log.e(TAG, "run: 访问超时，将跳转到错误的处理方法");
                                 RevicedTools.failEventHandlerByUdp(position, TcpSocket.call = call);
                                 timer.cancel();
                                 timer = null;
                             }
                         }
-                    }, 5000);
-                    Log.e(TAG, "run: 我在TcpSocket里开启一个定时器");
-                }
+                    }, 7000);
+//                    Log.e(TAG, "run: 我在TcpSocket里开启一个定时器");
+//                }
                 Send(buffer);
             }
         });
@@ -156,6 +155,8 @@ public class TcpSocket {
                 out.flush();
             } catch (IOException e) {
                 BlinkLog.Error(e.toString());
+                closeTcpSocket();
+                Log.e(TAG, "Send: TcpSocket占用的资源");
             }
         }
     }
@@ -163,33 +164,37 @@ public class TcpSocket {
     private void Write(byte[] buffer) {
         int length = 0;
         try {
+            // 如果Tcp服务器一死，这里是不会阻塞的
             if (in != null) {
                 length = in.read(buffer);
             }
         } catch (IOException e) {
             BlinkLog.Error(e.toString());
+            // 释放资源
+            closeTcpSocket();
+            Log.e(TAG, "Write: 服务器挂了");
         }
 
         if (buffer[0] == 0) {
             return;
         }
-
         BlinkLog.Print("received: " + Arrays.toString(buffer));
 
-        if (position != Protocol.Heart) {
+//        if (position != Protocol.Heart) {
             // 如果接收到数据就把定时器给关掉
             if (timer != null) {
                 timer.cancel();
                 timer = null;
                 Log.e(TAG, "Write: 我接收到数据现在要关闭时定时器");
             }
-        }
+//        }
 
         /**
-         * ＴＣＰ访问电脑文件的逻辑
+         * Tcp访问电脑文件的逻辑
          */
         if (buffer[0] == 5) {
             if (buffer[4] == 3) {
+                //closeTcpSocket();
                 Message message = new Message();
                 message.obj = new byte[]{5};
                 message.what = 0;
@@ -197,15 +202,10 @@ public class TcpSocket {
                 return;
             } else {
                 // 访问文件的数据添加到集合中
-                bufferList.add(Arrays.copyOfRange(buffer, 0, buffer.length));
+                //bufferList.add(Arrays.copyOfRange(buffer, 0, buffer.length));
+                bufferList.add(buffer);
                 controlList.add((int) buffer[4]);
             }
-        } else if (position == Protocol.Heart) {
-            // 在主线程用中调用方法
-            Message message = Message.obtain();
-            message.obj = buffer;
-            message.what = length;
-            handler.sendMessage(message);
         } else {
             // 在主线程用中调用方法
             Message message = Message.obtain();

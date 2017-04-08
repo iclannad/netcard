@@ -43,6 +43,8 @@ import blink.com.blinkcard320.View.FilePathLineayout;
 import blink.com.blinkcard320.View.MyPersonalProgressDIalog;
 import blink.com.blinkcard320.heart.SendHeartThread;
 import smart.blink.com.card.API.BlinkLog;
+import smart.blink.com.card.API.BlinkWeb;
+import smart.blink.com.card.Tcp.TcpSocket;
 import smart.blink.com.card.bean.LookFileRsp;
 
 public class FilePreviewActivity extends MyBaseActivity implements OnItemClickListener, OnItemLongClickListener, HandlerImpl {
@@ -148,6 +150,7 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
         setRightTitleVisiable(false);
         setTopColor(R.color.MainColorBlue);
 
+
         handler = this;
         type = getIntent().getIntExtra("FILETYPE", -1);
         list = new ArrayList<>();
@@ -174,6 +177,12 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
         initdata();
 
         if (type == ActivityCode.ComputerFile) {
+            // 释放心跳线程的资源
+            SendHeartThread.isClose = true;
+            synchronized (SendHeartThread.HeartLock) {
+                SendHeartThread.HeartLock.notify();
+            }
+
             MyPersonalProgressDIalog.getInstance(this).setContent("正读取文件").showProgressDialog();
             //获取电脑路径
             NetCardController.LookFileMsg(mCurrentPath, this);
@@ -519,7 +528,7 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                         list.add(pair);
                     }
                 } else {
-                    int length = control.size() > name.size() ? control.size() : control.size();
+                    int length = control.size() > name.size() ? name.size() : control.size();
                     for (int i = 0; i < length; i++) {
                         FileListAdapter.Pair<String, Integer> pair = new FileListAdapter.Pair<>();
                         pair.setA(name.get(i));
@@ -555,7 +564,22 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
      */
     @Override
     public void myError(int position, int error) {
+        if (position == ActivityCode.LookFileMsg) {
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // 重新开启一个心跳线程
+                    SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+                    SendHeartThread.isClose = false;
+                    sendHeartThread.start();
 
+                    // 关闭对话框
+                    FilePreviewActivity.this.finish();
+                    MyPersonalProgressDIalog.getInstance(FilePreviewActivity.this).dissmissProgress();
+                    Toast.makeText(FilePreviewActivity.this, "访问失败，请再次进入", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private void setCheckboxCancel() {

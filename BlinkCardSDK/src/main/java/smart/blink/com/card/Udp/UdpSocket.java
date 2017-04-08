@@ -103,6 +103,11 @@ public class UdpSocket {
             }
         }
 
+//        else if (UdpSocket.position == Protocol.LookFileMsg) {
+//            Log.e(TAG, "run: 该问电脑文件目录失败");
+//            RevicedTools.LookFileMsgFail(call);
+//        }
+
         timer = null;
         timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -113,17 +118,14 @@ public class UdpSocket {
 
                 } else if (UdpSocket.position == Protocol.SetUploadDir) {
 
-                } else if (UdpSocket.position == Protocol.LookFileMsg) {
-                    Log.e(TAG, "run: 该问电脑文件目录失败");
-                    RevicedTools.LookFileMsgFail(call);
-                } else {
+                }  else {
                     Log.e(TAG, "run: 已经连接不到服务器了");
                     RevicedTools.failEventHandlerByUdp(position, UdpSocket.call);
                 }
 
                 CloseTime();
             }
-        }, 2000);
+        }, 3000);
 
         //　然后再开启一个发送线程
         thread = null;
