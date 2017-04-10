@@ -81,6 +81,7 @@ public class MyUpload implements BlinkNetCardCall, TimerTaskCall {
                 uploadReq.setFilename(filename);
                 uploadReq.setSpeed(speed);
                 reqBlockId = 0;
+                lastReqBlockId = 0;
                 call.onSuccess(0, uploadReq);
 
                 // 清空定时器

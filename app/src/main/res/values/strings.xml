@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">必联云网卡2</string>
+    <string name="app_name">必联云网卡</string>
 
     <!-- string_mainactivity-->
     <string name="activity_main_exit">再按一次退出程序</string>
