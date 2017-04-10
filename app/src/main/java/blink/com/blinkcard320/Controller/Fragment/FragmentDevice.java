@@ -6,8 +6,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,14 +27,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.administrator.data_sdk.CommonIntent;
 import com.example.administrator.ui_sdk.DensityUtil;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -51,15 +45,12 @@ import blink.com.blinkcard320.Moudle.Item;
 import blink.com.blinkcard320.Moudle.skin.SkinConfig;
 import blink.com.blinkcard320.R;
 import blink.com.blinkcard320.Tool.Adapter.LGAdapter;
-import blink.com.blinkcard320.Tool.Protocol;
 import blink.com.blinkcard320.Tool.System.Tools;
 import blink.com.blinkcard320.Tool.Thread.HandlerImpl;
 import blink.com.blinkcard320.Tool.UploadUtils;
 import blink.com.blinkcard320.Tool.Utils.SharedPrefsUtils;
-import blink.com.blinkcard320.Tool.Utils.UIHelper;
 import blink.com.blinkcard320.View.DialogClick;
 import blink.com.blinkcard320.View.MyProgressDIalog;
-import blink.com.blinkcard320.camera.CameraActivity;
 import blink.com.blinkcard320.heart.SendHeartThread;
 import smart.blink.com.card.API.BlinkWeb;
 import smart.blink.com.card.bean.ChangePcPwdRsp;
@@ -227,7 +218,6 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
                         getActivity().getResources().getString(R.string.instruction_wshutdown),
                         getActivity(),
                         this);
-                Log.e(TAG, "onItemClick: " + "定时关机");
                 break;
             case 2:
                 MyProgressDIalog.createSweetDialog(getActivity(), getResources().getString(R.string.instruction_shutdown), this, ActivityCode.Shutdown);
@@ -353,7 +343,6 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
     public void Enter(int position) {
         //锁屏的操作
         if (position == ActivityCode.LOOKPC) {
-            // 访部电脑文件的时候，先暂时关闭发送心跳的线程
             // 释放心跳线程的资源
             SendHeartThread.isClose = true;
             synchronized (SendHeartThread.HeartLock) {
@@ -455,8 +444,7 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
 
             ShutdownRsp shutdownRsp = (ShutdownRsp) object;
             if (shutdownRsp.getSuccess() == 0) {
-                //MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_shutdown_recved);
-                UIHelper.ToastMessageNetError(context, R.string.main_handler_shutdown_recved);
+                MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_shutdown_recved);
             }
         }
 
@@ -470,11 +458,9 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
             ChangePcPwdRsp changePcPwdRsp = (ChangePcPwdRsp) object;
             int value = changePcPwdRsp.getSuccess();
             if (value == 0) {
-                //MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_change_sucess);
-                UIHelper.ToastMessageNetError(context, R.string.main_handler_change_sucess);
+                MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_change_sucess);
             } else {
-                //MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_original_error);
-                UIHelper.ToastMessageNetError(context, R.string.main_handler_original_error);
+                MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_original_error, context);
             }
         }
 

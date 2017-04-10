@@ -841,7 +841,7 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
             ShutdownRsp shutdownRsp = (ShutdownRsp) object;
             if (shutdownRsp.getSuccess() == 0) {
                 //MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_shutdown_recved);
-                UIHelper.ToastMessageNetError(context, R.string.main_handler_shutdown_recved);
+                MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_shutdown_recved);
             }
         }
 
@@ -855,11 +855,11 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
             ChangePcPwdRsp changePcPwdRsp = (ChangePcPwdRsp) object;
             int value = changePcPwdRsp.getSuccess();
             if (value == 0) {
-                //MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_change_sucess);
-                UIHelper.ToastMessageNetError(context, R.string.main_handler_change_sucess);
+                MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_change_sucess);
             } else {
                 //MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_original_error);
-                UIHelper.ToastMessageNetError(context, R.string.main_handler_original_error);
+                //UIHelper.ToastMessageNetError(context, R.string.main_handler_original_error);
+                MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_original_error, MainActivity.this);
             }
         }
 
