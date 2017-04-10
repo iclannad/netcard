@@ -19,13 +19,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blink.blinkp2p.R;
 import com.example.administrator.data_sdk.CommonIntent;
 import com.example.administrator.data_sdk.ImageUtil.ImageTransformation;
 
 import java.io.IOException;
 import java.util.Calendar;
 
-import blink.com.blinkcard320.R;
 import com.blink.blinkp2p.Tool.System.Tools;
 
 public class CameraActivity extends Activity implements SurfaceHolder.Callback {

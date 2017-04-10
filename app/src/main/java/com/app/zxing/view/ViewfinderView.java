@@ -29,12 +29,12 @@ import android.view.View;
 
 import com.app.zxing.camera.CameraManager;
 
+import com.blink.blinkp2p.R;
 import com.google.zxing.ResultPoint;
 
 import java.util.Collection;
 import java.util.HashSet;
 
-import blink.com.blinkcard320.R;
 import com.blink.blinkp2p.Tool.Utils.UIHelper;
 
 /**

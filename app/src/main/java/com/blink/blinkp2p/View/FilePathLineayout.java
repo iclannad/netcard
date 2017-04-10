@@ -14,11 +14,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+import com.blink.blinkp2p.R;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import blink.com.blinkcard320.R;
 
 /**
  * Created by Runajiahui on 15-11-13.

@@ -11,13 +11,13 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
+import com.blink.blinkp2p.R;
+import com.blink.blinkp2p.Tool.Protocol;
 import com.blink.blinkp2p.Tool.Utils.Mime;
 
 import java.util.List;
 
-import blink.com.blinkcard320.R;
-import com.blink.blinkp2p.Tool.Protocol;
+//import blink.com.blinkcard320.R;
 
 public class FileListAdapter extends BaseAdapter {
 

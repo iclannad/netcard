@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.application.MyApplication;
 import com.blink.blinkp2p.Controller.Activity.Login;
-import blink.com.blinkcard320.R;
 import com.blink.blinkp2p.Tool.System.Tools;
 
 import smart.blink.com.card.Tcp.TcpSocket;

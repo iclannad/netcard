@@ -12,12 +12,12 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.blink.blinkp2p.R;
 import com.example.administrator.ui_sdk.DensityUtil;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
 import java.lang.reflect.Field;
 
-import blink.com.blinkcard320.R;
 
 /**
  * Created by Administrator on 2017/3/20.

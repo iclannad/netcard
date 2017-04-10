@@ -6,11 +6,11 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.blink.blinkp2p.Controller.ActivityCode;
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
 
 import com.blink.blinkp2p.Controller.Activity.base.MyBaseActivity;
 import com.blink.blinkp2p.Controller.NetCardController;
-import blink.com.blinkcard320.R;
 
 import com.blink.blinkp2p.Tool.System.Tools;
 import com.blink.blinkp2p.Tool.Utils.UIHelper;

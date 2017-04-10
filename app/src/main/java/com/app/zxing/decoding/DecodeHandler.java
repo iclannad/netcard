@@ -25,6 +25,7 @@ import android.util.Log;
 import com.app.zxing.MipcaActivityCapture;
 import com.app.zxing.camera.CameraManager;
 import com.app.zxing.camera.PlanarYUVLuminanceSource;
+import com.blink.blinkp2p.R;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
@@ -34,7 +35,7 @@ import com.google.zxing.common.HybridBinarizer;
 
 import java.util.Hashtable;
 
-import blink.com.blinkcard320.R;
+
 
 final class DecodeHandler extends Handler {
 

@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.System.MyToast;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
 import com.gc.materialdesign.views.ButtonFlat;
@@ -23,7 +24,6 @@ import java.util.Date;
 
 import com.blink.blinkp2p.Controller.NetCardController;
 
-import blink.com.blinkcard320.R;
 
 import com.blink.blinkp2p.Tool.Utils.UIHelper;
 

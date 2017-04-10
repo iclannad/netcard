@@ -12,7 +12,7 @@ import com.blink.blinkp2p.Controller.Activity.slidingmenu.settings.QuickStartAct
 import com.blink.blinkp2p.Controller.Activity.slidingmenu.settings.SkinActivity;
 
 import com.blink.blinkp2p.Moudle.Comment;
-import blink.com.blinkcard320.R;
+import com.blink.blinkp2p.R;
 
 /**
  * Created by Administrator on 2017/3/20.

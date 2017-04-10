@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.RelativeLayout;
 
+import com.blink.blinkp2p.R;
 import com.example.administrator.ui_sdk.DensityUtil;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 import com.blink.blinkp2p.Moudle.Item;
 import com.blink.blinkp2p.Moudle.ViewHolder;
 import com.blink.blinkp2p.Moudle.skin.SkinConfig;
-import blink.com.blinkcard320.R;
+
 import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
 
 /**

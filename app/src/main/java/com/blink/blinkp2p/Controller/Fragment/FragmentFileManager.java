@@ -15,13 +15,13 @@ import android.widget.LinearLayout;
 
 import com.blink.blinkp2p.Controller.Activity.TransSportActivity;
 import com.blink.blinkp2p.Controller.ActivityCode;
+import com.blink.blinkp2p.R;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
 import java.util.ArrayList;
 
 import com.blink.blinkp2p.Controller.Activity.FileRecordActivity;
 import com.blink.blinkp2p.Moudle.Item;
-import blink.com.blinkcard320.R;
 import com.blink.blinkp2p.Tool.Adapter.LGAdapter;
 
 @SuppressLint("NewApi")

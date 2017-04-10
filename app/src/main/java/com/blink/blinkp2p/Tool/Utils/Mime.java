@@ -4,11 +4,12 @@ import android.content.Intent;
 import android.net.Uri;
 
 
+import com.blink.blinkp2p.R;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import blink.com.blinkcard320.R;
 
 public class Mime {
     /**

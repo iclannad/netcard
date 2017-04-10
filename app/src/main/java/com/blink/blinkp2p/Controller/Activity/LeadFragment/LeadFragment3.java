@@ -11,7 +11,8 @@ import android.widget.TextView;
 
 import com.blink.blinkp2p.Controller.Activity.Login;
 import com.blink.blinkp2p.Controller.Activity.splash.SplashActivity;
-import blink.com.blinkcard320.R;
+
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
 
 /**

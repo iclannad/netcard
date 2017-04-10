@@ -7,7 +7,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import blink.com.blinkcard320.R;
+import com.blink.blinkp2p.R;
 
 
 /**

@@ -8,7 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import blink.com.blinkcard320.R;
+import com.blink.blinkp2p.R;
+
 
 /**
  * Created by Administrator on 2017/3/20.

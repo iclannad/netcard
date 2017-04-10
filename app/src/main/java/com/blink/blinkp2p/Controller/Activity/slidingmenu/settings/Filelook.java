@@ -12,6 +12,7 @@ import android.widget.ListView;
 
 import com.blink.blinkp2p.Controller.Activity.base.MyBaseActivity;
 import com.blink.blinkp2p.Moudle.skin.SkinConfig;
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Adapter.FileDAOAdapter;
 import com.blink.blinkp2p.Tool.Adapter.FileListAdapter;
 import com.blink.blinkp2p.Tool.Protocol;
@@ -27,7 +28,6 @@ import java.util.Map;
 
 import com.blink.blinkp2p.Moudle.Comment;
 
-import blink.com.blinkcard320.R;
 
 import com.blink.blinkp2p.View.FilePathLineayout;
 

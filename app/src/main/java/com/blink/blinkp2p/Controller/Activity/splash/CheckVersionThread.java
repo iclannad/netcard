@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.System.Tools;
 import com.blink.blinkp2p.Tool.Utils.StringUtils;
 import com.blink.blinkp2p.View.MyPersonalProgressDIalog;
@@ -20,7 +21,6 @@ import com.lidroid.xutils.http.client.HttpRequest;
 
 import java.io.File;
 
-import blink.com.blinkcard320.R;
 
 /**
  * Created by Administrator on 2017/4/10.

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.blink.blinkp2p.Controller.Activity.LeadActivity;
 import com.blink.blinkp2p.Controller.Activity.Login;
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.View.MyPersonalProgressDIalog;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
@@ -22,7 +23,6 @@ import java.util.TimerTask;
 import com.blink.blinkp2p.Moudle.Comment;
 import com.blink.blinkp2p.Moudle.skin.SkinConfig;
 
-import blink.com.blinkcard320.R;
 
 import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
 

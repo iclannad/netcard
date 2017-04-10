@@ -10,7 +10,7 @@ import java.util.Map;
 
 import com.blink.blinkp2p.Controller.Activity.base.MyBaseActivity;
 import com.blink.blinkp2p.Moudle.Comment;
-import blink.com.blinkcard320.R;
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Adapter.DeviceGridViewAdapter;
 import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
 import com.blink.blinkp2p.Tool.Utils.UIHelper;

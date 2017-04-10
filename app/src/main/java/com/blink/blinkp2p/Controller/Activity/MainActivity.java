@@ -29,6 +29,7 @@ import com.blink.blinkp2p.Controller.Activity.slidingmenu.FeedbackActivity;
 import com.blink.blinkp2p.Controller.Activity.slidingmenu.UserinfoActivity;
 import com.blink.blinkp2p.Controller.Activity.slidingmenu.settings.QuickStartActivity;
 import com.blink.blinkp2p.Controller.ActivityCode;
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.System.MyToast;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
 import com.blink.blinkp2p.heart.HeartHandler;
@@ -59,7 +60,7 @@ import com.blink.blinkp2p.Moudle.DownorUpload;
 import com.blink.blinkp2p.Moudle.Item;
 import com.blink.blinkp2p.Moudle.skin.SkinConfig;
 
-import blink.com.blinkcard320.R;
+
 
 import com.blink.blinkp2p.Tool.Adapter.LGAdapter;
 import com.blink.blinkp2p.Tool.System.Tools;

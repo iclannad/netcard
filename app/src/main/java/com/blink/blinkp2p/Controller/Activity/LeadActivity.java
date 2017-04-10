@@ -10,13 +10,13 @@ import android.widget.ImageView;
 import com.blink.blinkp2p.Controller.Activity.LeadFragment.LeadFragment1;
 import com.blink.blinkp2p.Controller.Activity.LeadFragment.LeadFragment2;
 import com.blink.blinkp2p.Controller.Activity.LeadFragment.LeadFragment3;
+import com.blink.blinkp2p.R;
 import com.example.administrator.data_sdk.ImageUtil.ImageTransformation;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 import com.example.administrator.ui_sdk.Other.MyViewPagerItemAdapter;
 
 import java.util.ArrayList;
 
-import blink.com.blinkcard320.R;
 
 /**
  * Created by Administrator on 2017/4/5.

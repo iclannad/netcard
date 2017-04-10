@@ -7,7 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import blink.com.blinkcard320.R;
+import com.blink.blinkp2p.R;
+
 
 /**
  * Created by Administrator on 2017/4/5.

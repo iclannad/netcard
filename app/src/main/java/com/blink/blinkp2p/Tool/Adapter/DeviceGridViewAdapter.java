@@ -9,12 +9,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.blink.blinkp2p.R;
 import com.example.administrator.ui_sdk.DensityUtil;
 
 import java.util.ArrayList;
 import java.util.Map;
 
-import blink.com.blinkcard320.R;
 
 public class DeviceGridViewAdapter extends BaseAdapter {
 

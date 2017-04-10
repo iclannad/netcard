@@ -22,13 +22,14 @@ import com.app.zxing.camera.CameraManager;
 import com.app.zxing.decoding.CaptureActivityHandler;
 import com.app.zxing.decoding.InactivityTimer;
 import com.app.zxing.view.ViewfinderView;
+import com.blink.blinkp2p.R;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 
 import java.io.IOException;
 import java.util.Vector;
 
-import blink.com.blinkcard320.R;
+
 
 /**
  * Initial the camera

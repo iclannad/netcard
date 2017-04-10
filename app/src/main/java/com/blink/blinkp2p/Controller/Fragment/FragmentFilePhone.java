@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 
 import com.blink.blinkp2p.Controller.Activity.FilePreviewActivity;
 import com.blink.blinkp2p.Controller.ActivityCode;
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Adapter.LGAdapter;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
@@ -32,7 +33,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.blink.blinkp2p.Moudle.Item;
-import blink.com.blinkcard320.R;
 
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)

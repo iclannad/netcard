@@ -7,12 +7,12 @@ import android.widget.GridView;
 
 import com.blink.blinkp2p.Moudle.skin.SkinBean;
 import com.blink.blinkp2p.Moudle.skin.SkinConfig;
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Adapter.SkinAdapter;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
 import java.util.ArrayList;
 
-import blink.com.blinkcard320.R;
 
 import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
 

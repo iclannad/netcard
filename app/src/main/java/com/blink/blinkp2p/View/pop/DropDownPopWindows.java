@@ -12,7 +12,7 @@ import android.widget.PopupWindow;
 
 import java.util.ArrayList;
 
-import blink.com.blinkcard320.R;
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.View.pop.Dao.LoginDAO;
 
 /**

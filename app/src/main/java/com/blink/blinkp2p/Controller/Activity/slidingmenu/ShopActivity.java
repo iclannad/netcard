@@ -3,11 +3,11 @@ package com.blink.blinkp2p.Controller.Activity.slidingmenu;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import com.blink.blinkp2p.R;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 import com.example.administrator.ui_sdk.MyWebClient;
 import com.example.administrator.ui_sdk.View.MyWebView;
 
-import blink.com.blinkcard320.R;
 
 /**
  * Created by Administrator on 2017/3/20.

@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Adapter.DownUpAdapter;
 
 import java.text.DecimalFormat;
@@ -18,7 +19,6 @@ import com.blink.blinkp2p.Moudle.Comment;
 import com.blink.blinkp2p.Moudle.DownorUpload;
 import com.blink.blinkp2p.Moudle.Item;
 import com.blink.blinkp2p.Moudle.skin.SkinConfig;
-import blink.com.blinkcard320.R;
 
 import com.blink.blinkp2p.Tool.DownUtils;
 import com.blink.blinkp2p.Tool.UploadUtils;

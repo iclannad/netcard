@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 
 import com.blink.blinkp2p.Moudle.skin.SkinBean;
-import blink.com.blinkcard320.R;
+import com.blink.blinkp2p.R;
 
 /**
  * Created by Administrator on 2017/3/20.

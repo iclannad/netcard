@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 import com.blink.blinkp2p.Controller.Activity.Login;
 import com.blink.blinkp2p.Controller.NetCardController;
-import blink.com.blinkcard320.R;
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Protocol;
 import com.blink.blinkp2p.Tool.System.Tools;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;

@@ -4,8 +4,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.blink.blinkp2p.Controller.Activity.base.MyBaseActivity;
+import com.blink.blinkp2p.R;
 
-import blink.com.blinkcard320.R;
 
 /**
  * Created by Administrator on 2017/3/20.

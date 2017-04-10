@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.blink.blinkp2p.Controller.Activity.MainActivity;
 import com.blink.blinkp2p.Controller.Activity.base.MyBaseActivity;
 import com.blink.blinkp2p.Controller.ActivityCode;
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Adapter.FileDAOAdapter;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
 
@@ -23,7 +24,7 @@ import java.util.Map;
 import com.blink.blinkp2p.Controller.NetCardController;
 import com.blink.blinkp2p.Moudle.Comment;
 import com.blink.blinkp2p.Moudle.skin.SkinConfig;
-import blink.com.blinkcard320.R;
+
 
 import com.blink.blinkp2p.Tool.Adapter.FileListAdapter;
 import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;

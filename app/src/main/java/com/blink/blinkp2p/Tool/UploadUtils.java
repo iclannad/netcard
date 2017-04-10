@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.blink.blinkp2p.Controller.Activity.MainActivity;
 import com.blink.blinkp2p.Controller.ActivityCode;
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Dao.MsgDAO;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
 
@@ -17,7 +18,7 @@ import java.util.Date;
 import com.blink.blinkp2p.Controller.NetCardController;
 import com.blink.blinkp2p.Moudle.Comment;
 import com.blink.blinkp2p.Moudle.DownorUpload;
-import blink.com.blinkcard320.R;
+
 
 import com.blink.blinkp2p.View.DownUpCallback;
 import com.blink.blinkp2p.application.MyApplication;

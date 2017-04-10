@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.blink.blinkp2p.Controller.Activity.base.MyBaseActivity;
 import com.blink.blinkp2p.Controller.ActivityCode;
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.System.MyToast;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
 import com.blink.blinkp2p.Tool.Utils.Mime;
@@ -33,7 +34,7 @@ import java.util.Map;
 import com.blink.blinkp2p.Controller.NetCardController;
 import com.blink.blinkp2p.Moudle.Comment;
 import com.blink.blinkp2p.Moudle.DownorUpload;
-import blink.com.blinkcard320.R;
+
 import com.blink.blinkp2p.Tool.Adapter.FileListAdapter;
 import com.blink.blinkp2p.Tool.DownUtils;
 import com.blink.blinkp2p.Tool.System.Tools;

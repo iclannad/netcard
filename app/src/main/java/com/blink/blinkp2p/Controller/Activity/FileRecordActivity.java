@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.blink.blinkp2p.Controller.Activity.base.MyBaseActivity;
 import com.blink.blinkp2p.Moudle.skin.SkinConfig;
+import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Dao.MsgDAO;
 import com.blink.blinkp2p.Tool.Dao.SQLHelper;
 import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import blink.com.blinkcard320.R;
 
 public class FileRecordActivity extends MyBaseActivity {
 

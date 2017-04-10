@@ -28,12 +28,13 @@ import android.util.Log;
 import com.app.zxing.MipcaActivityCapture;
 import com.app.zxing.camera.CameraManager;
 import com.app.zxing.view.ViewfinderResultPointCallback;
+import com.blink.blinkp2p.R;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 
 import java.util.Vector;
 
-import blink.com.blinkcard320.R;
+
 
 /**
  * This class handles all the messaging which comprises the state machine for capture.

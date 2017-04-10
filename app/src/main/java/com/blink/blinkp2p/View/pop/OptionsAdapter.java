@@ -11,9 +11,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.blink.blinkp2p.R;
+
 import java.util.ArrayList;
 
-import blink.com.blinkcard320.R;
 
 /**
  * Created by Administrator on 2017/4/7.
