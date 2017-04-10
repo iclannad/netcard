@@ -30,9 +30,11 @@ import android.widget.Toast;
 import com.blink.blinkp2p.Controller.Activity.MainActivity;
 import com.blink.blinkp2p.Controller.ActivityCode;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
+import com.blink.blinkp2p.View.MyPersonalProgressDIalog;
 import com.example.administrator.ui_sdk.DensityUtil;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
+import java.io.DataOutput;
 import java.io.File;
 import java.net.DatagramSocket;
 import java.util.ArrayList;
@@ -44,7 +46,9 @@ import com.blink.blinkp2p.Moudle.Comment;
 import com.blink.blinkp2p.Moudle.DownorUpload;
 import com.blink.blinkp2p.Moudle.Item;
 import com.blink.blinkp2p.Moudle.skin.SkinConfig;
+
 import blink.com.blinkcard320.R;
+
 import com.blink.blinkp2p.Tool.Adapter.LGAdapter;
 import com.blink.blinkp2p.Tool.System.Tools;
 import com.blink.blinkp2p.Tool.UploadUtils;
@@ -52,6 +56,7 @@ import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
 import com.blink.blinkp2p.View.DialogClick;
 import com.blink.blinkp2p.View.MyProgressDIalog;
 import com.blink.blinkp2p.heart.SendHeartThread;
+
 import smart.blink.com.card.API.BlinkWeb;
 import smart.blink.com.card.bean.ChangePcPwdRsp;
 import smart.blink.com.card.bean.LookPCRsp;
@@ -371,6 +376,7 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
             synchronized (SendHeartThread.HeartLock) {
                 SendHeartThread.HeartLock.notify();
             }
+
             //关机
             NetCardController.Shutdown(0, this);
         }
@@ -443,8 +449,10 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
             sendHeartThread.start();
 
             ShutdownRsp shutdownRsp = (ShutdownRsp) object;
+            Log.e(TAG, "myHandler: shutdownRsp.getSuccess() ==" + shutdownRsp.getSuccess());
             if (shutdownRsp.getSuccess() == 0) {
-                MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_shutdown_recved);
+                //MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_shutdown_recved);
+                Toast.makeText(context, R.string.main_handler_shutdown_recved, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -510,7 +518,9 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
             FragmentDevice.this.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_shutdown_lost, FragmentDevice.this.getActivity());
+                    //MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_shutdown_lost, FragmentDevice.this.getActivity());
+                    MyPersonalProgressDIalog.getInstance(getActivity()).dissmissProgress();
+                    Toast.makeText(context, R.string.main_handler_shutdown_lost, Toast.LENGTH_SHORT).show();
                 }
             });
         }

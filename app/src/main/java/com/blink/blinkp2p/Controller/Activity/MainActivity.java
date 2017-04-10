@@ -58,7 +58,9 @@ import com.blink.blinkp2p.Moudle.Comment;
 import com.blink.blinkp2p.Moudle.DownorUpload;
 import com.blink.blinkp2p.Moudle.Item;
 import com.blink.blinkp2p.Moudle.skin.SkinConfig;
+
 import blink.com.blinkcard320.R;
+
 import com.blink.blinkp2p.Tool.Adapter.LGAdapter;
 import com.blink.blinkp2p.Tool.System.Tools;
 import com.blink.blinkp2p.Tool.UploadUtils;
@@ -898,7 +900,7 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
     @Override
     public void myError(int position, int error) {
 
-        Log.e(TAG, "myError: ===" + position );
+        Log.e(TAG, "myError: ===" + position);
 
         if (position == ActivityCode.HELLO) {
             //打洞失败则申请子服务器
@@ -943,7 +945,9 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
             MainActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_shutdown_lost, MainActivity.this);
+                    //MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_shutdown_lost, MainActivity.this);
+                    MyPersonalProgressDIalog.getInstance(MainActivity.this).dissmissProgress();
+                    Toast.makeText(context, R.string.main_handler_shutdown_lost, Toast.LENGTH_SHORT).show();
                 }
             });
         }

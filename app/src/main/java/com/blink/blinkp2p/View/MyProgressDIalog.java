@@ -22,6 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.blink.blinkp2p.Controller.NetCardController;
+
 import blink.com.blinkcard320.R;
 
 import com.blink.blinkp2p.Tool.Utils.UIHelper;
@@ -474,7 +475,8 @@ public class MyProgressDIalog {
 //                            new CountTime(Protocol.SHUTDOWN,
 //                                    MainActivity.MainHandler).start();
 //                        }
-
+                        // 登录提示
+                        MyPersonalProgressDIalog.getInstance(context).setContent("向电脑发送关闭信息...").showProgressDialog();
                         Log.e(TAG, "onTimeSet: " + msgtime);
                         NetCardController.Shutdown(-msgtime, mHandler);
 
@@ -554,7 +556,6 @@ public class MyProgressDIalog {
 //        }
         mProgressDialog = new ProgressDialog(context, content);
     }
-
 
 
 }
