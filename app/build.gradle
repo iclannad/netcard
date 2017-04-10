@@ -1,15 +1,27 @@
 apply plugin: 'com.android.application'
 
 android {
+
+    useLibrary'org.apache.http.legacy'
+
+    signingConfigs {
+        blinknetcard {
+            keyAlias 'blink'
+            keyPassword '3433366a'
+            storeFile file('E:/Android Work/Key Store/blinknetcard.jks')
+            storePassword '3433366a'
+        }
+    }
+
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "blink.com.blinkcard"
+        applicationId "com.blink.blinkp2p"
         minSdkVersion 10
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0"
+        versionName "1.1.0"
     }
     buildTypes {
         release {
@@ -29,4 +41,5 @@ dependencies {
     compile files('libs/meterial_library.jar')
     compile project(':BlinkCardSDK')
     compile files('libs/zxing.jar')
+    compile files('libs/xUtils-2.6.14.jar')
 }

@@ -27,39 +27,39 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Controller.Activity.SplashActivity">
+        <activity android:name="com.blink.blinkp2p.Controller.Activity.splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Controller.Activity.LeadActivity"></activity>
+        <activity android:name="com.blink.blinkp2p.Controller.Activity.LeadActivity"></activity>
         <activity
-            android:name=".Controller.Activity.Login"
+            android:name="com.blink.blinkp2p.Controller.Activity.Login"
             android:launchMode="singleTask"></activity>
         <activity android:name="com.app.zxing.MipcaActivityCapture"/>
         <activity
-            android:name=".Controller.Activity.MainActivity"
+            android:name="com.blink.blinkp2p.Controller.Activity.MainActivity"
             android:launchMode="singleTask" />
-        <activity android:name=".camera.CameraActivity" />
-        <activity android:name=".Controller.Activity.TransSportActivity" />
-        <activity android:name=".Controller.Activity.FileRecordActivity" />
-        <activity android:name=".Controller.Activity.FilePreviewActivity" />
+        <activity android:name="com.blink.blinkp2p.camera.CameraActivity" />
+        <activity android:name="com.blink.blinkp2p.Controller.Activity.TransSportActivity" />
+        <activity android:name="com.blink.blinkp2p.Controller.Activity.FileRecordActivity" />
+        <activity android:name="com.blink.blinkp2p.Controller.Activity.FilePreviewActivity" />
 
         <!--子菜单-->
-        <activity android:name=".Controller.Activity.slidingmenu.AboutActivity" />
-        <activity android:name=".Controller.Activity.slidingmenu.FeedbackActivity" />
-        <activity android:name=".Controller.Activity.slidingmenu.SettingsActivity" />
-        <activity android:name=".Controller.Activity.slidingmenu.ShopActivity" />
-        <activity android:name=".Controller.Activity.slidingmenu.UserinfoActivity" />
-        <activity android:name=".Controller.Activity.slidingmenu.AlterUserPWDActivity" />
+        <activity android:name="com.blink.blinkp2p.Controller.Activity.slidingmenu.AboutActivity" />
+        <activity android:name="com.blink.blinkp2p.Controller.Activity.slidingmenu.FeedbackActivity" />
+        <activity android:name="com.blink.blinkp2p.Controller.Activity.slidingmenu.SettingsActivity" />
+        <activity android:name="com.blink.blinkp2p.Controller.Activity.slidingmenu.ShopActivity" />
+        <activity android:name="com.blink.blinkp2p.Controller.Activity.slidingmenu.UserinfoActivity" />
+        <activity android:name="com.blink.blinkp2p.Controller.Activity.slidingmenu.AlterUserPWDActivity" />
 
         <!--设置-->
-        <activity android:name=".Controller.Activity.slidingmenu.settings.Filelook" />
-        <activity android:name=".Controller.Activity.slidingmenu.settings.QuickStartActivity" />
-        <activity android:name=".Controller.Activity.slidingmenu.settings.SkinActivity" />
-        <activity android:name=".Controller.Activity.slidingmenu.settings.FilelookPC" />
+        <activity android:name="com.blink.blinkp2p.Controller.Activity.slidingmenu.settings.Filelook" />
+        <activity android:name="com.blink.blinkp2p.Controller.Activity.slidingmenu.settings.QuickStartActivity" />
+        <activity android:name="com.blink.blinkp2p.Controller.Activity.slidingmenu.settings.SkinActivity" />
+        <activity android:name="com.blink.blinkp2p.Controller.Activity.slidingmenu.settings.FilelookPC" />
 
     </application>
 

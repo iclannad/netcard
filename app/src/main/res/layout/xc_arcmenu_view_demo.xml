@@ -5,7 +5,7 @@
     android:background="@color/Grey"
     android:fitsSystemWindows="true">
 
-    <blink.com.blinkcard320.View.MGridView
+    <com.blink.blinkp2p.View.MGridView
         android:id="@+id/gridview"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

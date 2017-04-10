@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import blink.com.blinkcard320.R;
-import blink.com.blinkcard320.Tool.Utils.UIHelper;
+import com.blink.blinkp2p.Tool.Utils.UIHelper;
 
 /**
  * This view is overlaid on top of the camera preview. It adds the viewfinder

@@ -9,12 +9,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <blink.com.blinkcard320.View.FilePathLineayout
+        <com.blink.blinkp2p.View.FilePathLineayout
             android:id="@+id/settings_myfilepath"
             android:layout_width="match_parent"
             android:layout_height="@dimen/y20"
             android:background="@color/filepath"
-            android:gravity="center_vertical"></blink.com.blinkcard320.View.FilePathLineayout>
+            android:gravity="center_vertical"></com.blink.blinkp2p.View.FilePathLineayout>
 
         <LinearLayout
             android:id="@+id/activity_save_filepath"

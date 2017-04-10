@@ -34,7 +34,7 @@
             android:textColor="@android:color/white" />
     </RelativeLayout>
 
-    <blink.com.blinkcard320.View.FilePathLineayout
+    <com.blink.blinkp2p.View.FilePathLineayout
         android:id="@+id/activity_myfilepath"
         android:layout_width="match_parent"
         android:layout_height="@dimen/butHeight"
