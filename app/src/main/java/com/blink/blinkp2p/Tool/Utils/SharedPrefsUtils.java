@@ -22,7 +22,14 @@ final public class SharedPrefsUtils {
      */
     public static String getStringPreference(Context context, String key) {
         String value = null;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        //SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        /**---------------------------------------------------------------------------------------*/
+        // 为了兼容旧版本，不然不会这么写
+        SharedPreferences preferences = context.getSharedPreferences("first_pref",
+                Context.MODE_PRIVATE);
+        /**---------------------------------------------------------------------------------------*/
+
         if (preferences != null) {
             value = preferences.getString(key, null);
         }
@@ -38,7 +45,13 @@ final public class SharedPrefsUtils {
      * @return true if the new value was successfully written to persistent storage.
      */
     public static boolean setStringPreference(Context context, String key, String value) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        //SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        /**---------------------------------------------------------------------------------------*/
+        // 为了兼容旧版本，不然不会这么写
+        SharedPreferences preferences = context.getSharedPreferences("first_pref",
+                Context.MODE_PRIVATE);
+        /**---------------------------------------------------------------------------------------*/
         if (preferences != null && !TextUtils.isEmpty(key)) {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(key, value);

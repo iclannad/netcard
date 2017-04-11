@@ -7,7 +7,7 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.blink.blinkp2p.Controller.Activity.Login;
+import com.blink.blinkp2p.Controller.Activity.login.Login;
 import com.blink.blinkp2p.Controller.NetCardController;
 import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Protocol;

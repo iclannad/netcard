@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.blink.blinkp2p.Controller.Activity.Login;
+import com.blink.blinkp2p.Controller.Activity.login.Login;
 import com.blink.blinkp2p.Controller.Activity.splash.SplashActivity;
 
 import com.blink.blinkp2p.R;

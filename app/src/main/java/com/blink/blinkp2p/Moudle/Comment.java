@@ -49,6 +49,24 @@ public class Comment {
     public static final String PASSWORD = "login_password";
     public static final String IS_RELOGIN = "is_relogin";
 
+    /**
+     * 这是为了兼容旧版本
+     */
+    public final static String LOGINDATA = "logindata";
+
+    /**
+     * 这是为了兼容旧版本，快截启动
+     */
+    public final static String ICON_QUITSTART = "QuitStart";
+    public final static String ICON_RESTART = "RESTART";
+    public final static String ICON_LOCLPC = "LOOKPC";
+    public final static String ICON_CHANGEPASSWD = "CHANGEPW";
+    public final static String ICON_CAMERA = "CAMERA";
+    public final static String ICON_TIMESHUTDOWN = "TIMESHUTDOWN";
+    public final static String ICON_SHUTDOWN = "SHUTDOWN";
+    public final static String ICON_GETUPDATE = "GETUPDATE";
+    public final static String ICON_UPDATE = "UPDATE";
+
 
     /**
      * 下载列表的链表

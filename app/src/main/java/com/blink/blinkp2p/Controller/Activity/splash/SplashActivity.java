@@ -11,14 +11,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.blink.blinkp2p.Controller.Activity.LeadActivity;
-import com.blink.blinkp2p.Controller.Activity.Login;
+import com.blink.blinkp2p.Controller.Activity.login.Login;
 import com.blink.blinkp2p.R;
+import com.blink.blinkp2p.Tool.System.Tools;
 import com.blink.blinkp2p.View.MyPersonalProgressDIalog;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
 import java.io.File;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import com.blink.blinkp2p.Moudle.Comment;
 import com.blink.blinkp2p.Moudle.skin.SkinConfig;
@@ -86,7 +85,10 @@ public class SplashActivity extends BaseActivity {
 
     // 进入登录页面或者引导页
     private void goHome() {
-        if (isFirstEnter) {
+
+        //isFirstEnter = Tools.isFirstRunApplication(SplashActivity.this);
+        // 为了兼容旧版本的数据
+        if (Tools.isFirstRunApplication(SplashActivity.this)) {
             goGuide();
             return;
         }

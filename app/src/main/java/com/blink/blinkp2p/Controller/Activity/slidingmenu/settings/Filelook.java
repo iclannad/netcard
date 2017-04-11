@@ -131,10 +131,13 @@ public class Filelook extends MyBaseActivity implements AdapterView.OnItemClickL
          * 判断是从文件下载还是从照片存储位置过来的
          */
         savetype = getIntent().getStringExtra(Comment.FILETYPE);
+        Log.e(TAG, "init: savetype===" + savetype);
+
         if (savetype.equals(Comment.DOWNFILE)) {
             // 从sharedPrefs中读取以前保存的路径
             setTitle(getResources().getString(R.string.setfiledownpath));
             currentfile = SharedPrefsUtils.getStringPreference(Filelook.this, Comment.DOWNFILE);
+            Log.e(TAG, "init: currentfile===" + currentfile);
         } else if (savetype.equals(Comment.PICTUREFILE)) {
             // 从sharedPrefs中读取以前保存的路径
             setTitle(getResources().getString(R.string.setpicpath));

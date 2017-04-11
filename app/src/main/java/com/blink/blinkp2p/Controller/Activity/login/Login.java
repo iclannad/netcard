@@ -1,4 +1,4 @@
-package com.blink.blinkp2p.Controller.Activity;
+package com.blink.blinkp2p.Controller.Activity.login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.zxing.MipcaActivityCapture;
+import com.blink.blinkp2p.Controller.Activity.MainActivity;
 import com.blink.blinkp2p.Controller.ActivityCode;
 import com.blink.blinkp2p.Controller.NetCardController;
 import com.blink.blinkp2p.Moudle.skin.SkinConfig;
@@ -32,6 +33,7 @@ import com.example.administrator.ui_sdk.Applications;
 import com.example.administrator.ui_sdk.DensityUtil;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -40,6 +42,9 @@ import com.blink.blinkp2p.Moudle.Comment;
 
 
 import com.blink.blinkp2p.Tool.System.Tools;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.lidroid.xutils.db.table.Id;
 
 import smart.blink.com.card.bean.ConnectPcRsp;
 import smart.blink.com.card.bean.RelayMsgRsp;
@@ -174,7 +179,74 @@ public class Login extends BaseActivity implements HandlerImpl {
         helloCount = MyApplication.helloCount;
         helloCount.set(0);
 
-        initSaveAutoLoginData();
+        // 先暂时注释
+        //initSaveAutoLoginData();
+
+        initSaveAutoLoginDataCompatOldVersion();
+    }
+
+    /**
+     * 这个是为了兼容老版本的数据
+     */
+    private void initSaveAutoLoginDataCompatOldVersion() {
+        isReLogin = SharedPrefsUtils.getBooleanPreference(this, Comment.IS_RELOGIN, false);
+
+        LoginBeanGson l = getLoginBeanGson();
+        if (l != null) {
+            // 得到数据的处理逻辑
+            isRemeberPwd = l.isRemeber();
+            isAutoLogin = l.isAutologin();
+
+            activityCheckboxAutologin.setChecked(isAutoLogin);
+            activityCheckboxRemeberpassword.setChecked(isRemeberPwd);
+            if (isRemeberPwd) {
+                loginUserName = l.getUsername();
+                loginPwd = l.getPassword();
+
+                // 调试代码用，会删除
+                initActivityEditText.setText(loginUserName);
+                activityInitEditPasswd.setText(loginPwd);
+            } else {
+                // 调用代码用
+                initActivityEditText.setText("");
+                activityInitEditPasswd.setText("");
+                loginUserName = "";
+                loginPwd = "";
+            }
+        }
+        // 如果是重新登录的话就不需要自动登录
+        if (!isReLogin) {
+            // 判断是需要自动登录
+            if (isAutoLogin) {
+                startWantRequest();
+            }
+        }
+        // 设置checkbox的点击事件
+        activityCheckboxAutologin.setOnClickListener(this);
+        activityCheckboxRemeberpassword.setOnClickListener(this);
+    }
+
+    private LoginBeanGson getLoginBeanGson() {
+        String userlist = SharedPrefsUtils.getStringPreference(this, Comment.LOGINDATA);
+        Log.e(TAG, "initSaveAutoLoginDataCompatOldVersion: userlist===" + userlist);
+
+        // 如果获取不到数据的话就直接返回一个空
+        if (userlist == null) {
+            return null;
+        }
+        Gson g = new Gson();
+        LoginBeanGson l = null;
+        try {
+            List<LoginBeanGson> retList = g.fromJson(userlist,
+                    new TypeToken<List<LoginBeanGson>>() {
+                    }.getType());
+            l = retList.get(0);
+        } catch (Exception e) {
+
+            l = g.fromJson(userlist, LoginBeanGson.class);
+        } finally {
+            return l;
+        }
     }
 
     /**
@@ -483,7 +555,8 @@ public class Login extends BaseActivity implements HandlerImpl {
             MyToast.Toast(context, R.string.login_success);
             finish();
 
-            saveAutoLoginData();
+            //saveAutoLoginData();
+            SaveAutoLoginDataCompatOldVersion();
 
         }
 
@@ -524,9 +597,33 @@ public class Login extends BaseActivity implements HandlerImpl {
 
                 finish();
 
-                saveAutoLoginData();
+                //saveAutoLoginData();
+                SaveAutoLoginDataCompatOldVersion();
             }
         }
+    }
+
+    /**
+     * 为了兼容老版本保存自动登录的数据
+     */
+    private void SaveAutoLoginDataCompatOldVersion() {
+        // 重新置为false
+        SharedPrefsUtils.setBooleanPreference(this, Comment.IS_RELOGIN, false);
+
+        LoginBeanGson l = new LoginBeanGson();
+        if (isRemeberPwd) {
+            l.setAutologin(isAutoLogin);
+            l.setRemeber(isRemeberPwd);
+            l.setUsername(ID);
+            l.setPassword(password);
+
+        } else {
+            l.setUsername("");
+            l.setPassword("");
+        }
+        l.setTime(System.currentTimeMillis());
+        SharedPrefsUtils.setStringPreference(this, Comment.LOGINDATA, l.toString());
+        Log.e(TAG, "SaveAutoLoginDataCompatOldVersion: l===" + l.toString());
     }
 
 
@@ -603,7 +700,7 @@ public class Login extends BaseActivity implements HandlerImpl {
 
 
     /**
-     * 保存自动登录的数据
+     * 保存自动登录的数据 暂先不用
      */
     private void saveAutoLoginData() {
         SharedPrefsUtils.setBooleanPreference(this, Comment.IS_AUTO_LOGIN, isAutoLogin);

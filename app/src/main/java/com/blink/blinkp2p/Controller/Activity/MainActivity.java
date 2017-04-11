@@ -24,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blink.blinkp2p.Controller.Activity.login.Login;
 import com.blink.blinkp2p.Controller.Activity.slidingmenu.AlterUserPWDActivity;
 import com.blink.blinkp2p.Controller.Activity.slidingmenu.FeedbackActivity;
 import com.blink.blinkp2p.Controller.Activity.slidingmenu.UserinfoActivity;
@@ -59,7 +60,6 @@ import com.blink.blinkp2p.Moudle.Comment;
 import com.blink.blinkp2p.Moudle.DownorUpload;
 import com.blink.blinkp2p.Moudle.Item;
 import com.blink.blinkp2p.Moudle.skin.SkinConfig;
-
 
 
 import com.blink.blinkp2p.Tool.Adapter.LGAdapter;
@@ -229,7 +229,6 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
 
         initHeartThread();
 
-
     }
 
     /**
@@ -261,7 +260,6 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
         }
     }
 
-
     /**
      * 对快捷启动的按钮进行初始化
      *
@@ -270,7 +268,31 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
     private void initImageview_quitstart(int skinValue) {
         // 快捷启动
         imageview_quitstart = (ImageView) view.findViewById(R.id.activity_imageview_quitstart);
-        int option = SharedPrefsUtils.getIntegerPreference(context, Comment.QUICK_START, Comment.DEFAULT);
+        //int option = SharedPrefsUtils.getIntegerPreference(context, Comment.QUICK_START, Comment.DEFAULT);
+        int option = Comment.DEFAULT;
+        String stringOption = SharedPrefsUtils.getStringPreference(context, Comment.ICON_QUITSTART);
+
+        Log.e(TAG, "initImageview_quitstart: stringOption===" + stringOption);
+
+        if (stringOption != null) {
+            if (stringOption.equals(Comment.ICON_RESTART)) {
+                option = Comment.REBOOT;
+            } else if (stringOption.equals(Comment.ICON_TIMESHUTDOWN)) {
+                option = Comment.SET_TIME_SHUTDOWN;
+            } else if (stringOption.equals(Comment.ICON_SHUTDOWN)) {
+                option = Comment.SHUTDOWN;
+            } else if (stringOption.equals(Comment.ICON_LOCLPC)) {
+                option = Comment.LOCK_PC;
+            } else if (stringOption.equals(Comment.ICON_CHANGEPASSWD)) {
+                option = Comment.ALTER_PWD;
+            } else if (stringOption.equals(Comment.ICON_GETUPDATE)) {
+                option = Comment.GET_UPDATE;
+            } else if (stringOption.equals(Comment.ICON_CAMERA)) {
+                option = Comment.CAMERA;
+            } else {
+                option = Comment.DEFAULT;
+            }
+        }
         switch (option) {
             case Comment.DEFAULT:
                 // 根据皮肤设定不同图片

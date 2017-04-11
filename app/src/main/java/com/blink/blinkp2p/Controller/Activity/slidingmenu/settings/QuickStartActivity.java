@@ -111,37 +111,44 @@ public class QuickStartActivity extends MyBaseActivity implements AdapterView.On
 
         switch (position) {
             case 0:
-                SharedPrefsUtils.setIntegerPreference(context, Comment.QUICK_START, Comment.REBOOT);
+                //SharedPrefsUtils.setIntegerPreference(context, Comment.QUICK_START, Comment.REBOOT);
+                SharedPrefsUtils.setStringPreference(context, Comment.ICON_QUITSTART, Comment.ICON_RESTART);
                 tip += QuickStartActivity.this.getResources().getString(R.string.instruction_reboot);
                 UIHelper.ToastSetSuccess(QuickStartActivity.this, tip);
                 break;
             case 1:
-                SharedPrefsUtils.setIntegerPreference(context, Comment.QUICK_START, Comment.SET_TIME_SHUTDOWN);
+                //SharedPrefsUtils.setIntegerPreference(context, Comment.QUICK_START, Comment.SET_TIME_SHUTDOWN);
+                SharedPrefsUtils.setStringPreference(context, Comment.ICON_QUITSTART, Comment.ICON_TIMESHUTDOWN);
                 tip += QuickStartActivity.this.getResources().getString(R.string.instruction_wshutdown);
                 UIHelper.ToastSetSuccess(QuickStartActivity.this, tip);
                 break;
             case 2:
-                SharedPrefsUtils.setIntegerPreference(context, Comment.QUICK_START, Comment.SHUTDOWN);
+                //SharedPrefsUtils.setIntegerPreference(context, Comment.QUICK_START, Comment.SHUTDOWN);
+                SharedPrefsUtils.setStringPreference(context, Comment.ICON_QUITSTART, Comment.ICON_SHUTDOWN);
                 tip += QuickStartActivity.this.getResources().getString(R.string.instruction_shutdown);
                 UIHelper.ToastSetSuccess(QuickStartActivity.this, tip);
                 break;
             case 3:
-                SharedPrefsUtils.setIntegerPreference(context, Comment.QUICK_START, Comment.LOCK_PC);
+                //SharedPrefsUtils.setIntegerPreference(context, Comment.QUICK_START, Comment.LOCK_PC);
+                SharedPrefsUtils.setStringPreference(context, Comment.ICON_QUITSTART, Comment.ICON_LOCLPC);
                 tip += QuickStartActivity.this.getResources().getString(R.string.lock_pc);
                 UIHelper.ToastSetSuccess(QuickStartActivity.this, tip);
                 break;
             case 4:
-                SharedPrefsUtils.setIntegerPreference(context, Comment.QUICK_START, Comment.ALTER_PWD);
+                //SharedPrefsUtils.setIntegerPreference(context, Comment.QUICK_START, Comment.ALTER_PWD);
+                SharedPrefsUtils.setStringPreference(context, Comment.ICON_QUITSTART, Comment.ICON_CHANGEPASSWD);
                 tip += QuickStartActivity.this.getResources().getString(R.string.instruction_AlterPassword);
                 UIHelper.ToastSetSuccess(QuickStartActivity.this, tip);
                 break;
             case 5:
-                SharedPrefsUtils.setIntegerPreference(context, Comment.QUICK_START, Comment.GET_UPDATE);
+                //SharedPrefsUtils.setIntegerPreference(context, Comment.QUICK_START, Comment.GET_UPDATE);
+                SharedPrefsUtils.setStringPreference(context, Comment.ICON_QUITSTART, Comment.ICON_GETUPDATE);
                 tip += QuickStartActivity.this.getResources().getString(R.string.update);
                 UIHelper.ToastSetSuccess(QuickStartActivity.this, tip);
                 break;
             case 6:
-                SharedPrefsUtils.setIntegerPreference(context, Comment.QUICK_START, Comment.CAMERA);
+                //SharedPrefsUtils.setIntegerPreference(context, Comment.QUICK_START, Comment.CAMERA);
+                SharedPrefsUtils.setStringPreference(context, Comment.ICON_QUITSTART, Comment.ICON_CAMERA);
                 tip += QuickStartActivity.this.getResources().getString(R.string.Camera);
                 UIHelper.ToastSetSuccess(QuickStartActivity.this, tip);
                 break;

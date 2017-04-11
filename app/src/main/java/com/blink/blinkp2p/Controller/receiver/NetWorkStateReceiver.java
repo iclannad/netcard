@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.application.MyApplication;
-import com.blink.blinkp2p.Controller.Activity.Login;
+import com.blink.blinkp2p.Controller.Activity.login.Login;
 import com.blink.blinkp2p.Tool.System.Tools;
 
 import smart.blink.com.card.Tcp.TcpSocket;
