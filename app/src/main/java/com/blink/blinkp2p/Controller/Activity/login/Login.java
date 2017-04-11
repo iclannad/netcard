@@ -99,7 +99,6 @@ public class Login extends BaseActivity implements HandlerImpl {
                     initActivityEditText.setText(mDownPopWindows.getdatas(selIndex));
                     //LoginSetData.getIntance(Login.this).setPasswd(initActivityEditText, activityInitEditPasswd);
                     mDownPopWindows.dismiss();
-                    Log.e(TAG, "handleMessage: 点击条目了");
                     break;
                 case 2:
                     int delIndex = data.getInt("delIndex");
@@ -109,8 +108,6 @@ public class Login extends BaseActivity implements HandlerImpl {
                     mDownPopWindows.AdapterUpdate();
                     initActivityEditText.setText("");
                     activityInitEditPasswd.setText("");
-
-                    Log.e(TAG, "handleMessage: 删除的操作");
                     break;
 //                case Read_SharePerence:
 //                    if ((boolean) msg.obj) {
@@ -137,9 +134,6 @@ public class Login extends BaseActivity implements HandlerImpl {
         setTileBar(0);
 
         init_idLinear = (RelativeLayout) view.findViewById(R.id.init_idLinear);
-        if (init_idLinear == null) {
-            Log.e(TAG, "init: init_idLinear空指针");
-        }
 
         loginEditRelative = (RelativeLayout) view.findViewById(R.id.loginEditRelative);
         loginScanRelative = (RelativeLayout) view.findViewById(R.id.loginScanRelative);

@@ -120,6 +120,7 @@ public class SplashActivity extends BaseActivity {
 
         isFirstEnter = SharedPrefsUtils.getBooleanPreference(this, SHAREDPREFERENCES_NAME, true);
 
+        /**-----------------------------------------------------------------------------------------*/
         /**
          * 此处为了兼容旧版本才这么写
          */
