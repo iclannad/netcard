@@ -9,6 +9,7 @@ import com.blink.blinkp2p.Moudle.skin.SkinBean;
 import com.blink.blinkp2p.Moudle.skin.SkinConfig;
 import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Adapter.SkinAdapter;
+import com.blink.blinkp2p.Tool.System.Tools;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
 import java.util.ArrayList;
@@ -115,5 +116,8 @@ public class SkinActivity extends BaseActivity implements AdapterView.OnItemClic
         // 把值存放在本地中
         SharedPrefsUtils.setIntegerPreference(this, SkinConfig.SKIN_CONFIG, SkinConfig.skinArray[position]);
         SharedPrefsUtils.setIntegerPreference(this, SkinConfig.SKIN_SELECT_ICON, position);
+
+        // 兼容旧版本
+        Tools.WriteSkinConfig(this, position);
     }
 }

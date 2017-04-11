@@ -120,6 +120,17 @@ public class SplashActivity extends BaseActivity {
 
         isFirstEnter = SharedPrefsUtils.getBooleanPreference(this, SHAREDPREFERENCES_NAME, true);
 
+        /**
+         * 此处为了兼容旧版本才这么写
+         */
+        int position = Integer.parseInt(Tools.ReadSkinConfig(context));
+        Log.e(TAG, "init: 皮肤设置position===" + position);
+        // 把值存放在本地中
+        SharedPrefsUtils.setIntegerPreference(this, SkinConfig.SKIN_CONFIG, SkinConfig.skinArray[position]);
+        SharedPrefsUtils.setIntegerPreference(this, SkinConfig.SKIN_SELECT_ICON, position);
+        /**-----------------------------------------------------------------------------------------*/
+
+
         int skinValue = SharedPrefsUtils.getIntegerPreference(this, SkinConfig.SKIN_CONFIG, SkinConfig.SKIN_DEFAULT_VALUE);
         splash_linear.setBackgroundResource(skinValue);
         setTopColor(skinValue);
