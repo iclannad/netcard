@@ -86,7 +86,7 @@ public class SplashActivity extends BaseActivity {
     // 进入登录页面或者引导页
     private void goHome() {
 
-        isFirstEnter = Tools.isFirstRunApplication(SplashActivity.this);
+        //isFirstEnter = Tools.isFirstRunApplication(SplashActivity.this);
         // 为了兼容旧版本的数据
         if (Tools.isFirstRunApplication(SplashActivity.this)) {
             goGuide();
@@ -118,17 +118,21 @@ public class SplashActivity extends BaseActivity {
         splashLoad = (TextView) view.findViewById(R.id.splashLoad);
         setContent(view);
 
-        isFirstEnter = SharedPrefsUtils.getBooleanPreference(this, SHAREDPREFERENCES_NAME, true);
+        //isFirstEnter = SharedPrefsUtils.getBooleanPreference(this, SHAREDPREFERENCES_NAME, true);
 
         /**-----------------------------------------------------------------------------------------*/
         /**
          * 此处为了兼容旧版本才这么写
          */
-        int position = Integer.parseInt(Tools.ReadSkinConfig(context));
-        Log.e(TAG, "init: 皮肤设置position===" + position);
-        // 把值存放在本地中
-        SharedPrefsUtils.setIntegerPreference(this, SkinConfig.SKIN_CONFIG, SkinConfig.skinArray[position]);
-        SharedPrefsUtils.setIntegerPreference(this, SkinConfig.SKIN_SELECT_ICON, position);
+        String skinString = Tools.ReadSkinConfig(context);
+        Log.e(TAG, "init: skinString===" + skinString);
+        if (skinString != null) {
+            int position = Integer.parseInt(skinString);
+            Log.e(TAG, "init: 皮肤设置position===" + position);
+            // 把值存放在本地中
+            SharedPrefsUtils.setIntegerPreference(this, SkinConfig.SKIN_CONFIG, SkinConfig.skinArray[position]);
+            SharedPrefsUtils.setIntegerPreference(this, SkinConfig.SKIN_SELECT_ICON, position);
+        }
         /**-----------------------------------------------------------------------------------------*/
 
 
@@ -157,7 +161,8 @@ public class SplashActivity extends BaseActivity {
         // 创建需要的文件夹
         String downFileDir = SharedPrefsUtils.getStringPreference(this, Comment.DOWNFILE);
         if (downFileDir == null) {
-            downFileDir = Environment.getExternalStorageDirectory().toString();
+            downFileDir = Environment.getExternalStorageDirectory().toString() + "/B_LINK_P2P_files_down";
+            SharedPrefsUtils.setStringPreference(this, Comment.DOWNFILE, downFileDir);
         }
         File fileDown = new File(downFileDir);
         if (!fileDown.exists()) {
@@ -167,7 +172,8 @@ public class SplashActivity extends BaseActivity {
 
         String picFileDir = SharedPrefsUtils.getStringPreference(this, Comment.PICTUREFILE);
         if (picFileDir == null) {
-            picFileDir = Environment.getExternalStorageDirectory().toString();
+            picFileDir = Environment.getExternalStorageDirectory().toString() + "/B_LINK_P2P_files_picture";
+            SharedPrefsUtils.setStringPreference(this, Comment.PICTUREFILE, picFileDir);
         }
         File filePic = new File(picFileDir);
         if (!filePic.exists()) {
