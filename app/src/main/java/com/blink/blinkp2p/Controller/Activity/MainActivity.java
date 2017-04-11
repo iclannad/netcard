@@ -865,6 +865,7 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
             if (shutdownRsp.getSuccess() == 0) {
                 //MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_shutdown_recved);
                 MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_shutdown_recved);
+                MyPersonalProgressDIalog.getInstance(MainActivity.this).dissmissProgress();
             }
         }
 

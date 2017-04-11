@@ -338,49 +338,23 @@ public class Login extends BaseActivity implements HandlerImpl {
         super.Click(v);
 
         if (v.getId() == R.id.init_activity_button_want) {
-//            //首先获取内外IP和端口
-//            ID = initActivityEditText.getText().toString();
-//            password = activityInitEditPasswd.getText().toString();
-//
-//            if (ID.length() == 0) {
-//                MyToast.Toast(context, R.string.error_input_null_user);
-//                return;
-//            }
-//
-//            if (password.length() == 0) {
-//                MyToast.Toast(context, R.string.error_input_null_userpw);
-//                return;
-//            }
-//
-//            if (ID.length() >= 48) {
-//                MyToast.Toast(context, R.string.error_user_long);
-//                return;
-//            }
-//            if (password.length() > 15) {
-//                MyToast.Toast(context, R.string.error_pw_long);
-//                return;
-//            }
-//            //首先获取内外网IP和端口
-//            NetCardController.WANT(ID, password, this);
             boolean isOnline = Tools.isOnline(this);
             if (isOnline) {
                 startWantRequest();
             } else {
                 Toast.makeText(this, "当前网络不可用,请检查连接", Toast.LENGTH_SHORT).show();
             }
-
-
         }
 
-        // 下面为checkbox登录选择框逻辑
+        // 自动登录选择框
         if (v.getId() == R.id.activity_checkbox_autologin) {
             isAutoLogin = activityCheckboxAutologin.isChecked();
             if (!isRemeberPwd) {
                 activityCheckboxAutologin.setChecked(false);
                 isAutoLogin = false;
             }
-            Log.e(TAG, "Click: activity_checkbox_autologin " + activityCheckboxAutologin.isChecked());
         }
+        // 记住密码选择框
         if (v.getId() == R.id.activity_checkbox_remeberpassword) {
             isRemeberPwd = activityCheckboxRemeberpassword.isChecked();
             if (!isRemeberPwd) {
@@ -391,8 +365,6 @@ public class Login extends BaseActivity implements HandlerImpl {
         }
 
         if (v.getId() == R.id.init_activity_button_sweep) {
-            Log.e(TAG, "Click: 扫描二维码");
-            Log.e(TAG, "onClick: 扫描二维码");
             Log.e("Ruan", Tools.isCamera(this) + "");
             if (Tools.isCamera(this)) {
                 Intent intent = new Intent();
@@ -404,22 +376,19 @@ public class Login extends BaseActivity implements HandlerImpl {
             }
         }
 
+        // 弹出pop窗口
         if (v.getId() == R.id.init_downImage) {
-
             mDownPopWindows = new DropDownPopWindows(Login.this, handler, init_idLinear.getWidth());
             mDownPopWindows.initPopuWindow(initActivityEditText, activityInitEditPasswd);
             mDownPopWindows.popupWindwShowing(initActivityEditText);
-            Log.e(TAG, "Click: 弹出pop窗口");
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e(TAG, "onActivityResult: ");
         switch (requestCode) {
             case 1:
-                Log.e(TAG, "onActivityResult: case 1");
                 if (resultCode == RESULT_OK) {
                     Bundle bundle = data.getExtras();
                     String reslut = bundle.getString("result");
@@ -428,7 +397,6 @@ public class Login extends BaseActivity implements HandlerImpl {
                         Toast.makeText(this, R.string.error_input_long, Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    Log.e("qrcode:", "pw=====" + bundle.getString("result"));
                     initActivityEditText.setText(bundle.getString("result"));
                     activityInitEditPasswd.setText("123456");
                 }
@@ -506,10 +474,8 @@ public class Login extends BaseActivity implements HandlerImpl {
                 }, 250, 250);
             }
 
-
             switch (wantRsp.getSuccess()) {
                 case 0:
-                    //返回成功之后
                     //继续打洞
                     NetCardController.HELLO(this);
                     break;
@@ -557,14 +523,6 @@ public class Login extends BaseActivity implements HandlerImpl {
         // 申请与子服务器成功后会走这个方法，通过TCP方法与服务器连接
         if (position == ActivityCode.RelayMsg) {
             Log.e(TAG, "onSuccess: " + "申请与子服务器成功");
-            RelayMsgRsp relayMsgRsp = (RelayMsgRsp) object;
-//            Log.e(TAG, "myHandler: " + relayMsgRsp.getIP());
-//            Log.e(TAG, "myHandler: " + relayMsgRsp.getPORT());
-//            byte[] uuid = relayMsgRsp.getUUID();
-//            for (byte b :
-//                    uuid) {
-//                Log.e(TAG, "myHandler: " + b);
-//            }
             NetCardController.CONNECT_TO_SUBSERVER(this);
         }
 

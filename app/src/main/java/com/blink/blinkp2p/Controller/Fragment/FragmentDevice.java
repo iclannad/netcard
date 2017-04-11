@@ -453,6 +453,7 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
             if (shutdownRsp.getSuccess() == 0) {
                 //MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_shutdown_recved);
                 Toast.makeText(context, R.string.main_handler_shutdown_recved, Toast.LENGTH_SHORT).show();
+                MyPersonalProgressDIalog.getInstance(getActivity()).dissmissProgress();
             }
         }
 

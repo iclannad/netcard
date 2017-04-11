@@ -86,7 +86,7 @@ public class SplashActivity extends BaseActivity {
     // 进入登录页面或者引导页
     private void goHome() {
 
-        //isFirstEnter = Tools.isFirstRunApplication(SplashActivity.this);
+        isFirstEnter = Tools.isFirstRunApplication(SplashActivity.this);
         // 为了兼容旧版本的数据
         if (Tools.isFirstRunApplication(SplashActivity.this)) {
             goGuide();
