@@ -601,7 +601,15 @@ public class Login extends BaseActivity implements HandlerImpl {
         }
 
         if (position == ActivityCode.WANT) {
-
+            Log.e(TAG, "myError: 连接主服务器失败");
+            Login.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //打洞失败则申请子服务器
+                    MyPersonalProgressDIalog.getInstance(Login.this).dissmissProgress();
+                    Toast.makeText(Login.this, "访问主服务器失败", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
 
         if (position == ActivityCode.RelayMsg) {

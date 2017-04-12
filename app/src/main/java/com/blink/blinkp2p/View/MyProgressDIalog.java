@@ -141,38 +141,6 @@ public class MyProgressDIalog {
         }
     }
 
-//    public static void CreateDialog(final Context context, int ResourceId,
-//                                    final int Operation, final int wait, final Handler handler) {
-//        String sure = context.getResources().getString(R.string.confirm);
-//        String name = context.getResources().getString(ResourceId);
-//        new AlertDialog.Builder(context)
-//                .setTitle(name)
-//                .setMessage(sure + name + "?")
-//                .setPositiveButton(sure, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        // TODO Auto-generated method stub
-//                        if (MainActivity.connectionType == Protocol.UDP) {
-//                            MyProgressDIalog.getInstance(context).init();
-//                            MyProgressDIalog.getInstance(context)
-//                                    .showProgressDialog();
-//                            SendOpeartionThread tr = new SendOpeartionThread(
-//                                    InitActivity.mPc_ip, InitActivity.mPc_port,
-//                                    UdpSocket.getState(), Operation);
-//                            tr.start();
-//                        } else {
-//                            MyProgressDIalog.getInstance(context).init();
-//                            MyProgressDIalog.getInstance(context)
-//                                    .showProgressDialog();
-//                            new CountTime(Operation, handler).start();
-//                            new LookAndOthers(Operation, "" + wait).start();
-//                        }
-//                    }
-//                })
-//                .setNegativeButton(
-//                        context.getResources().getString(R.string.no), null)
-//                .show();
-//    }
 
     private static SweetAlertDialog sProgressdialog = null;
 
@@ -204,52 +172,10 @@ public class MyProgressDIalog {
                                 sProgressdialog.setTitleText("Loading");
                                 sProgressdialog.setCancelable(false);
                                 sProgressdialog.show();
-//								if (MainActivity.connectionType == Protocol.UDP) {
-//									SendOpeartionThread tr = new SendOpeartionThread(
-//											InitActivity.mPc_ip,
-//											InitActivity.mPc_port, UdpSocket
-//													.getState(), Operation);
-//									tr.start();
-//								} else {
-//									new CountTime(Operation,
-//											MainActivity.MainHandler).start();
-//									new LookAndOthers(Operation, "" + wait)
-//											.start();
-//								}
                             }
                         }).show();
     }
 
-//    public static void CreateDialog(final Context context, String name,
-//                                    final int Operation, final int wait, final Handler handler) {
-//        String sure = context.getResources().getString(R.string.confirm);
-//        new AlertDialog.Builder(context)
-//                .setTitle(name)
-//                .setMessage(sure + name + "?")
-//                .setPositiveButton(sure, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        // TODO Auto-generated method stub
-//                        if (MainActivity.connectionType == Protocol.UDP) {
-//                            MyProgressDIalog.getInstance(context).init();
-//                            MyProgressDIalog.showProgressDialog();
-//                            SendOpeartionThread tr = new SendOpeartionThread(
-//                                    InitActivity.mPc_ip, InitActivity.mPc_port,
-//                                    UdpSocket.getState(), Operation);
-//                            tr.start();
-//                        } else {
-//                            MyProgressDIalog.getInstance(context).init();
-//                            MyProgressDIalog.getInstance(context)
-//                                    .showProgressDialog();
-//                            new CountTime(Operation, handler).start();
-//                            new LookAndOthers(Operation, "" + wait).start();
-//                        }
-//                    }
-//                })
-//                .setNegativeButton(
-//                        context.getResources().getString(R.string.no), null)
-//                .show();
-//    }
 
     /**
      * 修改电脑锁屏密码
@@ -300,6 +226,8 @@ public class MyProgressDIalog {
                             R.string.error_pw_long);
                     return;
                 }
+                // 登录提示
+                MyPersonalProgressDIalog.getInstance(context).setContent("修改电脑锁屏密码中...").showProgressDialog();
                 // 向服务器请求修改锁屏密码
                 NetCardController.ChangePcPwd(oldpw_s, newpw_s, mHandler);
 

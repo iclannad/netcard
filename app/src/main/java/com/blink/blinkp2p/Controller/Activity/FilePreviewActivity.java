@@ -22,6 +22,7 @@ import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.System.MyToast;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
 import com.blink.blinkp2p.Tool.Utils.Mime;
+import com.blink.blinkp2p.heart.HeartController;
 import com.example.administrator.data_sdk.FileUtil.FileTool;
 
 import java.io.File;
@@ -110,17 +111,10 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                         mFilePathLineayout.pullViewString(mCurrentPath);
                         onclickfiledir(new File(msg.obj.toString()));
                     } else {
-                        // 释放心跳线程的资源
-                        SendHeartThread.isClose = true;
-                        synchronized (SendHeartThread.HeartLock) {
-                            SendHeartThread.HeartLock.notify();
-                        }
+
 
                         // 释放心跳线程的资源
-                        SendHeartThread.isClose = true;
-                        synchronized (SendHeartThread.HeartLock) {
-                            SendHeartThread.HeartLock.notify();
-                        }
+                        HeartController.stopHeart();
                         MyPersonalProgressDIalog.getInstance(FilePreviewActivity.this).setContent("正读取文件").showProgressDialog();
 //                        if ("/".equals(mCurrentPath))
 //                            mCurrentPath = "";
@@ -176,10 +170,7 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
 
         if (type == ActivityCode.ComputerFile) {
             // 释放心跳线程的资源
-            SendHeartThread.isClose = true;
-            synchronized (SendHeartThread.HeartLock) {
-                SendHeartThread.HeartLock.notify();
-            }
+            HeartController.stopHeart();
 
             MyPersonalProgressDIalog.getInstance(this).setContent("正读取文件").showProgressDialog();
             //获取电脑路径
@@ -271,11 +262,9 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
             }
 
             if (type == ActivityCode.ComputerFile) {
-                Log.e(TAG, "Click: 添加了几个下载任务：" + Comment.list.size());
                 Toast.makeText(this, "添加" + (Comment.list.size() - downCount) + "个任务到下载列表", Toast.LENGTH_SHORT).show();
             } else {
                 // 打印查看添加了几个任务
-                Log.e(TAG, "Click: 添加了几个上传任务：" + Comment.Uploadlist.size());
                 Toast.makeText(this, "添加" + (Comment.Uploadlist.size() - uploadCount) + "任务到上传列表", Toast.LENGTH_SHORT).show();
             }
 
@@ -388,10 +377,7 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                 mCurrentPath = "";
 
             // 释放心跳线程的资源
-            SendHeartThread.isClose = true;
-            synchronized (SendHeartThread.HeartLock) {
-                SendHeartThread.HeartLock.notify();
-            }
+            HeartController.stopHeart();
 
             NetCardController.LookFileMsg(mCurrentPath + pair.getA() + "\\", this);
             mFilePathLineayout.pushView(pair.getA(), mCurrentPath + pair.getA() + "\\", this);
@@ -506,9 +492,7 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
             BlinkLog.Print(lookFileRsp.toString());
 
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             if (lookFileRsp.getSuccess() == 0) {
                 name = new ArrayList<>();
@@ -567,9 +551,7 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                 @Override
                 public void run() {
                     // 重新开启一个心跳线程
-                    SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-                    SendHeartThread.isClose = false;
-                    sendHeartThread.start();
+                    HeartController.startHeart();
 
                     // 关闭对话框
                     FilePreviewActivity.this.finish();

@@ -32,6 +32,7 @@ import com.blink.blinkp2p.Controller.ActivityCode;
 import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
 import com.blink.blinkp2p.View.MyPersonalProgressDIalog;
+import com.blink.blinkp2p.heart.HeartController;
 import com.example.administrator.ui_sdk.DensityUtil;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
@@ -99,22 +100,12 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
             R.string.fragmentdeviceItem,
             R.string.fragmentdeviceItem};
 
-//    public FragmentDevice(OnFragmentToActivity onfragmenttoactivity) {
-//        // TODO Auto-generated constructor stub
-//
-//    }
 
     private LGAdapter adapter = null;
     private GridView fragmentdevice_gridview = null;
     private static String name;
     private String path;
 
-//    @Override
-//    public void onAttach(Activity activity) {
-//        // TODO Auto-generated method stub
-//
-//        super.onAttach(activity);
-//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -136,15 +127,10 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
     }
 
     private void initview() {
-//        mDatagramSocket = ((UdpSocket) getActivity().getApplication())
-//                .getState();
-//        mgridview = (MGridView) mView.findViewById(R.id.gridview);
-//        fragmentDeviceBack = (LinearLayout) mView.findViewById(R.id.fragmentDeviceBack);
         list = new ArrayList<>();
         for (int i = 0; i < str.length; i++) {
             list.add(getItem(image[i], str[i]));
         }
-
 
         fragmentdevice_gridview = (GridView) view.findViewById(R.id.fragmentdevice_gridview);
         fragmentDeviceBack = (LinearLayout) view.findViewById(R.id.fragmentDeviceBack);
@@ -153,25 +139,6 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
         adapter = new LGAdapter(context, list, "GridView");
         fragmentdevice_gridview.setAdapter(adapter);
         fragmentdevice_gridview.setOnItemClickListener(this);
-//        mdevicegridadapter = new DeviceGridViewAdapter(context, list);
-//        mgridview.setAdapter(mdevicegridadapter);
-//        mgridview.setOnItemClickListener(this);
-//        mgridview.setOnItemLongClickListener(this);
-//        fragmentDeviceBack.setBackgroundResource(SkinConfig.getInstance().getColor());
-
-
-//        tv_os = (TextView) mView.findViewById(R.id.fragment_os);
-//        tv_os.setText(PCINOF.GetInstance().getOS());
-//        tv_cpu = (TextView) mView.findViewById(R.id.fragment_cpu);
-//        tv_cpu.setText(PCINOF.GetInstance().getCPU());
-//        tv_memory = (TextView) mView.findViewById(R.id.fragment_memory);
-//        tv_memory.setText(PCINOF.GetInstance().getMemory());
-//        tv_time = (TextView) mView.findViewById(R.id.fragment_time);
-//        tv_time.setText(PCINOF.GetInstance().getTime());
-//        tv_user = (TextView) mView.findViewById(R.id.fragment_pcusername);
-//        tv_user.setText(PCINOF.GetInstance().getUsername());
-//        fragment_deviceTop = (LinearLayout) mView.findViewById(R.id.fragment_deviceTop);
-
 
         DensityUtil.setRelHeight(fragmentDeviceBack, BaseActivity.height / 4);
 //		DensityUtil.setHeight(mgridview , DensityUtil.getHeight(getActivity()) - DensityUtil.getHeight(getActivity()) / 4 - DensityUtil.getHeight(getActivity()) / 12 );
@@ -189,16 +156,6 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
         return item;
     }
 
-//    private void getpcinof() {
-//        MyProgressDIalog.getInstance(getActivity()).init();
-//        MyProgressDIalog.getInstance(getActivity())
-//                .showProgressDialog();
-//        SendOpeartionThread tr = new SendOpeartionThread(
-//                InitActivity.mPc_ip, InitActivity.mPc_port,
-//                UdpSocket.getState(), Protocol.GETPCINFO);
-//        tr.start();
-//    }
-
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
         // TODO Auto-generated method stub
@@ -207,10 +164,7 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
             case 4:
                 // 访部电脑文件的时候，先暂时关闭发送心跳的线程
                 // 释放心跳线程的资源
-                SendHeartThread.isClose = true;
-                synchronized (SendHeartThread.HeartLock) {
-                    SendHeartThread.HeartLock.notify();
-                }
+                HeartController.stopHeart();
 
                 // 和旧版对比，已作过修改
                 MyProgressDIalog.CreateChangePCPWDialog(getActivity(), ActivityCode.ChangePcPwd, this);
@@ -305,7 +259,6 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
                 b.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // TODO Auto-generated method stub
                         bmp.recycle();
                         dialog.dismiss();
                         path = null;
@@ -333,7 +286,6 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
                 });
                 break;
         }
-
     }
 
 
@@ -349,10 +301,11 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
         //锁屏的操作
         if (position == ActivityCode.LOOKPC) {
             // 释放心跳线程的资源
-            SendHeartThread.isClose = true;
-            synchronized (SendHeartThread.HeartLock) {
-                SendHeartThread.HeartLock.notify();
-            }
+//            SendHeartThread.isClose = true;
+//            synchronized (SendHeartThread.HeartLock) {
+//                SendHeartThread.HeartLock.notify();
+//            }
+            HeartController.stopHeart();
             //锁屏
             NetCardController.LOOKPC(this);
         }
@@ -360,10 +313,8 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
         if (position == ActivityCode.Restart) {
             // 访部电脑文件的时候，先暂时关闭发送心跳的线程
             // 释放心跳线程的资源
-            SendHeartThread.isClose = true;
-            synchronized (SendHeartThread.HeartLock) {
-                SendHeartThread.HeartLock.notify();
-            }
+            HeartController.stopHeart();
+
             //重启
             NetCardController.Restart(0, this);
         }
@@ -372,13 +323,11 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
         if (position == ActivityCode.Shutdown) {
             // 访部电脑文件的时候，先暂时关闭发送心跳的线程
             // 释放心跳线程的资源
-            SendHeartThread.isClose = true;
-            synchronized (SendHeartThread.HeartLock) {
-                SendHeartThread.HeartLock.notify();
-            }
+            HeartController.stopHeart();
 
             //关机
             NetCardController.Shutdown(0, this);
+            Log.e(TAG, "Enter: 立即关机");
         }
     }
 
@@ -398,9 +347,10 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
 
         if (position == ActivityCode.LOOKPC) {
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+//            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+//            SendHeartThread.isClose = false;
+//            sendHeartThread.start();
+            HeartController.startHeart();
 
             LookPCRsp lookPCRsp = (LookPCRsp) object;
             if (lookPCRsp.getSuccess() == 0) {
@@ -421,9 +371,7 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
         // 电脑重启返回的结果
         if (position == ActivityCode.Restart) {
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             RestartRsp restartRsp = (RestartRsp) object;
             if (restartRsp.getSuccess() == 0) {
@@ -444,9 +392,7 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
         // 电脑关机返回的结果
         if (position == ActivityCode.Shutdown) {
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             ShutdownRsp shutdownRsp = (ShutdownRsp) object;
             Log.e(TAG, "myHandler: shutdownRsp.getSuccess() ==" + shutdownRsp.getSuccess());
@@ -460,15 +406,15 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
         // 修改pc密码返回的结果
         if (position == ActivityCode.ChangePcPwd) {
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             ChangePcPwdRsp changePcPwdRsp = (ChangePcPwdRsp) object;
             int value = changePcPwdRsp.getSuccess();
             if (value == 0) {
+                MyPersonalProgressDIalog.getInstance(getActivity()).dissmissProgress();
                 MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_change_sucess);
             } else {
+                MyPersonalProgressDIalog.getInstance(getActivity()).dissmissProgress();
                 MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_original_error, context);
             }
         }
@@ -485,9 +431,7 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
     public void myError(int position, int error) {
         if (position == ActivityCode.LOOKPC) {
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             FragmentDevice.this.getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -498,9 +442,7 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
         }
         if (position == ActivityCode.Restart) {
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             FragmentDevice.this.getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -512,30 +454,29 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
 
         if (position == ActivityCode.Shutdown) {
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             FragmentDevice.this.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    //MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_shutdown_lost, FragmentDevice.this.getActivity());
+                    MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_shutdown_lost, FragmentDevice.this.getActivity());
                     MyPersonalProgressDIalog.getInstance(getActivity()).dissmissProgress();
                     Toast.makeText(context, R.string.main_handler_shutdown_lost, Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "run: ActivityCode.Shutdown");
                 }
             });
         }
 
+
         if (position == ActivityCode.ChangePcPwd) {
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             FragmentDevice.this.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_change_lost, FragmentDevice.this.getActivity());
+                    MyPersonalProgressDIalog.getInstance(getActivity()).dissmissProgress();
+                    Toast.makeText(context, R.string.main_handler_change_lost, Toast.LENGTH_SHORT).show();
                 }
             });
         }

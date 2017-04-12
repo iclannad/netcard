@@ -31,7 +31,9 @@ import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
 import com.blink.blinkp2p.View.FilePathLineayout;
 import com.blink.blinkp2p.Tool.Adapter.FileListAdapter.Pair;
 import com.blink.blinkp2p.View.MyPersonalProgressDIalog;
+import com.blink.blinkp2p.heart.HeartController;
 import com.blink.blinkp2p.heart.SendHeartThread;
+
 import smart.blink.com.card.bean.GetUploadDirRsp;
 import smart.blink.com.card.bean.LookFileRsp;
 
@@ -106,10 +108,7 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
 //                    }
 
                     mFilePathLineayout.pullViewString(currentfile);
-                    SendHeartThread.isClose = true;
-                    synchronized (SendHeartThread.HeartLock) {
-                        SendHeartThread.HeartLock.notify();
-                    }
+                    HeartController.stopHeart();
                     // 弹出提示框
                     MyPersonalProgressDIalog.getInstance(FilelookPC.this).setContent("正读取文件").showProgressDialog();
                     // 请求currentfile目录下面的文件
@@ -146,10 +145,8 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
         mFilePathLineayout.addhead("/");
 
 
-        SendHeartThread.isClose = true;
-        synchronized (SendHeartThread.HeartLock) {
-            SendHeartThread.HeartLock.notify();
-        }
+        HeartController.stopHeart();
+        MyPersonalProgressDIalog.getInstance(this).setContent("正读取文件").showProgressDialog();
         // 从服务器请求上传目录
         NetCardController.GetUploadDir(this);
     }
@@ -187,10 +184,7 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
         MyPersonalProgressDIalog.getInstance(this).setContent("正读取文件").showProgressDialog();
 
         // 关闭心跳
-        SendHeartThread.isClose = true;
-        synchronized (SendHeartThread.HeartLock) {
-            SendHeartThread.HeartLock.notify();
-        }
+        HeartController.stopHeart();
 
         // 请求查看电脑的文件
         NetCardController.LookFileMsg(currentfile + pair.getA() + "\\", this);
@@ -225,9 +219,7 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
             LookFileRsp lookFileRsp = (LookFileRsp) object;
 
             // 开启心跳
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             if (lookFileRsp.getSuccess() == 0) {
                 // 关闭提示框
@@ -317,6 +309,29 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
      */
     @Override
     public void myError(int position, int error) {
-        Log.e(TAG, "myError: " + "有数据过来");
+        // 获得上传路径失败的逻辑
+        if (position == ActivityCode.GetUploadDir) {
+            HeartController.startHeart();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MyPersonalProgressDIalog.getInstance(FilelookPC.this).dissmissProgress();
+                    Toast.makeText(FilelookPC.this, "访问失败，请点返回再次进入", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // 访问文件目录失败
+        if (position == ActivityCode.LookFileMsg) {
+            HeartController.startHeart();
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MyPersonalProgressDIalog.getInstance(FilelookPC.this).dissmissProgress();
+                    Toast.makeText(FilelookPC.this, "访问失败，请点返回再次进入", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+        }
     }
 }

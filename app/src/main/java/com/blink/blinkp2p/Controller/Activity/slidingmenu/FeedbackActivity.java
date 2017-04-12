@@ -14,6 +14,8 @@ import com.blink.blinkp2p.Controller.NetCardController;
 
 import com.blink.blinkp2p.Tool.System.Tools;
 import com.blink.blinkp2p.Tool.Utils.UIHelper;
+import com.blink.blinkp2p.heart.HeartController;
+
 import smart.blink.com.card.bean.FeedbackRsp;
 
 /**
@@ -92,7 +94,7 @@ public class FeedbackActivity extends MyBaseActivity implements HandlerImpl {
                     FeedbackActivity.this.getResources().getString(R.string.error_feedback_islen));
             return;
         }
-
+        HeartController.stopHeart();
         NetCardController.FEEDBACK(contacts, text, this);
 
     }
@@ -108,6 +110,8 @@ public class FeedbackActivity extends MyBaseActivity implements HandlerImpl {
         Log.e(TAG, "myHandler: ");
         if (position == ActivityCode.Feedback) {
             FeedbackRsp feedbackRsp = (FeedbackRsp) object;
+
+            HeartController.startHeart();
             if (feedbackRsp.getSuccess() == 0) {
                 //Log.e(TAG, "myHandler: " + "提交成功");
                 UIHelper.ToastSetSuccess(FeedbackActivity.this,
@@ -129,6 +133,10 @@ public class FeedbackActivity extends MyBaseActivity implements HandlerImpl {
      */
     @Override
     public void myError(int position, int error) {
-        Log.e(TAG, "myError: ");
+        if (position == ActivityCode.Feedback) {
+            HeartController.startHeart();
+            UIHelper.ToastSetSuccess(FeedbackActivity.this,
+                    FeedbackActivity.this.getResources().getString(R.string.submit_feedback_failed));
+        }
     }
 }

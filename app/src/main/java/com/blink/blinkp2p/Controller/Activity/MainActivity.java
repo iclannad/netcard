@@ -33,6 +33,7 @@ import com.blink.blinkp2p.Controller.ActivityCode;
 import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.System.MyToast;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
+import com.blink.blinkp2p.heart.HeartController;
 import com.blink.blinkp2p.heart.HeartHandler;
 import com.example.administrator.data_sdk.CommonIntent;
 import com.example.administrator.ui_sdk.DensityUtil;
@@ -647,12 +648,10 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
                 builder.setTitle(getResources().getString(R.string.photo));
                 View view = LayoutInflater.from(MainActivity.this).inflate(
                         R.layout.dialog_camera, null);
-
                 if (name == null || path == null) {
                     Log.e(TAG, "onActivityResult: name==null or path==null");
                     return;
                 }
-
                 ImageView iv = (ImageView) view
                         .findViewById(R.id.imageview_dialog_camera);
                 TextView tv = (TextView) view
@@ -674,7 +673,6 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
                 b.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // TODO Auto-generated method stub
                         bmp.recycle();
                         dialog.dismiss();
                         path = null;
@@ -717,33 +715,20 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
     public void Enter(int position) {
         Log.e(TAG, "Enter: " + position);
         if (position == ActivityCode.LOOKPC) {
-            // 访部电脑文件的时候，先暂时关闭发送心跳的线程
             // 释放心跳线程的资源
-            SendHeartThread.isClose = true;
-            synchronized (SendHeartThread.HeartLock) {
-                SendHeartThread.HeartLock.notify();
-            }
-
+            HeartController.stopHeart();
             //锁屏
             NetCardController.LOOKPC(this);
         }
         if (position == ActivityCode.Restart) {
-            // 访部电脑文件的时候，先暂时关闭发送心跳的线程
             // 释放心跳线程的资源
-            SendHeartThread.isClose = true;
-            synchronized (SendHeartThread.HeartLock) {
-                SendHeartThread.HeartLock.notify();
-            }
+            HeartController.stopHeart();
 
             NetCardController.Restart(0, this);
         }
         if (position == ActivityCode.Shutdown) {
-            // 访部电脑文件的时候，先暂时关闭发送心跳的线程
             // 释放心跳线程的资源
-            SendHeartThread.isClose = true;
-            synchronized (SendHeartThread.HeartLock) {
-                SendHeartThread.HeartLock.notify();
-            }
+            HeartController.stopHeart();
 
             NetCardController.Shutdown(0, this);
         }
@@ -831,9 +816,7 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
         // 参考Fragment里面的代码
         if (position == ActivityCode.LOOKPC) {
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             LookPCRsp lookPCRsp = (LookPCRsp) object;
             if (lookPCRsp.getSuccess() == 0) {
@@ -844,9 +827,7 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
         // 电脑重启返回的结果
         if (position == ActivityCode.Restart) {
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             RestartRsp restartRsp = (RestartRsp) object;
             if (restartRsp.getSuccess() == 0) {
@@ -857,9 +838,7 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
         // 电脑关机返回的结果
         if (position == ActivityCode.Shutdown) {
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             ShutdownRsp shutdownRsp = (ShutdownRsp) object;
             if (shutdownRsp.getSuccess() == 0) {
@@ -872,17 +851,15 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
         // 修改pc密码返回的结果
         if (position == ActivityCode.ChangePcPwd) {
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             ChangePcPwdRsp changePcPwdRsp = (ChangePcPwdRsp) object;
             int value = changePcPwdRsp.getSuccess();
             if (value == 0) {
+                MyPersonalProgressDIalog.getInstance(MainActivity.this).dissmissProgress();
                 MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_change_sucess);
             } else {
-                //MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_original_error);
-                //UIHelper.ToastMessageNetError(context, R.string.main_handler_original_error);
+                MyPersonalProgressDIalog.getInstance(MainActivity.this).dissmissProgress();
                 MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_original_error, MainActivity.this);
             }
         }
@@ -927,17 +904,20 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
         Log.e(TAG, "myError: ===" + position);
 
         if (position == ActivityCode.HELLO) {
-            //打洞失败则申请子服务器
-            MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
-            MyPersonalProgressDIalog.getInstance(this).setContent("正通过服务器连接").showProgressDialog();
-            NetCardController.RelayMsg(this);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //打洞失败则申请子服务器
+                    MyPersonalProgressDIalog.getInstance(MainActivity.this).dissmissProgress();
+                    MyPersonalProgressDIalog.getInstance(MainActivity.this).setContent("正通过服务器连接").showProgressDialog();
+                    NetCardController.RelayMsg(MainActivity.this);
+                }
+            });
         }
 
         if (position == ActivityCode.LOOKPC) {
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             MainActivity.this.runOnUiThread(new Runnable() {
                 @Override
@@ -948,9 +928,7 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
         }
         if (position == ActivityCode.Restart) {
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             MainActivity.this.runOnUiThread(new Runnable() {
                 @Override
@@ -962,14 +940,12 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
 
         if (position == ActivityCode.Shutdown) {
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             MainActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    //MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_shutdown_lost, MainActivity.this);
+                    MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_shutdown_lost, MainActivity.this);
                     MyPersonalProgressDIalog.getInstance(MainActivity.this).dissmissProgress();
                     Toast.makeText(context, R.string.main_handler_shutdown_lost, Toast.LENGTH_SHORT).show();
                 }
@@ -978,14 +954,14 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
 
         if (position == ActivityCode.ChangePcPwd) {
             // 重新开启一个心跳线程
-            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-            SendHeartThread.isClose = false;
-            sendHeartThread.start();
+            HeartController.startHeart();
 
             MainActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_change_lost, MainActivity.this);
+                    //MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_change_lost, MainActivity.this);
+                    MyPersonalProgressDIalog.getInstance(MainActivity.this).dissmissProgress();
+                    Toast.makeText(context, R.string.main_handler_change_lost, Toast.LENGTH_SHORT).show();
                 }
             });
         }
