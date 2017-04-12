@@ -25,31 +25,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.blink.blinkp2p.Controller.Activity.login.Login;
+import com.blink.blinkp2p.Controller.Activity.slidingmenu.AboutActivity;
 import com.blink.blinkp2p.Controller.Activity.slidingmenu.AlterUserPWDActivity;
 import com.blink.blinkp2p.Controller.Activity.slidingmenu.FeedbackActivity;
+import com.blink.blinkp2p.Controller.Activity.slidingmenu.SettingsActivity;
+import com.blink.blinkp2p.Controller.Activity.slidingmenu.ShopActivity;
 import com.blink.blinkp2p.Controller.Activity.slidingmenu.UserinfoActivity;
 import com.blink.blinkp2p.Controller.Activity.slidingmenu.settings.QuickStartActivity;
 import com.blink.blinkp2p.Controller.ActivityCode;
-import com.blink.blinkp2p.R;
-import com.blink.blinkp2p.Tool.System.MyToast;
-import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
-import com.blink.blinkp2p.heart.HeartController;
-import com.blink.blinkp2p.heart.HeartHandler;
-import com.example.administrator.data_sdk.CommonIntent;
-import com.example.administrator.ui_sdk.DensityUtil;
-import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
-import com.example.administrator.ui_sdk.MyBaseActivity.NavActivity;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import com.blink.blinkp2p.Controller.Activity.slidingmenu.AboutActivity;
-import com.blink.blinkp2p.Controller.Activity.slidingmenu.SettingsActivity;
-import com.blink.blinkp2p.Controller.Activity.slidingmenu.ShopActivity;
 import com.blink.blinkp2p.Controller.Fragment.FragmentDevice;
 import com.blink.blinkp2p.Controller.Fragment.FragmentFileManager;
 import com.blink.blinkp2p.Controller.Fragment.FragmentFilePC;
@@ -61,10 +44,11 @@ import com.blink.blinkp2p.Moudle.Comment;
 import com.blink.blinkp2p.Moudle.DownorUpload;
 import com.blink.blinkp2p.Moudle.Item;
 import com.blink.blinkp2p.Moudle.skin.SkinConfig;
-
-
-import com.blink.blinkp2p.Tool.Adapter.LGAdapter;
+import com.blink.blinkp2p.R;
+import com.blink.blinkp2p.Tool.Adapter.ListAdapter;
+import com.blink.blinkp2p.Tool.System.MyToast;
 import com.blink.blinkp2p.Tool.System.Tools;
+import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
 import com.blink.blinkp2p.Tool.UploadUtils;
 import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
 import com.blink.blinkp2p.Tool.Utils.UIHelper;
@@ -74,7 +58,20 @@ import com.blink.blinkp2p.View.MyDialog;
 import com.blink.blinkp2p.View.MyPersonalProgressDIalog;
 import com.blink.blinkp2p.View.MyProgressDIalog;
 import com.blink.blinkp2p.application.MyApplication;
+import com.blink.blinkp2p.heart.HeartController;
+import com.blink.blinkp2p.heart.HeartHandler;
 import com.blink.blinkp2p.heart.SendHeartThread;
+import com.example.administrator.data_sdk.CommonIntent;
+import com.example.administrator.ui_sdk.DensityUtil;
+import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
+import com.example.administrator.ui_sdk.MyBaseActivity.NavActivity;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import smart.blink.com.card.bean.ChangePcPwdRsp;
 import smart.blink.com.card.bean.ConnectPcRsp;
@@ -99,7 +96,9 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
 
     private ArrayList<Object> list = null;
     private ListView activity_left_ListView = null;
-    private LGAdapter adapter = null;
+    //private LGAdapter adapter = null;
+
+    private ListAdapter adapter = null;
 
     private ImageView imageview_quitstart;
     private TextView drawerlayout_textview_password;
@@ -216,7 +215,9 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
         setNavLeftContent(leftview);
 
 
-        adapter = new LGAdapter(context, list, "ListView");
+        //adapter = new LGAdapter(context, list, "ListView");
+        adapter = new ListAdapter(context, list);
+
         activity_left_ListView.setAdapter(adapter);
 
 
