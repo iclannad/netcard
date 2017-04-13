@@ -23,6 +23,7 @@
         android:layout_marginRight="20dip"
         android:autoText="false"
         android:capitalize="none"
+        android:digits="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`~!@#$^&amp;*()-=_+[]{};:\&apos;\&quot;\\|/?.,&lt;>/% "
         android:gravity="fill_horizontal"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -45,6 +46,7 @@
         android:layout_marginRight="20dip"
         android:autoText="false"
         android:capitalize="none"
+        android:digits="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`~!@#$^&amp;*()-=_+[]{};:\&apos;\&quot;\\|/?.,&lt;>/% "
         android:gravity="fill_horizontal"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 

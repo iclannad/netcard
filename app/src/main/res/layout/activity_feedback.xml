@@ -13,6 +13,7 @@
         android:layout_margin="@dimen/x10"
         android:background="@drawable/corner_rectangle_edit"
         android:ems="10"
+        android:digits="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ`~!@#$^&amp;*()-=_+[]{};:\&apos;\&quot;\\|/?.,&lt;>/% "
         android:hint="@string/feedback_connectway"
         android:inputType="none"
         android:paddingLeft="@dimen/x10"
