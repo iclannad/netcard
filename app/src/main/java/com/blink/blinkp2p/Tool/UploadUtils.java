@@ -23,6 +23,7 @@ import com.blink.blinkp2p.Moudle.DownorUpload;
 import com.blink.blinkp2p.View.DownUpCallback;
 import com.blink.blinkp2p.application.MyApplication;
 import com.blink.blinkp2p.heart.SendHeartThread;
+
 import smart.blink.com.card.API.BlinkWeb;
 import smart.blink.com.card.bean.UploadReq;
 import smart.blink.com.card.bean.UploadStartReq;
@@ -75,6 +76,7 @@ public class UploadUtils implements HandlerImpl {
             }
 
             downorUpload = (DownorUpload) Comment.Uploadlist.get(count);
+            Log.e(TAG, "StartLoad: downorUpload.getPath()===" + downorUpload.getPath() + " downorUpload.getName()===" + downorUpload.getName());
             NetCardController.UploadStart(downorUpload.getPath(), downorUpload.getName(), this);
             count++;
             isEnd = false;
@@ -137,55 +139,55 @@ public class UploadUtils implements HandlerImpl {
 
         if (position == ActivityCode.Upload) {
 //            if (BlinkWeb.STATE == BlinkWeb.TCP) {
-                //----------------------------------------------------------------------------------
-                UploadReq uploadReq = (UploadReq) object;
-                // 传输界面的接口
-                if (downUpCallback != null) {
-                    MyApplication.getInstance().uploadReq = uploadReq;
-                    downUpCallback.Call(position, uploadReq);
-                }
+            //----------------------------------------------------------------------------------
+            UploadReq uploadReq = (UploadReq) object;
+            // 传输界面的接口
+            if (downUpCallback != null) {
+                MyApplication.getInstance().uploadReq = uploadReq;
+                downUpCallback.Call(position, uploadReq);
+            }
 
-                isEnd = uploadReq.isEnd();
-                if (isEnd) {
-                    // 当下载完成的时候，将数据保存在本地数据库中
-                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    MsgDAO msgdao = new MsgDAO(UploadUtils.this.context);
-                    msgdao.insertdb(df.format(new Date()),
-                            UploadUtils.this.context.getResources().getString(R.string.phone),
-                            UploadUtils.this.context.getResources().getString(R.string.send),
-                            UploadUtils.this.context.getResources().getString(R.string.pc),
-                            null);
-                    msgdao.close();
-                    Log.e(TAG, "myHandler: 上传完成一个任务就保存在数据库中");
+            isEnd = uploadReq.isEnd();
+            if (isEnd) {
+                // 当下载完成的时候，将数据保存在本地数据库中
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                MsgDAO msgdao = new MsgDAO(UploadUtils.this.context);
+                msgdao.insertdb(df.format(new Date()),
+                        UploadUtils.this.context.getResources().getString(R.string.phone),
+                        UploadUtils.this.context.getResources().getString(R.string.send),
+                        UploadUtils.this.context.getResources().getString(R.string.pc),
+                        null);
+                msgdao.close();
+                Log.e(TAG, "myHandler: 上传完成一个任务就保存在数据库中");
 
-                    if (count < Comment.Uploadlist.size()) {
-                        //上传完一个暂停一秒再上传下一个
-                        Log.e(TAG, "myHandler: " + "再上传一个文件");
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                        }
-                        StartLoad();
-                    } else {
-
-                        // 当下载完毕之后清空任务列表
-                        Comment.Uploadlist.clear();
-                        count = 0;  // 清0
-                        MyApplication.getInstance().uploadReq = null;
-
-                        final Activity activity = (Activity) this.context;
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(activity, "任务上传完毕", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        Log.e(TAG, "myHandler: " + "所有任务都上传完毕,重新开启心跳线程");
-                        SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-                        SendHeartThread.isClose = false;
-                        sendHeartThread.start();
+                if (count < Comment.Uploadlist.size()) {
+                    //上传完一个暂停一秒再上传下一个
+                    Log.e(TAG, "myHandler: " + "再上传一个文件");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
                     }
+                    StartLoad();
+                } else {
+
+                    // 当下载完毕之后清空任务列表
+                    Comment.Uploadlist.clear();
+                    count = 0;  // 清0
+                    MyApplication.getInstance().uploadReq = null;
+
+                    final Activity activity = (Activity) this.context;
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(activity, "任务上传完毕", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    Log.e(TAG, "myHandler: " + "所有任务都上传完毕,重新开启心跳线程");
+                    SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+                    SendHeartThread.isClose = false;
+                    sendHeartThread.start();
                 }
+            }
 //            } else {
 //                UploadReq uploadReq = (UploadReq) object;
 //

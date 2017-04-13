@@ -15,6 +15,7 @@ import smart.blink.com.card.API.BlinkLog;
 import smart.blink.com.card.API.ErrorNo;
 import smart.blink.com.card.API.Protocol;
 import smart.blink.com.card.BlinkNetCardCall;
+import smart.blink.com.card.Tool.MyRevicedTools;
 import smart.blink.com.card.Udp.File.FileWrite;
 import smart.blink.com.card.Tool.MyTimerTask;
 import smart.blink.com.card.Tool.RevicedTools;
@@ -281,7 +282,9 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                             j++;
                             //正常则读取数据发送实际数据
                             countArray[k] = j;
-                            RevicedTools.Downloading(k, countArray[k], buf, blinkcall);
+                            //RevicedTools.Downloading(k, countArray[k], buf, blinkcall);
+                            // 此处是在增加多任务下载的时候添加的功能
+                            new MyRevicedTools(k, countArray[k], buf, blinkcall);
                         }
 
                     } catch (IOException e) {
@@ -328,6 +331,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
             totalSpeed();
             //关闭写入流
             fileWrite.Close();
+            Log.e(TAG, "WaitStart: 文件下载完毕之后关闭当前的流");
         }
     }
 
@@ -374,8 +378,8 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
             speedArray[i] = countArray[i];
         }
 
-        Log.e(TAG, "totalSpeed: setBlockId" +  totalSize);
-        Log.e(TAG, "totalSpeed: setTotolSize" +  (int)size);
+        Log.e(TAG, "totalSpeed: setBlockId" + totalSize);
+        Log.e(TAG, "totalSpeed: setTotolSize" + (int) size);
 
         speed = totalSize - lateSize;
         downLoadingRsp.setSpeed(speed / 5 + "K/S");

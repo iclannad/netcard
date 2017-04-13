@@ -28,6 +28,7 @@ import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
 import com.blink.blinkp2p.View.DownUpCallback;
 import com.blink.blinkp2p.application.MyApplication;
 import com.blink.blinkp2p.heart.SendHeartThread;
+
 import smart.blink.com.card.API.BlinkWeb;
 import smart.blink.com.card.Tool.FileWriteStream;
 import smart.blink.com.card.Tool.Util;
@@ -57,6 +58,7 @@ public class DownUtils implements HandlerImpl {
         if (isEnd) {
             StartLoad();
         }
+
     }
 
     public static void setProgress(DownUpCallback downUpCallback) {
@@ -70,13 +72,12 @@ public class DownUtils implements HandlerImpl {
         downorUpload = (DownorUpload) Comment.list.get(count);
         downLoadFileNamePath = downorUpload.getPath();
 
-        // 在发送下载指令之前，先停止心跳，下载完之后再开启
         // 释放心跳线程的资源
         SendHeartThread.isClose = true;
         synchronized (SendHeartThread.HeartLock) {
             SendHeartThread.HeartLock.notify();
         }
-
+        Log.e(TAG, "StartLoad: downLoadFileNamePath===" + downLoadFileNamePath);
         NetCardController.DownloadStart(downLoadFileNamePath, this);
         count++; //先暂时注释
         isEnd = false;
@@ -127,6 +128,9 @@ public class DownUtils implements HandlerImpl {
                     path = Environment.getExternalStorageDirectory() + "";
                 }
                 Log.e(TAG, "myHandler: " + "接收到下载请求，开始下载");
+                Log.e(TAG, "myHandler: path===" + path);
+                Log.e(TAG, "myHandler: downLoadFileNamePath===" + downLoadFileNamePath);
+                Log.e(TAG, "myHandler: downLoadStartRsp.getTotalblock()===" + downLoadStartRsp.getTotalblock());
                 NetCardController.DownLoading(path, downLoadFileNamePath, downLoadStartRsp.getTotalblock(), this);
             }
 
@@ -296,6 +300,11 @@ public class DownUtils implements HandlerImpl {
      */
     @Override
     public void myError(int position, int error) {
+        Log.e(TAG, "myError: position==" + position);
+        if (position == ActivityCode.DownloadStart) {
+            Log.e(TAG, "myError: 开始请求下载失败");
+        }
+
         if (downUpCallback != null)
             downUpCallback.Fail(position);
         if (count < Comment.list.size()) {

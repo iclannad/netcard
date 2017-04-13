@@ -22,6 +22,8 @@ import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.System.MyToast;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
 import com.blink.blinkp2p.Tool.Utils.Mime;
+import com.blink.blinkp2p.Tool.Utils.download.MyDownUtils;
+import com.blink.blinkp2p.Tool.Utils.upload.MyUploadUtils;
 import com.blink.blinkp2p.heart.HeartController;
 import com.example.administrator.data_sdk.FileUtil.FileTool;
 
@@ -43,7 +45,9 @@ import com.blink.blinkp2p.Tool.UploadUtils;
 import com.blink.blinkp2p.View.FilePathLineayout;
 import com.blink.blinkp2p.View.MyPersonalProgressDIalog;
 import com.blink.blinkp2p.heart.SendHeartThread;
+
 import smart.blink.com.card.API.BlinkLog;
+import smart.blink.com.card.API.BlinkWeb;
 import smart.blink.com.card.bean.LookFileRsp;
 
 public class FilePreviewActivity extends MyBaseActivity implements OnItemClickListener, OnItemLongClickListener, HandlerImpl {
@@ -268,10 +272,21 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                 Toast.makeText(this, "添加" + (Comment.Uploadlist.size() - uploadCount) + "任务到上传列表", Toast.LENGTH_SHORT).show();
             }
 
+            // 上传和下载当前文件
             if (type == ActivityCode.ComputerFile) {
-                new DownUtils(this);
+                if (BlinkWeb.STATE == BlinkWeb.TCP) {
+                    new DownUtils(this);
+                } else {
+                    // 测试多任务同时下载
+                    new MyDownUtils(this);
+                }
             } else {
-                new UploadUtils(this);
+                if (BlinkWeb.STATE == BlinkWeb.TCP) {
+                    new UploadUtils(this);
+                } else {
+                    // 测试多任务同时上传
+                    new MyUploadUtils(this);
+                }
             }
             // 隐藏掉选择框
             setCheckboxCancel();

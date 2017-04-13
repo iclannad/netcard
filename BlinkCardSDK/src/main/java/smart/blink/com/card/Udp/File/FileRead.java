@@ -14,12 +14,15 @@ import smart.blink.com.card.bean.UploadReq;
  */
 public class FileRead {
 
-    private static RandomAccessFile randomAccessFile = null;
+    //private static RandomAccessFile randomAccessFile = null;
+    private RandomAccessFile randomAccessFile = null;
 
     private String path = null;
 
-    private static long length = 0;
-    private static UploadReq uploadReq = null;
+    //private static long length = 0;
+    private long length = 0;
+    //private static UploadReq uploadReq = null;
+    private UploadReq uploadReq = null;
     private String filename = null;
 
     public FileRead(String path) {
@@ -47,7 +50,11 @@ public class FileRead {
     }
 
 
-    public static long getFileSize() {
+//    public static long getFileSize() {
+//        return length;
+//    }
+
+        public long getFileSize() {
         return length;
     }
 

@@ -19,7 +19,8 @@ import smart.blink.com.card.API.BlinkLog;
 public class FileWrite {
 
     private static final String TAG = FileWrite.class.getSimpleName();
-    private static RandomAccessFile randomAccessFile = null;
+    //private static RandomAccessFile randomAccessFile = null;
+    private RandomAccessFile randomAccessFile = null;
     private String filanme = null;
 
     /**
