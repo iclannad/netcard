@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 
+import com.blink.blinkp2p.Tool.Utils.download.DownTask;
 import com.google.gson.FieldNamingStrategy;
 
 import java.util.ArrayList;
@@ -72,6 +73,8 @@ public class Comment {
      * 下载列表的链表
      */
     public static ArrayList<Object> list = new ArrayList<>();
+
+    public static ArrayList<DownTask> downlist = new ArrayList<>();
 
     /**
      * 上传列表的链表

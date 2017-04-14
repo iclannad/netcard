@@ -19,7 +19,7 @@ import smart.blink.com.card.bean.DownLoadingRsp;
 
 /**
  * Created by Administrator on 2017/4/13.
- *
+ * <p/>
  * 注意：在这里我并没有考虑失败的情况
  */
 public class ＭyDownloadThread extends Thread implements HandlerImpl {
@@ -28,12 +28,16 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
     private DownorUpload downorUpload;
     private Context context;
     private ThreadHandlerImpl threadHandler;
+    private DownloadingImpl downloading;
+    private int position;
 
     // 构造方法
-    public ＭyDownloadThread(DownorUpload downorUpload, Context context, ThreadHandlerImpl threadHandler) {
+    public ＭyDownloadThread(int position, DownorUpload downorUpload, Context context, ThreadHandlerImpl threadHandler, DownloadingImpl downloading) {
         this.downorUpload = downorUpload;
         this.context = context;
         this.threadHandler = threadHandler;
+        this.position = position;
+        this.downloading = downloading;
         Log.e(TAG, "ＭyDownloadThread: 开启一个下载任务");
     }
 
@@ -67,11 +71,13 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
             DownLoadingRsp downLoadingRsp = (DownLoadingRsp) object;
             // 如果当前的回调只是更新ui，那么不会开启一个任务
             if (!downLoadingRsp.isEnd()) {
+                String speed = downLoadingRsp.getSpeed();
+                Log.e(TAG, "myHandler: speed===" + speed);
+                downloading.downloading(this.position, downLoadingRsp);
                 return;
             }
             // 下载完成后的回调
-            threadHandler.finishTask();
-            Log.e(TAG, "ＭyDownloadThread: 完成一个下载任务");
+            threadHandler.finishTask(this.position);
         }
     }
 

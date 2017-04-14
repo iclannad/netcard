@@ -22,6 +22,7 @@ import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.System.MyToast;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
 import com.blink.blinkp2p.Tool.Utils.Mime;
+import com.blink.blinkp2p.Tool.Utils.download.DownTask;
 import com.blink.blinkp2p.Tool.Utils.download.MyDownUtils;
 import com.blink.blinkp2p.Tool.Utils.upload.MyUploadUtils;
 import com.blink.blinkp2p.heart.HeartController;
@@ -248,6 +249,15 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                     downorUpload.setPath(mCurrentPath + name.get(seArray.get(i)));
                     Comment.list.add(downorUpload);
                     //否则则是上传操作
+                    DownTask downTask = new DownTask();
+                    downTask.id = i;
+                    downTask.name = name.get(seArray.get(i));
+                    downTask.path = mCurrentPath + name.get(seArray.get(i));
+                    downTask.status = 0;
+                    downTask.progress = 0;
+                    downTask.speed = "0";
+                    // 将加入下载任务列表
+                    Comment.downlist.add(downTask);
                 } else {
                     DownorUpload downorUpload = new DownorUpload();
                     String[] filename = list.get(seArray.get(i)).getA().split("/");

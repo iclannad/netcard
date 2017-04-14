@@ -23,9 +23,11 @@ import com.blink.blinkp2p.Moudle.skin.SkinConfig;
 import com.blink.blinkp2p.Tool.DownUtils;
 import com.blink.blinkp2p.Tool.UploadUtils;
 import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
+import com.blink.blinkp2p.Tool.Utils.download.MyDownUtils;
 import com.blink.blinkp2p.View.DownUpCallback;
 import com.blink.blinkp2p.application.MyApplication;
 
+import smart.blink.com.card.API.BlinkWeb;
 import smart.blink.com.card.bean.DownLoadingRsp;
 import smart.blink.com.card.bean.UploadReq;
 
@@ -71,7 +73,7 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
         taskDownText.setOnClickListener(this);
         taskUploadText.setOnClickListener(this);
 
-        Log.e(TAG, "onClick: 开启屏幕常亮");
+        // 开启屏幕常亮
         getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContent(view);
@@ -80,18 +82,28 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
     @Override
     protected void onResume() {
         super.onResume();
+        if (BlinkWeb.STATE == BlinkWeb.UDP) {
+            MyDownUtils.setProgress(this);
 
-        DownUtils.setProgress(this);
-        UploadUtils.setProgress(this);
-        // 默认是打开下载的界面
-        //读取正在上传下载的列表
-        getDownorUpload(ActivityCode.Downloading);
+            ArrayList<Object> downloadingTask = MyDownUtils.getAllDownloadingTask();
+            if (adapter == null) {
+                adapter = new DownUpAdapter(context, downloadingTask);
+                taskListView.setAdapter(adapter);
+            } else
+                adapter.Redata(downloadingTask);
+        } else {
+            DownUtils.setProgress(this);
+            UploadUtils.setProgress(this);
+            // 默认是打开下载的界面
+            //读取正在上传下载的列表
+            getDownorUpload(ActivityCode.Downloading);
 
-        if (adapter == null) {
-            adapter = new DownUpAdapter(context, list);
-            taskListView.setAdapter(adapter);
-        } else
-            adapter.Redata(list);
+            if (adapter == null) {
+                adapter = new DownUpAdapter(context, list);
+                taskListView.setAdapter(adapter);
+            } else
+                adapter.Redata(list);
+        }
     }
 
 
@@ -156,39 +168,43 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
     public void Click(View v) {
         super.Click(v);
         int skinValue = SharedPrefsUtils.getIntegerPreference(this, SkinConfig.SKIN_CONFIG, SkinConfig.SKIN_DEFAULT_VALUE);
+        if (BlinkWeb.STATE == BlinkWeb.UDP) {
 
-        if (v.getId() == R.id.taskDownText) {
-            getDownorUpload(ActivityCode.Downloading);
-            adapter.Redata(list);
-            //taskDownText.setBackgroundResource(R.color.MainColorBlue);
-            taskDownText.setBackgroundResource(skinValue);
-            taskUploadText.setBackgroundResource(R.color.WhiteSmoke);
-            taskDownText.setTextColor(getResources().getColor(R.color.WhiteSmoke));
-            //taskUploadText.setTextColor(getResources().getColor(R.color.MainColorBlue));
-            taskUploadText.setTextColor(getResources().getColor(skinValue));
+        } else {
+            if (v.getId() == R.id.taskDownText) {
+                getDownorUpload(ActivityCode.Downloading);
+                adapter.Redata(list);
+                //taskDownText.setBackgroundResource(R.color.MainColorBlue);
+                taskDownText.setBackgroundResource(skinValue);
+                taskUploadText.setBackgroundResource(R.color.WhiteSmoke);
+                taskDownText.setTextColor(getResources().getColor(R.color.WhiteSmoke));
+                //taskUploadText.setTextColor(getResources().getColor(R.color.MainColorBlue));
+                taskUploadText.setTextColor(getResources().getColor(skinValue));
 
-            DownUtils.setProgress(this);
-            UploadUtils.setProgress(null);
+                DownUtils.setProgress(this);
+                UploadUtils.setProgress(null);
 
-            updateLoadDownProgress();
-            return;
+                updateLoadDownProgress();
+                return;
+            }
+            if (v.getId() == R.id.taskUploadText) {
+                getDownorUpload(ActivityCode.Upload);
+                adapter.Redata(list);
+                taskDownText.setBackgroundResource(R.color.WhiteSmoke);
+                //taskUploadText.setBackgroundResource(R.color.MainColorBlue);
+                taskUploadText.setBackgroundResource(skinValue);
+                //taskDownText.setTextColor(getResources().getColor(R.color.MainColorBlue));
+                taskDownText.setTextColor(getResources().getColor(skinValue));
+                taskUploadText.setTextColor(getResources().getColor(R.color.WhiteSmoke));
+
+                DownUtils.setProgress(null);
+                UploadUtils.setProgress(this);
+
+                updateUpLoadProgress();
+                return;
+            }
         }
-        if (v.getId() == R.id.taskUploadText) {
-            getDownorUpload(ActivityCode.Upload);
-            adapter.Redata(list);
-            taskDownText.setBackgroundResource(R.color.WhiteSmoke);
-            //taskUploadText.setBackgroundResource(R.color.MainColorBlue);
-            taskUploadText.setBackgroundResource(skinValue);
-            //taskDownText.setTextColor(getResources().getColor(R.color.MainColorBlue));
-            taskDownText.setTextColor(getResources().getColor(skinValue));
-            taskUploadText.setTextColor(getResources().getColor(R.color.WhiteSmoke));
 
-            DownUtils.setProgress(null);
-            UploadUtils.setProgress(this);
-
-            updateUpLoadProgress();
-            return;
-        }
     }
 
     /**
@@ -239,45 +255,69 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
     @Override
 
     public void Call(int position, Object object) {
-        if (position == ActivityCode.Downloading && list.size() != 0) {
-            // 重新获取当前的列表
-            getDownorUpload(ActivityCode.Downloading);
-            DownLoadingRsp downLoadingRsp = (DownLoadingRsp) object;
-            // 判断是否到了结尾
-            if (downLoadingRsp.isEnd()) {
-                list.remove(0);
-            } else {
-                DecimalFormat df = new DecimalFormat("0.00");
-                String db = df.format((double) downLoadingRsp.getBlockId() / (double) downLoadingRsp.getTotolSize());
-                double d = Double.parseDouble(db) * 100;
-                int present = (int) d;
-                list.set(0, getItem(getResources().getDrawable(R.mipmap.download), downLoadingRsp.getFilename(), downLoadingRsp.getSpeed(), present + "%", present));
-            }
-        }
-        if (position == ActivityCode.Upload && list.size() != 0) {
-            // 重新获取当前的列表
-            getDownorUpload(ActivityCode.Upload);
+        if (BlinkWeb.STATE == BlinkWeb.UDP) {
+            // UDP内网下载更新界面
+            final ArrayList<Object> downloadingTask = MyDownUtils.getAllDownloadingTask();
+            if (adapter == null) {
+                adapter = new DownUpAdapter(context, downloadingTask);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        taskListView.setAdapter(adapter);
+                    }
+                });
 
-            UploadReq uploadReq = (UploadReq) object;
-            if (uploadReq.isEnd()) {
-                // 删除第一个下载完成的任务，更新界面
-                list.remove(0);
             } else {
-                DecimalFormat df = new DecimalFormat("0.00");
-                String db = df.format((double) uploadReq.getBlockID() / (double) uploadReq.getBlockSize());
-                double d = Double.parseDouble(db) * 100;
-                int present = (int) d;
-                list.set(0, getItem(getResources().getDrawable(R.mipmap.upload), uploadReq.getFilename(), uploadReq.getSpeed(), String.valueOf(present) + "%", present));
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.Redata(downloadingTask);
+                    }
+                });
             }
 
-        }
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                // 重新刷新界面
-                adapter.Redata(list);
+        } else {
+            if (position == ActivityCode.Downloading && list.size() != 0) {
+                // 重新获取当前的列表
+                getDownorUpload(ActivityCode.Downloading);
+                DownLoadingRsp downLoadingRsp = (DownLoadingRsp) object;
+                // 判断是否到了结尾
+                if (downLoadingRsp.isEnd()) {
+                    list.remove(0);
+                } else {
+                    DecimalFormat df = new DecimalFormat("0.00");
+                    String db = df.format((double) downLoadingRsp.getBlockId() / (double) downLoadingRsp.getTotolSize());
+                    double d = Double.parseDouble(db) * 100;
+                    int present = (int) d;
+                    list.set(0, getItem(getResources().getDrawable(R.mipmap.download), downLoadingRsp.getFilename(), downLoadingRsp.getSpeed(), present + "%", present));
+                }
             }
-        });
+            if (position == ActivityCode.Upload && list.size() != 0) {
+                // 重新获取当前的列表
+                getDownorUpload(ActivityCode.Upload);
+
+                UploadReq uploadReq = (UploadReq) object;
+                if (uploadReq.isEnd()) {
+                    // 删除第一个下载完成的任务，更新界面
+                    list.remove(0);
+                } else {
+                    DecimalFormat df = new DecimalFormat("0.00");
+                    String db = df.format((double) uploadReq.getBlockID() / (double) uploadReq.getBlockSize());
+                    double d = Double.parseDouble(db) * 100;
+                    int present = (int) d;
+                    list.set(0, getItem(getResources().getDrawable(R.mipmap.upload), uploadReq.getFilename(), uploadReq.getSpeed(), String.valueOf(present) + "%", present));
+                }
+
+            }
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // 重新刷新界面
+                    adapter.Redata(list);
+                }
+            });
+        }
     }
 
     /**

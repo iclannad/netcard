@@ -63,7 +63,7 @@ public class MyUploadThread extends Thread implements HandlerImpl {
             }
 
             // 上传一个任务成功后的回调
-            threadHandler.finishTask();
+            threadHandler.finishTask(position);
             Log.e(TAG, "myHandler: 上传一个任务成功");
         }
     }

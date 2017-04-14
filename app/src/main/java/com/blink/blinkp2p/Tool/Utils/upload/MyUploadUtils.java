@@ -75,7 +75,7 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl {
     }
 
     @Override
-    public void finishTask() {
+    public void finishTask(int position) {
         currentTaskCount--;
         if (currentTaskCount == 0) {
             Log.e(TAG, "finishTask: 所有任务上传完毕");
