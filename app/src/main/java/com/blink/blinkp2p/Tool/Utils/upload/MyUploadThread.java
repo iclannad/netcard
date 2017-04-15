@@ -24,12 +24,16 @@ public class MyUploadThread extends Thread implements HandlerImpl {
     private DownorUpload downorUpload;
     private Context context;
     private ThreadHandlerImpl threadHandler;
+    private int position;
+    private UploadingImpl uploading;
 
 
-    public MyUploadThread(DownorUpload downorUpload, Context context, ThreadHandlerImpl threadHandler) {
+    public MyUploadThread(int position, DownorUpload downorUpload, Context context, ThreadHandlerImpl threadHandler, UploadingImpl uploading) {
         this.downorUpload = downorUpload;
         this.context = context;
         this.threadHandler = threadHandler;
+        this.position = position;
+        this.uploading = uploading;
         Log.e(TAG, "MyUploadThread: 开启一个上传任务");
     }
 
@@ -59,11 +63,12 @@ public class MyUploadThread extends Thread implements HandlerImpl {
             UploadReq uploadReq = (UploadReq) object;
 
             if (!uploadReq.isEnd()) {
+                uploading.Uploading(this.position, uploadReq);
                 return;
             }
 
             // 上传一个任务成功后的回调
-            threadHandler.finishTask(position);
+            threadHandler.finishTask(this.position);
             Log.e(TAG, "myHandler: 上传一个任务成功");
         }
     }
@@ -76,6 +81,12 @@ public class MyUploadThread extends Thread implements HandlerImpl {
      */
     @Override
     public void myError(int position, int error) {
+        if (position == ActivityCode.UploadStart) {
 
+        }
+
+        if (position == ActivityCode.Upload) {
+
+        }
     }
 }

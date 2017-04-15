@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 
 import com.blink.blinkp2p.Tool.Utils.download.DownTask;
+import com.blink.blinkp2p.Tool.Utils.upload.UploadTask;
 import com.google.gson.FieldNamingStrategy;
 
 import java.util.ArrayList;
@@ -80,6 +81,7 @@ public class Comment {
      * 上传列表的链表
      */
     public static ArrayList<Object> Uploadlist = new ArrayList<>();
+    public static ArrayList<UploadTask> uploadlist = new ArrayList<>();
 
     //存储文件的路径
     public static String FilePath = Environment.getExternalStorageDirectory() + "/Blink/App/File";

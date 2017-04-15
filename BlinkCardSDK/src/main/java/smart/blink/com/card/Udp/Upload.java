@@ -88,7 +88,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
 
 
         timer = new Timer();
-        timer.schedule(new MyTimerTask(this), 0, 5000);
+        timer.schedule(new MyTimerTask(this), 0, 1000);
 
         // 最多开启5条线程下载
         for (int i = 1; i <= length; i++) {
@@ -131,7 +131,6 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                         } catch (IOException e) {
                             BlinkLog.Error(e.toString());
                         }
-                        //设置超时为2秒
                         try {
                             socket.setSoTimeout(5000);
                         } catch (SocketException e) {
@@ -147,7 +146,6 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                     } else {
                         UploadReq uploadReq = fileRead.Read(j, k);
                         buffer = SendTools.Uploading(uploadReq);
-
                     }
                     try {
                         out.write(buffer);
@@ -206,11 +204,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                 timer.cancel();
                 timer = null;
             }
-            // 更新一下值，允许下一次任务的添加
-            Log.e(TAG, "WaitStart: " + "允许下一次任务的添加");
-//            uploadReq.setEnd(true);
-//            //最后一次返回数据给界面
-            //           totalSpeed();
+
             //关闭写入流
             fileRead.Close();
 
@@ -223,7 +217,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
             }
             int speed = totalSize - lateSize;
             UploadReq uploadReq = new UploadReq();
-            uploadReq.setSpeed(speed / 5 + "K/S");
+            uploadReq.setSpeed(speed + "K/S");
             uploadReq.setBlockID(totalSize);
             uploadReq.setBlockSize((int) size);
             uploadReq.setFilename(fileRead.getFilename());
@@ -306,7 +300,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
         }
         int speed = totalSize - lateSize;
         UploadReq uploadReq = new UploadReq();
-        uploadReq.setSpeed(speed / 5 + "K/S");
+        uploadReq.setSpeed(speed + "K/S");
         uploadReq.setBlockID(totalSize);
         uploadReq.setBlockSize((int) size);
         uploadReq.setFilename(fileRead.getFilename());

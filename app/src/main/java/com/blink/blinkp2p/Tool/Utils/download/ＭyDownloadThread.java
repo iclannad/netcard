@@ -89,6 +89,12 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
      */
     @Override
     public void myError(int position, int error) {
+        if (position == ActivityCode.DownloadStart) {
 
+        }
+
+        if (position == ActivityCode.Downloading) {
+
+        }
     }
 }

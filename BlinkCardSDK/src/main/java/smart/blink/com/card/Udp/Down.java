@@ -143,8 +143,8 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
         fileWrite = new FileWrite(path, filename);
         //开启定时
         timer = new Timer();
-        // 每5秒统计一次下载速度
-        timer.schedule(new MyTimerTask(this), 0, 5000);
+        // 改成每统计一次下载速度
+        timer.schedule(new MyTimerTask(this), 0, 1000);
         this.IP = IP;
         this.PORT = PORT;
         this.filename = filename;
@@ -378,11 +378,8 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
             speedArray[i] = countArray[i];
         }
 
-        Log.e(TAG, "totalSpeed: setBlockId" + totalSize);
-        Log.e(TAG, "totalSpeed: setTotolSize" + (int) size);
-
         speed = totalSize - lateSize;
-        downLoadingRsp.setSpeed(speed / 5 + "K/S");
+        downLoadingRsp.setSpeed(speed  + "K/S");
         downLoadingRsp.setBlockId(totalSize);
         downLoadingRsp.setFilename(fileWrite.getFilename());
         downLoadingRsp.setTotolSize((int) size);

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import com.blink.blinkp2p.Controller.ActivityCode;
 import com.blink.blinkp2p.Moudle.Comment;
 import com.blink.blinkp2p.Moudle.DownorUpload;
 import com.blink.blinkp2p.Moudle.Item;
@@ -61,12 +62,14 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
 
         for (int i = 0; i < Comment.downlist.size(); i++) {
             DownTask downTask = Comment.downlist.get(i);
+            if (downTask.status == 2) {
+                continue;
+            }
             Object object = getItem(context.getResources().getDrawable(R.mipmap.download), downTask.name, downTask.speed, downTask.progress + "%", downTask.progress);
             allDownloadingTask.add(object);
         }
         return allDownloadingTask;
     }
-
 
     public MyDownUtils(Context context) {
         this.context = context;
@@ -144,7 +147,7 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
             HeartController.startHeart();
         }
         if (downUpCallback != null) {
-            downUpCallback.Call(position, null);
+            downUpCallback.Call(ActivityCode.Downloading, null);
         }
     }
 
@@ -168,7 +171,7 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
         downTask.progress = present;
 
         if (downUpCallback != null) {
-            downUpCallback.Call(position, null);
+            downUpCallback.Call(ActivityCode.Downloading, null);
         }
     }
 

@@ -25,6 +25,7 @@ import com.blink.blinkp2p.Tool.Utils.Mime;
 import com.blink.blinkp2p.Tool.Utils.download.DownTask;
 import com.blink.blinkp2p.Tool.Utils.download.MyDownUtils;
 import com.blink.blinkp2p.Tool.Utils.upload.MyUploadUtils;
+import com.blink.blinkp2p.Tool.Utils.upload.UploadTask;
 import com.blink.blinkp2p.heart.HeartController;
 import com.example.administrator.data_sdk.FileUtil.FileTool;
 
@@ -272,6 +273,15 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                         path += "/" + filepath[r];
                     downorUpload.setPath(path);
                     Comment.Uploadlist.add(downorUpload);
+
+                    UploadTask uploadTask = new UploadTask();
+                    uploadTask.name = filename[filename.length - 1];
+                    uploadTask.path = path;
+                    uploadTask.id = 0;
+                    uploadTask.progress = 0;
+                    uploadTask.status = 0;
+                    uploadTask.speed = "0";
+                    Comment.uploadlist.add(uploadTask);
                 }
             }
 

@@ -22,7 +22,7 @@ public class FileRead {
     //private static long length = 0;
     private long length = 0;
     //private static UploadReq uploadReq = null;
-    private UploadReq uploadReq = null;
+    //private UploadReq uploadReq = null;
     private String filename = null;
 
     public FileRead(String path) {
@@ -32,7 +32,7 @@ public class FileRead {
 
         filename = file.getName();
         length = file.length();
-        uploadReq = new UploadReq();
+        //uploadReq = new UploadReq();
         try {
             randomAccessFile = new RandomAccessFile(file, "rw");
         } catch (FileNotFoundException e) {
@@ -54,7 +54,7 @@ public class FileRead {
 //        return length;
 //    }
 
-        public long getFileSize() {
+    public long getFileSize() {
         return length;
     }
 
@@ -66,6 +66,8 @@ public class FileRead {
      * @return
      */
     public synchronized UploadReq Read(int wantblock, int flag) {
+        UploadReq uploadReq = new UploadReq();
+
         byte[] buffer = new byte[1024];
         try {
             randomAccessFile.seek((flag - 1) * 1024 * 1024 * 10 + (wantblock - 1) * 1024);//将文件流的位置移动到pos字节处

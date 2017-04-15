@@ -24,6 +24,7 @@ import com.blink.blinkp2p.Tool.DownUtils;
 import com.blink.blinkp2p.Tool.UploadUtils;
 import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
 import com.blink.blinkp2p.Tool.Utils.download.MyDownUtils;
+import com.blink.blinkp2p.Tool.Utils.upload.MyUploadUtils;
 import com.blink.blinkp2p.View.DownUpCallback;
 import com.blink.blinkp2p.application.MyApplication;
 
@@ -168,8 +169,48 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
     public void Click(View v) {
         super.Click(v);
         int skinValue = SharedPrefsUtils.getIntegerPreference(this, SkinConfig.SKIN_CONFIG, SkinConfig.SKIN_DEFAULT_VALUE);
+        // 内网
         if (BlinkWeb.STATE == BlinkWeb.UDP) {
+            if (v.getId() == R.id.taskDownText) {
+                //taskDownText.setBackgroundResource(R.color.MainColorBlue);
+                taskDownText.setBackgroundResource(skinValue);
+                taskUploadText.setBackgroundResource(R.color.WhiteSmoke);
+                taskDownText.setTextColor(getResources().getColor(R.color.WhiteSmoke));
+                //taskUploadText.setTextColor(getResources().getColor(R.color.MainColorBlue));
+                taskUploadText.setTextColor(getResources().getColor(skinValue));
 
+                MyUploadUtils.setProgress(null);
+                MyDownUtils.setProgress(this);
+
+                // 更新当前的下载列表
+                final ArrayList<Object> downloadingTask = MyDownUtils.getAllDownloadingTask();
+                if (adapter == null) {
+                    adapter = new DownUpAdapter(context, downloadingTask);
+                    taskListView.setAdapter(adapter);
+                } else {
+                    adapter.Redata(downloadingTask);
+                }
+
+            }
+            if (v.getId() == R.id.taskUploadText) {
+                taskDownText.setBackgroundResource(R.color.WhiteSmoke);
+                //taskUploadText.setBackgroundResource(R.color.MainColorBlue);
+                taskUploadText.setBackgroundResource(skinValue);
+                //taskDownText.setTextColor(getResources().getColor(R.color.MainColorBlue));
+                taskDownText.setTextColor(getResources().getColor(skinValue));
+                taskUploadText.setTextColor(getResources().getColor(R.color.WhiteSmoke));
+
+                MyUploadUtils.setProgress(this);
+                MyDownUtils.setProgress(null);
+
+                final ArrayList<Object> allUploadingTask = MyUploadUtils.getAllUploadingTask();
+                if (adapter == null) {
+                    adapter = new DownUpAdapter(context, allUploadingTask);
+                    taskListView.setAdapter(adapter);
+                } else {
+                    adapter.Redata(allUploadingTask);
+                }
+            }
         } else {
             if (v.getId() == R.id.taskDownText) {
                 getDownorUpload(ActivityCode.Downloading);
@@ -256,24 +297,48 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
 
     public void Call(int position, Object object) {
         if (BlinkWeb.STATE == BlinkWeb.UDP) {
-            // UDP内网下载更新界面
-            final ArrayList<Object> downloadingTask = MyDownUtils.getAllDownloadingTask();
-            if (adapter == null) {
-                adapter = new DownUpAdapter(context, downloadingTask);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        taskListView.setAdapter(adapter);
-                    }
-                });
+            if (position == ActivityCode.Downloading) {
+                // UDP内网下载更新界面
+                final ArrayList<Object> downloadingTask = MyDownUtils.getAllDownloadingTask();
+                if (adapter == null) {
+                    adapter = new DownUpAdapter(context, downloadingTask);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            taskListView.setAdapter(adapter);
+                        }
+                    });
 
-            } else {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.Redata(downloadingTask);
-                    }
-                });
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.Redata(downloadingTask);
+                        }
+                    });
+                }
+            }
+
+            // 内网上传的处理逻辑
+            if (position == ActivityCode.Upload) {
+                final ArrayList<Object> allUploadingTask = MyUploadUtils.getAllUploadingTask();
+                if (adapter == null) {
+                    adapter = new DownUpAdapter(context, allUploadingTask);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            taskListView.setAdapter(adapter);
+                        }
+                    });
+
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.Redata(allUploadingTask);
+                        }
+                    });
+                }
             }
 
         } else {

@@ -1,9 +1,9 @@
-package com.blink.blinkp2p.Tool.Utils.download;
+package com.blink.blinkp2p.Tool.Utils.upload;
 
 /**
- * Created by Administrator on 2017/4/14.
+ * Created by Administrator on 2017/4/15.
  */
-public class DownTask {
+public class UploadTask {
     public int id;
     public int status;
     public int progress;
