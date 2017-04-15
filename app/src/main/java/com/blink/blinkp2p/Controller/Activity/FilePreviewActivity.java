@@ -249,9 +249,11 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                     downorUpload.setFLAG(DownorUpload.DOWN);
                     downorUpload.setPath(mCurrentPath + name.get(seArray.get(i)));
                     Comment.list.add(downorUpload);
-                    //否则则是上传操作
+
+                    //-------------------------------------------------------------------
+                    // 下面是多任务同时下载的写法，上面是单任务下载的写法
                     DownTask downTask = new DownTask();
-                    downTask.id = i;
+                    downTask.id = Comment.downlist.size();  // 当前任务的序号
                     downTask.name = name.get(seArray.get(i));
                     downTask.path = mCurrentPath + name.get(seArray.get(i));
                     downTask.status = 0;
@@ -274,10 +276,12 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                     downorUpload.setPath(path);
                     Comment.Uploadlist.add(downorUpload);
 
+                    //-------------------------------------------------------------------
+                    // 下面是多任务同时上传的写法，上面是单任务上传的写法
                     UploadTask uploadTask = new UploadTask();
                     uploadTask.name = filename[filename.length - 1];
                     uploadTask.path = path;
-                    uploadTask.id = 0;
+                    uploadTask.id = Comment.uploadlist.size();
                     uploadTask.progress = 0;
                     uploadTask.status = 0;
                     uploadTask.speed = "0";

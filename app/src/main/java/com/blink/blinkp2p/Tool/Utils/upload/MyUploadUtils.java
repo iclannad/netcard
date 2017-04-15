@@ -1,8 +1,10 @@
 package com.blink.blinkp2p.Tool.Utils.upload;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.blink.blinkp2p.Controller.ActivityCode;
 import com.blink.blinkp2p.Moudle.Comment;
@@ -70,13 +72,15 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
         this.context = context;
 
         // 判断是否需要开启上传任务
-        if (Comment.Uploadlist.size() > 0) {
+        if (Comment.uploadlist.size() > 0) {
             isNeedMonitorTask = true;
         }
 
         //　开启一个维护任务线程
-        maintenceThread = new Thread(this);
-        maintenceThread.start();
+        if (maintenceThread == null) {
+            maintenceThread = new Thread(this);
+            maintenceThread.start();
+        }
 
         //　停止心跳线程
         HeartController.stopHeart();
@@ -87,7 +91,7 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
     @Override
     public void run() {
         while (isNeedMonitorTask) {
-            while (taskCount < Comment.Uploadlist.size() && currentTaskCount <= 5) {
+            while (taskCount < Comment.uploadlist.size() && currentTaskCount < 5) {
                 // 开启一个上传任务的逻辑
                 try {
                     Thread.sleep(200);
@@ -100,7 +104,8 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
                 downorUpload.setName(uploadTask.name);
                 downorUpload.setPath(uploadTask.path);
 
-                new MyUploadThread(taskCount, downorUpload, context, this, this).start();
+                new MyUploadThread(uploadTask.id, downorUpload, context, this, this).start();
+                //new MyUploadThread(taskCount, downorUpload, context, this, this).start();
 
                 // 任务标记　自加
                 taskCount++;
@@ -111,13 +116,6 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
-
-            //　如果所有任务都启动完毕之后，就不需要再启动任务
-            if (taskCount >= Comment.Uploadlist.size()) {
-                isNeedMonitorTask = false;
-                taskCount = 0;
-                Comment.Uploadlist.clear();
             }
 
         }
@@ -138,7 +136,23 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
         currentTaskCount--;
         if (currentTaskCount == 0) {
             Comment.uploadlist.clear();
-            Log.e(TAG, "finishTask: 所有任务上传完毕");
+            taskCount = 0;
+            isNeedMonitorTask = false;  // 关闭开启任务的while循环
+
+            Activity activity = (Activity) MyUploadUtils.context;
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, "任务上传完毕", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             HeartController.startHeart();
         }
 

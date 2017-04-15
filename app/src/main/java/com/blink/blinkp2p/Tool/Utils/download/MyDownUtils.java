@@ -1,8 +1,10 @@
 package com.blink.blinkp2p.Tool.Utils.download;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.blink.blinkp2p.Controller.ActivityCode;
 import com.blink.blinkp2p.Moudle.Comment;
@@ -62,6 +64,7 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
 
         for (int i = 0; i < Comment.downlist.size(); i++) {
             DownTask downTask = Comment.downlist.get(i);
+            // 如果任务下载完成的就不会在传输列表中显示
             if (downTask.status == 2) {
                 continue;
             }
@@ -79,8 +82,10 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
         }
 
         //　开启一个维护任务线程
-        maintenceThread = new Thread(this);
-        maintenceThread.start();
+        if (maintenceThread == null) {
+            maintenceThread = new Thread(this);
+            maintenceThread.start();
+        }
 
         //　停止心跳线程
         HeartController.stopHeart();
@@ -94,21 +99,23 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
     @Override
     public void run() {
         while (isNeedMonitorTask) {
-            //　开启任务，最多同时能开启6个线程
-            while (taskCount < Comment.downlist.size() && currentTaskCount <= 5) {
+            //　开启任务，最多同时能开启5个线程
+            while (taskCount < Comment.downlist.size() && currentTaskCount < 5) {
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                Log.e(TAG, "run: taskCount===" + taskCount + " Comment.downlist.size()===" + Comment.downlist.size());
                 DownTask downTask = Comment.downlist.get(taskCount);
                 downTask.status = 1;
                 DownorUpload downorUpload = new DownorUpload();
                 downorUpload.setName(downTask.name);
                 downorUpload.setFLAG(DownorUpload.DOWN);
                 downorUpload.setPath(downTask.path);
+
                 // 开启一个下载任务的逻辑
-                new ＭyDownloadThread(taskCount, downorUpload, context, this, this).start();
+                new ＭyDownloadThread(downTask.id, downorUpload, context, this, this).start();
 
                 // 任务标记　自加
                 taskCount++;
@@ -120,11 +127,7 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            //　如果所有任务都启动完毕之后，就不需要再启动任务
-            if (taskCount >= Comment.downlist.size()) {
-                isNeedMonitorTask = false;
-                taskCount = 0;
-            }
+
         }
     }
 
@@ -133,7 +136,6 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
      */
     @Override
     public void finishTask(int position) {
-
         DownTask downTask = Comment.downlist.get(position);
         downTask.speed = "";
         downTask.progress = 100;
@@ -141,9 +143,25 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
 
         currentTaskCount--;
         if (currentTaskCount == 0) {
-            Log.e(TAG, "finishTask: 所有的任务下载完毕");
+
+            Activity activity = (Activity) MyDownUtils.context;
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, "任务下载完毕", Toast.LENGTH_SHORT).show();
+                }
+            });
             // 重新开启心跳线程
             Comment.downlist.clear();
+            taskCount = 0;
+            isNeedMonitorTask = false;
+
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             HeartController.startHeart();
         }
         if (downUpCallback != null) {
