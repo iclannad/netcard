@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Adapter.DownUpAdapter;
@@ -23,16 +24,19 @@ import com.blink.blinkp2p.Moudle.skin.SkinConfig;
 import com.blink.blinkp2p.Tool.DownUtils;
 import com.blink.blinkp2p.Tool.UploadUtils;
 import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
+import com.blink.blinkp2p.Tool.Utils.download.DownTask;
 import com.blink.blinkp2p.Tool.Utils.download.MyDownUtils;
 import com.blink.blinkp2p.Tool.Utils.upload.MyUploadUtils;
+import com.blink.blinkp2p.Tool.Utils.upload.UploadTask;
 import com.blink.blinkp2p.View.DownUpCallback;
 import com.blink.blinkp2p.application.MyApplication;
 
 import smart.blink.com.card.API.BlinkWeb;
+import smart.blink.com.card.Tcp.Down;
 import smart.blink.com.card.bean.DownLoadingRsp;
 import smart.blink.com.card.bean.UploadReq;
 
-public class TransSportActivity extends MyBaseActivity implements DownUpCallback {
+public class TransSportActivity extends MyBaseActivity implements DownUpCallback, TaskDeleteImpl {
 
     private static final String TAG = TransSportActivity.class.getSimpleName();
 
@@ -88,10 +92,10 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
 
             ArrayList<Object> downloadingTask = MyDownUtils.getAllDownloadingTask();
             if (adapter == null) {
-                adapter = new DownUpAdapter(context, downloadingTask);
+                adapter = new DownUpAdapter(context, downloadingTask, this, Comment.DOWNLOAD);
                 taskListView.setAdapter(adapter);
             } else
-                adapter.Redata(downloadingTask);
+                adapter.Redata(downloadingTask, Comment.DOWNLOAD);
         } else {
             DownUtils.setProgress(this);
             UploadUtils.setProgress(this);
@@ -100,10 +104,10 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
             getDownorUpload(ActivityCode.Downloading);
 
             if (adapter == null) {
-                adapter = new DownUpAdapter(context, list);
+                adapter = new DownUpAdapter(context, list, null, 0);
                 taskListView.setAdapter(adapter);
             } else
-                adapter.Redata(list);
+                adapter.Redata(list, 0);
         }
     }
 
@@ -185,10 +189,10 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
                 // 更新当前的下载列表
                 final ArrayList<Object> downloadingTask = MyDownUtils.getAllDownloadingTask();
                 if (adapter == null) {
-                    adapter = new DownUpAdapter(context, downloadingTask);
+                    adapter = new DownUpAdapter(context, downloadingTask, this, Comment.DOWNLOAD);
                     taskListView.setAdapter(adapter);
                 } else {
-                    adapter.Redata(downloadingTask);
+                    adapter.Redata(downloadingTask, Comment.DOWNLOAD);
                 }
 
             }
@@ -205,16 +209,16 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
 
                 final ArrayList<Object> allUploadingTask = MyUploadUtils.getAllUploadingTask();
                 if (adapter == null) {
-                    adapter = new DownUpAdapter(context, allUploadingTask);
+                    adapter = new DownUpAdapter(context, allUploadingTask, this, Comment.UPLOAD);
                     taskListView.setAdapter(adapter);
                 } else {
-                    adapter.Redata(allUploadingTask);
+                    adapter.Redata(allUploadingTask, Comment.UPLOAD);
                 }
             }
         } else {
             if (v.getId() == R.id.taskDownText) {
                 getDownorUpload(ActivityCode.Downloading);
-                adapter.Redata(list);
+                adapter.Redata(list, 0);
                 //taskDownText.setBackgroundResource(R.color.MainColorBlue);
                 taskDownText.setBackgroundResource(skinValue);
                 taskUploadText.setBackgroundResource(R.color.WhiteSmoke);
@@ -230,7 +234,7 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
             }
             if (v.getId() == R.id.taskUploadText) {
                 getDownorUpload(ActivityCode.Upload);
-                adapter.Redata(list);
+                adapter.Redata(list, 0);
                 taskDownText.setBackgroundResource(R.color.WhiteSmoke);
                 //taskUploadText.setBackgroundResource(R.color.MainColorBlue);
                 taskUploadText.setBackgroundResource(skinValue);
@@ -301,7 +305,7 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
                 // UDP内网下载更新界面
                 final ArrayList<Object> downloadingTask = MyDownUtils.getAllDownloadingTask();
                 if (adapter == null) {
-                    adapter = new DownUpAdapter(context, downloadingTask);
+                    adapter = new DownUpAdapter(context, downloadingTask, this, Comment.DOWNLOAD);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -313,7 +317,7 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            adapter.Redata(downloadingTask);
+                            adapter.Redata(downloadingTask, Comment.DOWNLOAD);
                         }
                     });
                 }
@@ -323,7 +327,7 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
             if (position == ActivityCode.Upload) {
                 final ArrayList<Object> allUploadingTask = MyUploadUtils.getAllUploadingTask();
                 if (adapter == null) {
-                    adapter = new DownUpAdapter(context, allUploadingTask);
+                    adapter = new DownUpAdapter(context, allUploadingTask, this, Comment.UPLOAD);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -335,7 +339,7 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            adapter.Redata(allUploadingTask);
+                            adapter.Redata(allUploadingTask, Comment.UPLOAD);
                         }
                     });
                 }
@@ -379,7 +383,7 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
                 @Override
                 public void run() {
                     // 重新刷新界面
-                    adapter.Redata(list);
+                    adapter.Redata(list, 0);
                 }
             });
         }
@@ -395,4 +399,25 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
 
     }
 
+    @Override
+    public void delete(int position, int type) {
+        Log.e(TAG, "delete: position==" + position);
+        if (type == Comment.DOWNLOAD) {
+            DownTask downTask = Comment.downlist.get(position);
+            // 标记当前的任务已经下载完毕
+            if (downTask.status == 1) {
+                Toast.makeText(this, "不能删除正在进行的任务。", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            downTask.status = 2;
+        }
+        if (type == Comment.UPLOAD) {
+            UploadTask uploadTask = Comment.uploadlist.get(position);
+            if (uploadTask.status == 1) {
+                Toast.makeText(this, "不能删除正在进行的任务。", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            uploadTask.status = 2;
+        }
+    }
 }

@@ -71,8 +71,6 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
             DownLoadingRsp downLoadingRsp = (DownLoadingRsp) object;
             // 如果当前的回调只是更新ui，那么不会开启一个任务
             if (!downLoadingRsp.isEnd()) {
-                String speed = downLoadingRsp.getSpeed();
-                Log.e(TAG, "myHandler: speed===" + speed);
                 downloading.downloading(this.position, downLoadingRsp);
                 return;
             }

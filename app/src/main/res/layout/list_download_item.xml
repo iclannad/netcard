@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/duLinear"
+    android:background="@android:color/white"
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:id="@+id/duImage"
+        android:layout_width="@dimen/x35"
+        android:layout_height="@dimen/y35"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="@dimen/x10"
+        android:src="@mipmap/icon_file" />
+
+    <LinearLayout
+        android:layout_gravity="center_vertical"
+        android:layout_width="@dimen/x180"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+			android:singleLine="true"
+            android:text="filename"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/textsize_medium" />
+
+        <LinearLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="2"
+            >
+        <TextView
+            android:id="@+id/speedText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="0K/S"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/blue_background"
+            android:textSize="@dimen/textsize_small" />
+        
+        <TextView
+        android:id="@+id/movie_file_size"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="right"
+        android:text="0KB"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/title_caption"
+         />
+   </LinearLayout>     
+        <com.gc.materialdesign.views.ProgressBarDeterminate
+        android:id="@+id/speedBar"
+        android:layout_width="@dimen/x180"
+        android:layout_height="3dp"
+        android:background="#1E88E5"
+        android:layout_marginTop="@dimen/y5"
+         />
+    </LinearLayout>
+
+    <LinearLayout 
+        android:layout_marginLeft="@dimen/x10"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        >
+
+    <TextView
+        android:gravity="center_vertical"
+        android:id="@+id/presentText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0.0%"
+        android:textColor="@color/blue_background"
+        android:textSize="@dimen/textSize" />
+
+    <ImageView
+        android:layout_marginTop="@dimen/y5"
+        android:id="@+id/delete_task"
+        android:layout_width="@dimen/x30"
+        android:layout_height="@dimen/y20"
+        android:background="@mipmap/collection_delete_disabled_nt" />
+</LinearLayout>
+    
+    
+    <TextView 
+        android:id="@+id/tv_taskstate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/textsize_medium"
+        android:text="任务等待"
+        android:textColor="@color/logincolor"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/y10"
+        />
+
+</LinearLayout>

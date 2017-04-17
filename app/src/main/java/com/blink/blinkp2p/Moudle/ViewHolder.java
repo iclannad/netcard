@@ -58,6 +58,7 @@ public class ViewHolder {
     public TextView titleText;
     public ProgressBar speedBar;
     public RelativeLayout duLinear;
+    public ImageView taskDeleteImage;
 
 
     public ViewHolder(View view, String position) {
@@ -104,6 +105,7 @@ public class ViewHolder {
                 titleText = (TextView) view.findViewById(R.id.titleText);
                 speedBar = (ProgressBar) view.findViewById(R.id.speedBar);
                 duLinear = (RelativeLayout) view.findViewById(R.id.duLinear);
+                taskDeleteImage = (ImageView) view.findViewById(R.id.iv_delete);
                 break;
 
 //            case "SortListView":

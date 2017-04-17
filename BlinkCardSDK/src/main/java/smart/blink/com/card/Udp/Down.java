@@ -331,7 +331,6 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
             totalSpeed();
             //关闭写入流
             fileWrite.Close();
-            Log.e(TAG, "WaitStart: 文件下载完毕之后关闭当前的流");
         }
     }
 

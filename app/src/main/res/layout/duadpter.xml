@@ -47,13 +47,29 @@
             android:textSize="@dimen/textsize_small" />
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/ll_delete"
+        android:layout_width="wrap_content"
+        android:layout_toLeftOf="@id/itemRightLinear"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_delete"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@mipmap/collection_delete_disabled_nt"/>
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/itemCenterLinear"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/itemRightLinear"
+        android:layout_toLeftOf="@+id/ll_delete"
         android:layout_toRightOf="@+id/duImage"
         android:orientation="vertical"
         android:padding="@dimen/marginNormal">

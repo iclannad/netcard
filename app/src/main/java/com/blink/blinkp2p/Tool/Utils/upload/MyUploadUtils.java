@@ -37,7 +37,7 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
     public static boolean isNeedMonitorTask = false;
     public static DownUpCallback downUpCallback;
 
-    private static Object getItem(Drawable drawable, String title, String speed, String present, int progress) {
+    private static Object getItem(int id, Drawable drawable, String title, String speed, String present, int progress) {
         Item item = new Item();
         item.setListImage(drawable);
         item.setListText(title);
@@ -45,6 +45,8 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
         item.setListRightText1(speed);
         item.setProgressBar(progress);
         item.setHeight((int) context.getResources().getDimension(R.dimen.itemHeight));
+
+        item.id = id;
 
         return item;
     }
@@ -62,7 +64,7 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
                 continue;
             }
 
-            Object object = getItem(context.getResources().getDrawable(R.mipmap.upload), uploadTask.name, uploadTask.speed, uploadTask.progress + "%", uploadTask.progress);
+            Object object = getItem(uploadTask.id, context.getResources().getDrawable(R.mipmap.upload), uploadTask.name, uploadTask.speed, uploadTask.progress + "%", uploadTask.progress);
             allUploadingTask.add(object);
         }
         return allUploadingTask;
@@ -99,6 +101,13 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
                     e.printStackTrace();
                 }
                 UploadTask uploadTask = Comment.uploadlist.get(taskCount);
+
+                // 如果当前任务已经被删除的话就不需求开启下载
+                if (uploadTask.status == 2) {
+                    taskCount++;
+                    continue;
+                }
+
                 uploadTask.status = 1;
                 DownorUpload downorUpload = new DownorUpload();
                 downorUpload.setName(uploadTask.name);

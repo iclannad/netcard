@@ -1,10 +1,14 @@
 package com.blink.blinkp2p.Tool.Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
+import com.blink.blinkp2p.Controller.Activity.TaskDeleteImpl;
 
 import com.blink.blinkp2p.R;
 import com.example.administrator.ui_sdk.DensityUtil;
@@ -20,14 +24,18 @@ import com.blink.blinkp2p.Moudle.ViewHolder;
  */
 public class DownUpAdapter extends BaseAdapter {
 
+    private static final String TAG = DownUpAdapter.class.getSimpleName();
     private Context context = null;
     private ArrayList<Object> list = null;
     private ViewHolder viewHolder = null;
+    TaskDeleteImpl taskDelete = null;
+    int type;   // 上传下载类型
 
-
-    public DownUpAdapter(Context context, ArrayList<Object> list) {
+    public DownUpAdapter(Context context, ArrayList<Object> list, TaskDeleteImpl taskDelete, int type) {
         this.context = context;
         this.list = list;
+        this.taskDelete = taskDelete;
+        this.type = type;
     }
 
     @Override
@@ -49,8 +57,8 @@ public class DownUpAdapter extends BaseAdapter {
 
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        Item item = (Item) list.get(position);
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        final Item item = (Item) list.get(position);
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.duadpter, null);
             viewHolder = new ViewHolder(convertView, "DUAdapter");
@@ -66,6 +74,41 @@ public class DownUpAdapter extends BaseAdapter {
         viewHolder.speedText.setText(item.getListRightText1());
         viewHolder.presentText.setText(item.getListRightText());
         viewHolder.speedBar.setProgress(item.getProgressBar());
+//        // 任务删除
+        viewHolder.taskDeleteImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(context)
+                        .setTitle(
+                                context.getResources().getString(
+                                        R.string.delete_file))
+                        .setMessage(
+                                context.getResources().getString(
+                                        R.string.delete_currenttask))
+                        .setNegativeButton(
+                                context.getResources().getString(R.string.yes),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,
+                                                        int which) {
+                                        // 删除当前的任务
+                                        //list.remove(position);
+                                        //DownUpAdapter.this.notifyDataSetChanged();
+                                        if (taskDelete != null) {
+                                            // 此处应该传入要删除任务id
+                                            taskDelete.delete(item.id, type);
+                                        }
+                                    }
+                                })
+                        .setPositiveButton(R.string.no,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,
+                                                        int which) {
+                                        dialog.dismiss();
+                                    }
+                                }).show();
+
+            }
+        });
         if (item.getHeight() != 0) {
             DensityUtil.setAbsSize(viewHolder.duLinear, BaseActivity.width, item.getHeight());
         }
@@ -74,8 +117,9 @@ public class DownUpAdapter extends BaseAdapter {
     }
 
 
-    public void Redata(ArrayList<Object> list) {
+    public void Redata(ArrayList<Object> list, int type) {
         this.list = list;
         this.notifyDataSetChanged();
+        this.type = type;
     }
 }

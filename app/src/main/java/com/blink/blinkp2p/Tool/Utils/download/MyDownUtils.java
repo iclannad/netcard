@@ -42,7 +42,7 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
     public static DownUpCallback downUpCallback;
 
 
-    private static Object getItem(Drawable drawable, String title, String speed, String present, int progress) {
+    private static Object getItem(int id, Drawable drawable, String title, String speed, String present, int progress) {
         Item item = new Item();
         item.setListImage(drawable);
         item.setListText(title);
@@ -50,6 +50,8 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
         item.setListRightText1(speed);
         item.setProgressBar(progress);
         item.setHeight((int) context.getResources().getDimension(R.dimen.itemHeight));
+
+        item.id = id;
 
         return item;
     }
@@ -68,7 +70,7 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
             if (downTask.status == 2) {
                 continue;
             }
-            Object object = getItem(context.getResources().getDrawable(R.mipmap.download), downTask.name, downTask.speed, downTask.progress + "%", downTask.progress);
+            Object object = getItem(downTask.id, context.getResources().getDrawable(R.mipmap.download), downTask.name, downTask.speed, downTask.progress + "%", downTask.progress);
             allDownloadingTask.add(object);
         }
         return allDownloadingTask;
@@ -108,6 +110,14 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
                 }
                 Log.e(TAG, "run: taskCount===" + taskCount + " Comment.downlist.size()===" + Comment.downlist.size());
                 DownTask downTask = Comment.downlist.get(taskCount);
+
+                // 如果当前任务已经在任务列表中删除的话，就不开启下一个任务
+                if (downTask.status == 2) {
+                    // 任务标记　自加
+                    taskCount++;
+                    continue;
+                }
+
                 downTask.status = 1;
                 DownorUpload downorUpload = new DownorUpload();
                 downorUpload.setName(downTask.name);
@@ -117,9 +127,9 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
                 // 开启一个下载任务的逻辑
                 new ＭyDownloadThread(downTask.id, downorUpload, context, this, this).start();
 
+                currentTaskCount++;
                 // 任务标记　自加
                 taskCount++;
-                currentTaskCount++;
             }
 
             try {
@@ -129,6 +139,8 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
             }
 
         }
+
+        maintenceThread = null;
     }
 
     /**
@@ -143,7 +155,6 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
 
         currentTaskCount--;
         if (currentTaskCount == 0) {
-
             Activity activity = (Activity) MyDownUtils.context;
             activity.runOnUiThread(new Runnable() {
                 @Override

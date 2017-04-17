@@ -77,6 +77,9 @@ public class Comment {
 
     public static ArrayList<DownTask> downlist = new ArrayList<>();
 
+    public static final int DOWNLOAD = 1;
+    public static final int UPLOAD = 2;
+
     /**
      * 上传列表的链表
      */
