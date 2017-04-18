@@ -19,6 +19,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.zip.CRC32;
 
 import smart.blink.com.card.bean.DownLoadingRsp;
 
@@ -33,8 +35,11 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
 
     private static Context context;
 
-    public static int taskCount = 0;   // 已经启动了的任务数
-    public static int currentTaskCount = 0;    //　当前正在下载的任务数
+    //    public static int taskCount = 0;   // 已经启动了的任务数
+//    public static int currentTaskCount = 0;    //　当前正在下载的任务数
+    public static AtomicInteger taskCount = new AtomicInteger(0);
+    public static AtomicInteger currentTaskCount = new AtomicInteger(0);
+
     public static Thread maintenceThread = null;      // 维护下载任务的线程
     public static boolean isNeedMonitorTask = false;
     public static ArrayList<Integer> finishTask = new ArrayList<>();    // 存放下载完成的任务
@@ -83,6 +88,7 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
             isNeedMonitorTask = true;
         }
 
+
         //　开启一个维护任务线程
         if (maintenceThread == null) {
             maintenceThread = new Thread(this);
@@ -90,7 +96,7 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
         }
 
         //　停止心跳线程
-        HeartController.stopHeart();
+        //HeartController.stopHeart();
         Log.e(TAG, "finishTask: 所有的任务将开始下载");
     }
 
@@ -102,19 +108,16 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
     public void run() {
         while (isNeedMonitorTask) {
             //　开启任务，最多同时能开启5个线程
-            while (taskCount < Comment.downlist.size() && currentTaskCount < 5) {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            // taskCount < Comment.downlist.size() && currentTaskCount
+            while (taskCount.get() < Comment.downlist.size() && currentTaskCount.get() < 5) {
                 Log.e(TAG, "run: taskCount===" + taskCount + " Comment.downlist.size()===" + Comment.downlist.size());
-                DownTask downTask = Comment.downlist.get(taskCount);
+                DownTask downTask = Comment.downlist.get(taskCount.get());
 
                 // 如果当前任务已经在任务列表中删除的话，就不开启下一个任务
                 if (downTask.status == 2) {
                     // 任务标记　自加
-                    taskCount++;
+                    //taskCount++;
+                    taskCount.getAndIncrement();
                     continue;
                 }
 
@@ -127,9 +130,17 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
                 // 开启一个下载任务的逻辑
                 new ＭyDownloadThread(downTask.id, downorUpload, context, this, this).start();
 
-                currentTaskCount++;
+                //currentTaskCount++;
+                currentTaskCount.getAndIncrement();
                 // 任务标记　自加
-                taskCount++;
+                //taskCount++;
+                taskCount.getAndIncrement();
+
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
             try {
@@ -153,8 +164,10 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
         downTask.progress = 100;
         downTask.status = 2;
 
-        currentTaskCount--;
-        if (currentTaskCount == 0) {
+        //currentTaskCount--;
+        currentTaskCount.getAndDecrement();
+        // currentTaskCount == 0
+        if (currentTaskCount.get() == 0) {
             Activity activity = (Activity) MyDownUtils.context;
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -164,7 +177,8 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
             });
             // 重新开启心跳线程
             Comment.downlist.clear();
-            taskCount = 0;
+            //taskCount = 0;
+            taskCount.set(0);
             isNeedMonitorTask = false;
 
             try {
@@ -173,7 +187,7 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
                 e.printStackTrace();
             }
 
-            HeartController.startHeart();
+            //HeartController.startHeart();
         }
         if (downUpCallback != null) {
             downUpCallback.Call(ActivityCode.Downloading, null);

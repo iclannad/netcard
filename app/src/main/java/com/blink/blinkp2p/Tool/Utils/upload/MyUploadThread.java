@@ -1,7 +1,9 @@
 package com.blink.blinkp2p.Tool.Utils.upload;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.blink.blinkp2p.Controller.ActivityCode;
 import com.blink.blinkp2p.Controller.NetCardController;
@@ -34,7 +36,6 @@ public class MyUploadThread extends Thread implements HandlerImpl {
         this.threadHandler = threadHandler;
         this.position = position;
         this.uploading = uploading;
-        Log.e(TAG, "MyUploadThread: 开启一个上传任务");
     }
 
     @Override
@@ -53,9 +54,22 @@ public class MyUploadThread extends Thread implements HandlerImpl {
         if (position == ActivityCode.UploadStart) {
             UploadStartReq uploadStartReq = (UploadStartReq) object;
             int success = uploadStartReq.getSuccess();
+            // 上传请求成功
             if (success == 0) {
                 // 开始上传数据
                 NetCardController.Upload(downorUpload.getPath(), downorUpload.getName(), this);
+            }
+
+            // 如果文件在电脑已经存在的话就直接标志任务完成
+            if (success == 23 || success == 34) {
+                Activity activity = (Activity) context;
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, "上传路径已存在此文件:" + downorUpload.getName(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                threadHandler.finishTask(this.position);
             }
         }
 

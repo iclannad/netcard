@@ -18,6 +18,7 @@ import com.blink.blinkp2p.heart.HeartController;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import smart.blink.com.card.bean.UploadReq;
 
@@ -31,8 +32,10 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
     private static final String TAG = MyUploadUtils.class.getSimpleName();
 
     private static Context context;
-    public static int taskCount = 0;   // 已经启动了的任务数
-    public static int currentTaskCount = 0;
+
+    public static AtomicInteger taskCount = new AtomicInteger(0);
+    public static AtomicInteger currentTaskCount = new AtomicInteger(0);
+
     public static Thread maintenceThread = null;
     public static boolean isNeedMonitorTask = false;
     public static DownUpCallback downUpCallback;
@@ -85,26 +88,18 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
         }
 
         //　停止心跳线程
-        HeartController.stopHeart();
-        Log.e(TAG, "finishTask: 所有的任务将开始上传");
+        //HeartController.stopHeart();
     }
-
 
     @Override
     public void run() {
         while (isNeedMonitorTask) {
-            while (taskCount < Comment.uploadlist.size() && currentTaskCount < 5) {
-                // 开启一个上传任务的逻辑
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                UploadTask uploadTask = Comment.uploadlist.get(taskCount);
+            while (taskCount.get() < Comment.uploadlist.size() && currentTaskCount.get() < 5) {
+                UploadTask uploadTask = Comment.uploadlist.get(taskCount.get());
 
                 // 如果当前任务已经被删除的话就不需求开启下载
                 if (uploadTask.status == 2) {
-                    taskCount++;
+                    taskCount.getAndIncrement();
                     continue;
                 }
 
@@ -113,12 +108,19 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
                 downorUpload.setName(uploadTask.name);
                 downorUpload.setPath(uploadTask.path);
 
+                // 上传任务的逻辑
                 new MyUploadThread(uploadTask.id, downorUpload, context, this, this).start();
-                //new MyUploadThread(taskCount, downorUpload, context, this, this).start();
 
                 // 任务标记　自加
-                taskCount++;
-                currentTaskCount++;
+                taskCount.getAndIncrement();
+                currentTaskCount.getAndIncrement();
+
+                // 开启一个上传任务的逻辑
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
             try {
@@ -128,6 +130,7 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
             }
 
         }
+        maintenceThread = null;
     }
 
     /**
@@ -142,10 +145,10 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
         uploadTask.speed = "";
         uploadTask.progress = 100;
 
-        currentTaskCount--;
-        if (currentTaskCount == 0) {
+        currentTaskCount.getAndDecrement();
+        if (currentTaskCount.get() == 0 && taskCount.get() >= Comment.uploadlist.size()) {
             Comment.uploadlist.clear();
-            taskCount = 0;
+            taskCount.set(0);
             isNeedMonitorTask = false;  // 关闭开启任务的while循环
 
             Activity activity = (Activity) MyUploadUtils.context;
@@ -162,7 +165,7 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
                 e.printStackTrace();
             }
 
-            HeartController.startHeart();
+            //HeartController.startHeart();
         }
 
         if (downUpCallback != null) {
