@@ -183,7 +183,7 @@ public class TcpSocket {
             if (timer != null) {
                 timer.cancel();
                 timer = null;
-                Log.e(TAG, "Write: 我接收到数据现在要关闭时定时器");
+                //Log.e(TAG, "Write: 我接收到数据现在要关闭时定时器");
             }
         }
 

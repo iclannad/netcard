@@ -1,16 +1,11 @@
 package smart.blink.com.card.Tcp;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-
 import java.io.File;
 import java.util.Timer;
 
 import smart.blink.com.card.API.BlinkWeb;
-import smart.blink.com.card.API.ErrorNo;
 import smart.blink.com.card.BlinkNetCardCall;
 import smart.blink.com.card.Tool.MyTimerTask;
-import smart.blink.com.card.Tool.ReqDownUp;
 import smart.blink.com.card.Tool.SendTools;
 import smart.blink.com.card.Tool.TimerTaskCall;
 import smart.blink.com.card.bean.MainObject;
@@ -37,20 +32,20 @@ public class MyUpload implements BlinkNetCardCall, TimerTaskCall {
         this.path = path;
         this.filename = filename;
         this.call = call;
-        Log.e(TAG, "path===" + path + "   filename===" + filename);
+        //Log.e(TAG, "path===" + path + "   filename===" + filename);
         this.timer = new Timer();
-        this.timer.schedule(new MyTimerTask(this), 0, 5000);
+        this.timer.schedule(new MyTimerTask(this), 0, 1000);
 
         // 获得当前文件需要上传的总块数
         file = new File(path, filename);
-        Log.e(TAG, "file.exists():  " + file.exists());
-        Log.e(TAG, "file.length(): " + file.length());
+//        Log.e(TAG, "file.exists():  " + file.exists());
+//        Log.e(TAG, "file.length(): " + file.length());
 
         long block = file.length() / 1024;
         if (file.length() % 1024 != 0) {
             block++;
         }
-        Log.e(TAG, "该文件的的上传的总块数是：  " + block);
+//        Log.e(TAG, "该文件的的上传的总块数是：  " + block);
         wantblock = block;
         lastReqBlockId = 0;
 
@@ -58,7 +53,7 @@ public class MyUpload implements BlinkNetCardCall, TimerTaskCall {
     }
 
     private void startUpload() {
-        Log.e(TAG, "startUpload: reqBlockId===" + reqBlockId);
+//        Log.e(TAG, "startUpload: reqBlockId===" + reqBlockId);
         byte[] buffer = SendTools.UploadingOldVersion(reqBlockId, wantblock, filename, file);
         new TcpSocket(BlinkWeb.zIP, BlinkWeb.zPORT, buffer, 0, this);
         reqBlockId++;
@@ -70,26 +65,27 @@ public class MyUpload implements BlinkNetCardCall, TimerTaskCall {
         if (upLoadByServerRsp.getSuccess() == 0) {
             //上传一块成功
             if (reqBlockId >= wantblock) {
-                // 全部上传成功
-                Log.e(TAG, "onSuccess: 全部块数上传成功");
-                UploadReq uploadReq = new UploadReq();
-                uploadReq.setBlockID(reqBlockId);
-                uploadReq.setBlockSize((int) wantblock);
-                String speed = (double) (reqBlockId - lastReqBlockId) / 5 + "k/s";
-                lastReqBlockId = reqBlockId;
-                uploadReq.setEnd(true);
-                uploadReq.setFilename(filename);
-                uploadReq.setSpeed(speed);
-                reqBlockId = 0;
-                lastReqBlockId = 0;
-                call.onSuccess(0, uploadReq);
-
                 // 清空定时器
                 // 4月5日早因为这条代码调试了一早上
                 timer.cancel();
                 timer = null;
+
+                // 全部上传成功
+                //Log.e(TAG, "onSuccess: 全部块数上传成功");
+                UploadReq uploadReq = new UploadReq();
+//                uploadReq.setBlockID(reqBlockId);
+//                uploadReq.setBlockSize((int) wantblock);
+//                String speed = (double) (reqBlockId - lastReqBlockId) + "k/s";
+//
+                uploadReq.setEnd(true);
+//                uploadReq.setFilename(filename);
+//                uploadReq.setSpeed(speed);
+                reqBlockId = 0;
+                lastReqBlockId = 0;
+                call.onSuccess(-1, uploadReq);
             } else {
-                Log.e(TAG, "onSuccess: 当上传完成一块时，继续上传下一块");
+                //Log.e(TAG, "onSuccess: 当上传完成一块时，继续上传下一块");
+                // 当上传完成一块时，继续上传下一块
                 startUpload();
             }
         }
@@ -105,14 +101,16 @@ public class MyUpload implements BlinkNetCardCall, TimerTaskCall {
      */
     @Override
     public void TimerCall() {
-        UploadReq uploadReq = new UploadReq();
-        uploadReq.setBlockID(reqBlockId);
-        uploadReq.setBlockSize((int) wantblock);
-        String speed = (double) (reqBlockId - lastReqBlockId) / 5 + "k/s";
-        lastReqBlockId = reqBlockId;
-        uploadReq.setEnd(false);
-        uploadReq.setFilename(filename);
-        uploadReq.setSpeed(speed);
-        call.onSuccess(0, uploadReq);
+        if (reqBlockId < wantblock) {
+            UploadReq uploadReq = new UploadReq();
+            uploadReq.setBlockID(reqBlockId);
+            uploadReq.setBlockSize((int) wantblock);
+            String speed = (double) (reqBlockId - lastReqBlockId) + "k/s";
+            lastReqBlockId = reqBlockId;
+            uploadReq.setEnd(false);
+            uploadReq.setFilename(filename);
+            uploadReq.setSpeed(speed);
+            call.onSuccess(-1, uploadReq);
+        }
     }
 }

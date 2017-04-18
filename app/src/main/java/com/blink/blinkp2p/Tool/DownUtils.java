@@ -27,6 +27,7 @@ import com.blink.blinkp2p.Moudle.DownorUpload;
 import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
 import com.blink.blinkp2p.View.DownUpCallback;
 import com.blink.blinkp2p.application.MyApplication;
+import com.blink.blinkp2p.heart.HeartController;
 import com.blink.blinkp2p.heart.SendHeartThread;
 
 import smart.blink.com.card.API.BlinkWeb;
@@ -73,10 +74,8 @@ public class DownUtils implements HandlerImpl {
         downLoadFileNamePath = downorUpload.getPath();
 
         // 释放心跳线程的资源
-        SendHeartThread.isClose = true;
-        synchronized (SendHeartThread.HeartLock) {
-            SendHeartThread.HeartLock.notify();
-        }
+        HeartController.stopHeart();
+
         Log.e(TAG, "StartLoad: downLoadFileNamePath===" + downLoadFileNamePath);
         NetCardController.DownloadStart(downLoadFileNamePath, this);
         count++; //先暂时注释
@@ -100,7 +99,6 @@ public class DownUtils implements HandlerImpl {
                 downLoadStartByServerRsp = (DownLoadStartByServerRsp) object;
                 if (downLoadStartByServerRsp.getSuccess() == 0) {
                     // 如果能进来这里的话就说明解析数据成功了
-                    Log.e(TAG, "myHandler: " + "与子服务器连接时，发送的下载请求成功，接下来进行下载的过程，会调用DownLoading方法");
                     // cmd = 9
                     // 创建下载的文件
                     handleDownload(9, downLoadStartByServerRsp.getTotalBlock(), downLoadStartByServerRsp.getFileName());
@@ -127,17 +125,16 @@ public class DownUtils implements HandlerImpl {
                 } else {
                     path = Environment.getExternalStorageDirectory() + "";
                 }
-                Log.e(TAG, "myHandler: " + "接收到下载请求，开始下载");
-                Log.e(TAG, "myHandler: path===" + path);
-                Log.e(TAG, "myHandler: downLoadFileNamePath===" + downLoadFileNamePath);
-                Log.e(TAG, "myHandler: downLoadStartRsp.getTotalblock()===" + downLoadStartRsp.getTotalblock());
+//                Log.e(TAG, "myHandler: " + "接收到下载请求，开始下载");
+//                Log.e(TAG, "myHandler: path===" + path);
+//                Log.e(TAG, "myHandler: downLoadFileNamePath===" + downLoadFileNamePath);
+//                Log.e(TAG, "myHandler: downLoadStartRsp.getTotalblock()===" + downLoadStartRsp.getTotalblock());
                 NetCardController.DownLoading(path, downLoadFileNamePath, downLoadStartRsp.getTotalblock(), this);
             }
 
         }
 
         if (position == ActivityCode.Downloading) {
-            // ---------------------------------------------------------------------------------
             DownLoadingRsp downLoadingRsp = (DownLoadingRsp) object;
             // 存放在全局变量中
             MyApplication.getInstance().downLoadingRsp = downLoadingRsp;
@@ -159,7 +156,7 @@ public class DownUtils implements HandlerImpl {
                     DownUtils.this.context.getResources().getString(R.string.phone),
                     null);
             msgdao.close();
-            Log.e(TAG, "myHandler: 下载完成一个任务就保存在数据库中");
+            //Log.e(TAG, "myHandler: 下载完成一个任务就保存在数据库中");
 
             //Comment.list.remove(0); // 删除任务列表中的第一个任务
             if (count < Comment.list.size()) {
@@ -182,13 +179,11 @@ public class DownUtils implements HandlerImpl {
                         Toast.makeText(activity, "任务下载完毕", Toast.LENGTH_SHORT).show();
                     }
                 });
-                Log.e(TAG, "myHandler: 任务下载完毕，重新开启心跳线程");
+                //Log.e(TAG, "myHandler: 任务下载完毕，重新开启心跳线程");
                 // 下载完毕，已经没有任务在下载
                 isEnd = true;
 
-                SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-                SendHeartThread.isClose = false;
-                sendHeartThread.start();
+                HeartController.startHeart();
             }
         }
     }
@@ -206,7 +201,7 @@ public class DownUtils implements HandlerImpl {
         Log.e(TAG, "handleDownload: ");
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             try {
-                Log.e(TAG, "handleDownload: true_name===" + true_name);
+                //Log.e(TAG, "handleDownload: true_name===" + true_name);
                 // 获取下载的路径
                 String temp = SharedPrefsUtils.getStringPreference(context, Comment.DOWNFILE);
                 String res = temp + "/" + true_name;
@@ -219,7 +214,7 @@ public class DownUtils implements HandlerImpl {
                     // 获取文件后缀名前面的部分
                     String name = true_name.substring(0, true_name.lastIndexOf("."));
                     String newFileName = temp + "/" + name + "(" + i + ")" + "." + prefix;
-                    Log.e(TAG, "handleDownload: 新的名字是newFileName===" + newFileName);
+                    //Log.e(TAG, "handleDownload: 新的名字是newFileName===" + newFileName);
                     true_file = new File(newFileName);
                     //true_file = new File(res + "(" + i + ")");
                     i++;

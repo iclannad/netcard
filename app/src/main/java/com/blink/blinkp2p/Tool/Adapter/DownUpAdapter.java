@@ -10,6 +10,7 @@ import android.widget.BaseAdapter;
 
 import com.blink.blinkp2p.Controller.Activity.TaskDeleteImpl;
 
+import com.blink.blinkp2p.Moudle.Comment;
 import com.blink.blinkp2p.R;
 import com.example.administrator.ui_sdk.DensityUtil;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 
 import com.blink.blinkp2p.Moudle.Item;
 import com.blink.blinkp2p.Moudle.ViewHolder;
+
+import smart.blink.com.card.API.BlinkWeb;
 
 /**
  * Created by Ruanjiahui on 2017/1/9.
@@ -90,13 +93,21 @@ public class DownUpAdapter extends BaseAdapter {
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog,
                                                         int which) {
-                                        // 删除当前的任务
-                                        //list.remove(position);
-                                        //DownUpAdapter.this.notifyDataSetChanged();
-                                        if (taskDelete != null) {
-                                            // 此处应该传入要删除任务id
-                                            taskDelete.delete(item.id, type);
-                                        }
+//                                        if (BlinkWeb.STATE == BlinkWeb.UDP) {
+                                            if (taskDelete != null) {
+                                                // 此处应该传入要删除任务id
+                                                taskDelete.delete(item.id, type);
+                                            }
+//                                        } else {
+//                                            list.remove(position);
+//                                            DownUpAdapter.this.notifyDataSetChanged();
+//                                            if (type == Comment.DOWNLOAD) {
+//                                                Comment.list.remove(position);
+//                                            } else {
+//                                                Comment.Uploadlist.remove(position);
+//                                            }
+//                                        }
+
                                     }
                                 })
                         .setPositiveButton(R.string.no,

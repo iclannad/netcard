@@ -18,14 +18,24 @@ import android.widget.Toast;
 
 import com.blink.blinkp2p.Controller.Activity.base.MyBaseActivity;
 import com.blink.blinkp2p.Controller.ActivityCode;
+import com.blink.blinkp2p.Controller.NetCardController;
+import com.blink.blinkp2p.Moudle.Comment;
+import com.blink.blinkp2p.Moudle.DownorUpload;
 import com.blink.blinkp2p.R;
+import com.blink.blinkp2p.Tool.Adapter.FileListAdapter;
 import com.blink.blinkp2p.Tool.System.MyToast;
+import com.blink.blinkp2p.Tool.System.Tools;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
+import com.blink.blinkp2p.Tool.UploadUtils;
 import com.blink.blinkp2p.Tool.Utils.Mime;
 import com.blink.blinkp2p.Tool.Utils.download.DownTask;
 import com.blink.blinkp2p.Tool.Utils.download.MyDownUtils;
+import com.blink.blinkp2p.Tool.Utils.download.tcp.MyTcpDownUtils;
+import com.blink.blinkp2p.Tool.Utils.download.tcp.MyTcpUploadUtils;
 import com.blink.blinkp2p.Tool.Utils.upload.MyUploadUtils;
 import com.blink.blinkp2p.Tool.Utils.upload.UploadTask;
+import com.blink.blinkp2p.View.FilePathLineayout;
+import com.blink.blinkp2p.View.MyPersonalProgressDIalog;
 import com.blink.blinkp2p.heart.HeartController;
 import com.example.administrator.data_sdk.FileUtil.FileTool;
 
@@ -35,18 +45,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.blink.blinkp2p.Controller.NetCardController;
-import com.blink.blinkp2p.Moudle.Comment;
-import com.blink.blinkp2p.Moudle.DownorUpload;
-
-import com.blink.blinkp2p.Tool.Adapter.FileListAdapter;
-import com.blink.blinkp2p.Tool.DownUtils;
-import com.blink.blinkp2p.Tool.System.Tools;
-import com.blink.blinkp2p.Tool.UploadUtils;
-import com.blink.blinkp2p.View.FilePathLineayout;
-import com.blink.blinkp2p.View.MyPersonalProgressDIalog;
-import com.blink.blinkp2p.heart.SendHeartThread;
 
 import smart.blink.com.card.API.BlinkLog;
 import smart.blink.com.card.API.BlinkWeb;
@@ -299,14 +297,16 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
             // 上传和下载当前文件
             if (type == ActivityCode.ComputerFile) {
                 if (BlinkWeb.STATE == BlinkWeb.TCP) {
-                    new DownUtils(this);
+                    //new DownUtils(this);
+                    new MyTcpDownUtils(this);
                 } else {
                     // 测试多任务同时下载
                     new MyDownUtils(this);
                 }
             } else {
                 if (BlinkWeb.STATE == BlinkWeb.TCP) {
-                    new UploadUtils(this);
+                    //new UploadUtils(this);
+                    new MyTcpUploadUtils(this);
                 } else {
                     // 测试多任务同时上传
                     new MyUploadUtils(this);

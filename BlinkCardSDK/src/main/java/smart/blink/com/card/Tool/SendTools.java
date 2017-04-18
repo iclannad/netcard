@@ -445,7 +445,7 @@ public class SendTools {
      */
     public static byte[] DownloadingOldVersion(int wantblock, String filename) {
 
-        Log.e(TAG, "DownloadingOldVersion: want==" + wantblock + " filename==" + filename);
+        //Log.e(TAG, "DownloadingOldVersion: want==" + wantblock + " filename==" + filename);
 
         byte[] head = new byte[4];
         head[0] = 71;                // 这里为了方便先这么写

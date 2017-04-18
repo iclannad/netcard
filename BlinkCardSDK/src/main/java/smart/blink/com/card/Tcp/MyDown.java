@@ -51,19 +51,19 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
         String[] strings = filename.split("\\\\");
         int length = strings.length - 1;
         this.transport_filename = strings[length];
-        Log.e(TAG, "MyDown: transport_filename===" + transport_filename);
+        //Log.e(TAG, "MyDown: transport_filename===" + transport_filename);
 
         timer = new Timer();
-        timer.schedule(new MyTimerTask(this), 0, 5000);
+        timer.schedule(new MyTimerTask(this), 0, 1000);
 
-        Log.e(TAG, "MyDown: 当前想下载的所有总块数为：wantblock: " + wantblock);
+        //Log.e(TAG, "MyDown: 当前想下载的所有总块数为：wantblock: " + wantblock);
 
         startDownLoad();
     }
 
 
     private void startDownLoad() {
-        Log.e(TAG, "init: 文件的名字是:" + filename);
+        //Log.e(TAG, "init: 文件的名字是:" + filename);
         byte[] buffer = SendTools.DownloadingOldVersion(reqBlockId, filename);
         new TcpSocket(BlinkWeb.zIP, BlinkWeb.zPORT, buffer, 0, this);
         reqBlockId++;
@@ -78,14 +78,13 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
                 // 最后一次下载成功
                 downLoadingRsp.setBlockId(reqBlockId);
                 downLoadingRsp.setTotolSize(wantblock);
-                String speed = (double) (reqBlockId - lastReqBlockId) / 5 + "k/s";
+                String speed = (double) (reqBlockId - lastReqBlockId) + "k/s";
                 lastReqBlockId = 0;
                 downLoadingRsp.setFilename(transport_filename);
                 transport_filename = "";
                 downLoadingRsp.setEnd(true);
                 downLoadingRsp.setSpeed(speed);
 
-                Log.e(TAG, "onSuccess: " + "下载成功");
                 FileWriteStream.writebigblockfileEnd((reqBlockId - 1) % 100, wdata);
                 call.onSuccess(0, downLoadingRsp);
                 reqBlockId = 0;
@@ -116,8 +115,8 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
         DownLoadingRsp downLoadingRsp = new DownLoadingRsp();
         downLoadingRsp.setBlockId(reqBlockId);
         downLoadingRsp.setTotolSize(wantblock);
-        // 这里速度不能这么算，这个星期要修改
-        String speed = (double) (reqBlockId - lastReqBlockId) / 5 + "k/s";
+
+        String speed = (double) (reqBlockId - lastReqBlockId) + "k/s";
         lastReqBlockId = reqBlockId;
         downLoadingRsp.setFilename(transport_filename);
         downLoadingRsp.setSpeed(speed);

@@ -57,7 +57,7 @@ public class RevicedTools {
     public RevicedTools(int position, byte[] buffer, int length, BlinkNetCardCall call) {
         RevicedTools.position = position;
 
-        Log.e(TAG, "RevicedTools: " + buffer[0]);
+        //Log.e(TAG, "RevicedTools: " + buffer[0]);
 
         switch (buffer[0]) {
             //解析want 的数据
@@ -221,7 +221,7 @@ public class RevicedTools {
         temp[3] = buffer[4];
         // 块序号
         int id = DataConverter.byteArrayToInt(temp);
-        Log.e(TAG, "DownloadingBySubServer: id==" + id);
+        //Log.e(TAG, "DownloadingBySubServer: id==" + id);
 
         // 文件长度
         int index = 4 + 4;
@@ -234,7 +234,7 @@ public class RevicedTools {
         temp[2] = blocklen[1];
         temp[3] = blocklen[0];
         int ilen = DataConverter.byteArrayToInt(temp);
-        Log.e(TAG, "DownloadingBySubServer: ilen" + ilen);
+        //Log.e(TAG, "DownloadingBySubServer: ilen" + ilen);
 
         // 文件名，如有需要再处理
         index = 4 + 4 + 4;
@@ -246,7 +246,7 @@ public class RevicedTools {
         try {
             String sfilename = new String(Arrays.copyOfRange(filename, 0,
                     filenamelen), "UTF-8");
-            Log.e(TAG, "DownloadingBySubServer: sfilename" + sfilename);
+            //Log.e(TAG, "DownloadingBySubServer: sfilename" + sfilename);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -273,13 +273,13 @@ public class RevicedTools {
         for (int i = index; i < 1296; i++) {
             check[i - index] = buffer[i];
         }
-        Log.e(TAG, "my check===" + ckecksum(buffer, buffer.length - 4));
-        Log.e(TAG, "check[0]===" + check[0]);
+        //Log.e(TAG, "my check===" + ckecksum(buffer, buffer.length - 4));
+        //Log.e(TAG, "check[0]===" + check[0]);
 
         if (ckecksum(buffer, buffer.length - 4) == check[0]) {
             downLoadingRsp.setSuccess(0);
             downLoadingRsp.data = wdata;
-            Log.e(TAG, "数据正确");
+            //Log.e(TAG, "数据正确");
             call.onSuccess(0, downLoadingRsp);
         } else {
             // 数据校验失败
