@@ -12,9 +12,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.blink.blinkp2p.Controller.NetCardController;
 import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.System.MyToast;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
+import com.blink.blinkp2p.Tool.Utils.UIHelper;
 import com.gc.materialdesign.views.ButtonFlat;
 import com.gc.materialdesign.widgets.Dialog;
 import com.gc.materialdesign.widgets.ProgressDialog;
@@ -22,27 +24,8 @@ import com.gc.materialdesign.widgets.ProgressDialog;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.blink.blinkp2p.Controller.NetCardController;
-
-
-import com.blink.blinkp2p.Tool.Utils.UIHelper;
-
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
-
-//import com.blink.blinkp2p.getdata.sender.SendOpeartionMsg;
-//import com.blink.blinkp2p.getdata.sender.SendOpeartionThread;
-//import com.blink.blinkp2p.getdata.sender.tcp.LookAndOthers;
-//import com.blink.blinkp2p.model.LG.LG;
-//import com.blink.blinkp2p.model.socket.UdpSocket;
-//import com.blink.blinkp2p.model.util.UIHelper;
-//import com.blink.blinkp2p.model.util.Util;
-//import com.blink.blinkp2p.model.values.Protocol;
-//import com.blink.blinkp2p.ui.activity.InitActivity;
-//import com.blink.blinkp2p.ui.activity.MainActivity;
-//import com.blink.blinkp2p.ui.activity.SettingsActivity;
-//import com.blink.blinkp2p.ui.view.MyTimerDialogTime;
-//import com.gc.materialdesign.views.ButtonFlat;
 
 public class MyProgressDIalog {
 
@@ -248,56 +231,6 @@ public class MyProgressDIalog {
 
     }
 
-//    public static void CreateEditTextDialog(final Context context,
-//                                            String title, String msg, final int Operation,
-//                                            final Handler mHandler) {
-//        final EditText e = new EditText(context);
-//        new AlertDialog.Builder(context)
-//                .setTitle(title)
-//                .setIcon(android.R.drawable.ic_dialog_info)
-//                .setView(e)
-//                .setNegativeButton("ȡ��", null)
-//                .setPositiveButton(
-//                        context.getResources().getString(R.string.confirm),
-//                        new DialogInterface.OnClickListener() {
-//
-//                            @Override
-//                            public void onClick(DialogInterface dialog,
-//                                                int which) {
-//                                // TODO Auto-generated method stub
-//                                String msg = e.getText().toString();
-//                                if (msg.length() == 0) {
-//                                    mHandler.sendEmptyMessage(Protocol.EMPTY);
-//                                    return;
-//                                }
-//                                if (MainActivity.connectionType == Protocol.UDP) {
-//                                    if (Operation == Protocol.SETFILEUP) {
-//                                        SettingsActivity.mTextView_ups = e
-//                                                .getText().toString();
-//                                    }
-//                                    SendOpeartionMsg tr = new SendOpeartionMsg(
-//                                            InitActivity.mPc_ip,
-//                                            InitActivity.mPc_port, UdpSocket
-//                                            .getState(), Operation,
-//                                            msg, mHandler);
-//                                    tr.start();
-//                                    MyProgressDIalog.getInstance(context)
-//                                            .init();
-//                                    MyProgressDIalog.getInstance(context)
-//                                            .showProgressDialog();
-//                                } else {
-//                                    MyProgressDIalog.getInstance(context)
-//                                            .init();
-//                                    MyProgressDIalog.getInstance(context)
-//                                            .showProgressDialog();
-//                                    new CountTime(Operation, mHandler).start();
-//                                    new LookAndOthers(Operation, msg).start();
-//                                }
-//                            }
-//                        }).show();
-//
-//    }
-
     public MyProgressDIalog(Context context) {
         // TODO Auto-generated constructor stub
         this.context = context;
@@ -334,8 +267,6 @@ public class MyProgressDIalog {
             mProgressDialog.show();
         } catch (Exception e) {
             // TODO: handle exception
-//			dissmissProgress();
-//			e.printStackTrace();
         }
     }
 
@@ -349,17 +280,6 @@ public class MyProgressDIalog {
             MyToast.Toast(cnt, text);
         }
     }
-
-//    public static void seetDialogTimeOver(int text, Context context) {
-//        if (sProgressdialog != null) {
-//            sProgressdialog.changeAlertType(SweetAlertDialog.WARNING_TYPE);
-//            sProgressdialog.setTitleText("");
-//            sProgressdialog.setContentText(context.getResources().getString(text));
-//        } else {
-//            dissmissProgress();
-//            UIHelper.ToastMessageNetError(context, text);
-//        }
-//    }
 
     public static void dissmissProgress() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
@@ -381,32 +301,15 @@ public class MyProgressDIalog {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay,
                                           int minute) {
-                        // TODO Auto-generated method stub
-//                        MyProgressDIalog.getInstance(context).init();
-//                        MyProgressDIalog.getInstance(context)
-//                                .showProgressDialog();
                         Date d = new Date();
                         int hours = d.getHours();
                         int min = d.getMinutes();
                         int msgtime = (hours * 60 + min)
                                 - (hourOfDay * 60 + minute);
-//                        if (MainActivity.connectionType == Protocol.UDP) {
-//                            LG.i(getClass(), "min===" + msgtime);
-//                            SendOpeartionMsg tr = new SendOpeartionMsg(
-//                                    InitActivity.mPc_ip, InitActivity.mPc_port,
-//                                    ds, Protocol.SHUTDOWN, -msgtime + "",
-//                                    MainActivity.MainHandler);
-//                            tr.start();
-//                        } else {
-//                            new LookAndOthers(Protocol.SHUTDOWN, -msgtime + "")
-//                                    .start();
-//                            new CountTime(Protocol.SHUTDOWN,
-//                                    MainActivity.MainHandler).start();
-//                        }
                         // 登录提示
                         MyPersonalProgressDIalog.getInstance(context).setContent("向电脑发送关闭信息...").showProgressDialog();
                         Log.e(TAG, "onTimeSet: " + msgtime);
-                        NetCardController.Shutdown(-msgtime, mHandler);
+                        NetCardController.setTimeShutdown(-msgtime, mHandler);
 
                     }
                 }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true);
@@ -414,67 +317,8 @@ public class MyProgressDIalog {
 
     }
 
-//    public static void CreateYesNoDialog(final Context context, String title,
-//                                         String msg, String buttontext, String cancelText,
-//                                         final Handler handler) {
-//
-//        final Dialog dialog = new Dialog(context, title, msg, buttontext,
-//                cancelText);
-//        dialog.setOnAcceptButtonClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                handler.sendEmptyMessage(Protocol.YES);
-//                dialog.dismiss();
-//            }
-//        });
-//        dialog.setOnCancelButtonClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                handler.sendEmptyMessage(Protocol.NO);
-//                dialog.dismiss();
-//            }
-//        });
-//        try {
-//            dialog.show();
-//        } catch (Exception e) {
-//            // TODO: handle exception
-//            e.printStackTrace();
-//            dialog.dismiss();
-//        }
-//
-//    }
 
-//    public static void CreateYesNoDialog(final Context context, int titleid,
-//                                         String msg, int buttontextId, int cancelTextId,
-//                                         final Handler handler) {
-//        String title = context.getResources().getString(titleid);
-//        String buttontext = context.getResources().getString(buttontextId);
-//        String cancelText = context.getResources().getString(cancelTextId);
-//        final Dialog dialog = new Dialog(context, title, msg, buttontext,
-//                cancelText);
-//        dialog.setOnAcceptButtonClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                handler.sendEmptyMessage(Protocol.YES);
-//                dialog.dismiss();
-//            }
-//        });
-//        dialog.setOnCancelButtonClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                handler.sendEmptyMessage(Protocol.NO);
-//                dialog.dismiss();
-//            }
-//        });
-//        dialog.show();
-//    }
 
-    //    public static void OpenCountTimeThread(Handler handler, int OpeartionLoss) {
-//
-//        CountTime ct = new CountTime(OpeartionLoss, handler);
-//        ct.start();
-//
-//    }
     // 对话框的内容设置
     public void setContent(String content) {
 //        if (mProgressDialog != null) {

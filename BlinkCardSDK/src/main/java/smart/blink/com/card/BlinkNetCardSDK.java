@@ -130,7 +130,7 @@ public class BlinkNetCardSDK {
                 UdpUtils.ChangePwd(id, oldPassword, newPassword, call);
                 break;
             case BlinkWeb.TCP:
-                Log.e(TAG, "ChangePwd: " + "我是走了tcp的修改用户登录密码");
+
                 //TcpUtils.ChangePwd(id, oldPassword, newPassword, call);
                 UdpUtils.ChangePwd(id, oldPassword, newPassword, call);
                 break;

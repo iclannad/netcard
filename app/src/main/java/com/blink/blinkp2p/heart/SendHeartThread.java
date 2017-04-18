@@ -48,8 +48,6 @@ public class SendHeartThread extends Thread {
                 }
                 timeCount.getAndIncrement();
             } catch (InterruptedException e) {
-                System.err.println("sleep interrupted");
-
                 return;
             }
 

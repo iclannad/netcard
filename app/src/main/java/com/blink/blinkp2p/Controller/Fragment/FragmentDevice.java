@@ -226,9 +226,7 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
     // 调用拍照功能后的回调
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e(TAG, "onActivityResult: 拍完相片回调");
         switch (requestCode) {
             case 1:
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -312,42 +310,29 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
     @Override
     public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
                                    long arg3) {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public void Enter(int position) {
-        //锁屏的操作
+
         if (position == ActivityCode.LOOKPC) {
-            // 释放心跳线程的资源
-//            SendHeartThread.isClose = true;
-//            synchronized (SendHeartThread.HeartLock) {
-//                SendHeartThread.HeartLock.notify();
-//            }
             HeartController.stopHeart();
             //锁屏
             NetCardController.LOOKPC(this);
         }
-        //重启
+
         if (position == ActivityCode.Restart) {
-            // 访部电脑文件的时候，先暂时关闭发送心跳的线程
-            // 释放心跳线程的资源
             HeartController.stopHeart();
 
             //重启
             NetCardController.Restart(0, this);
         }
 
-        //立即关机
         if (position == ActivityCode.Shutdown) {
-            // 访部电脑文件的时候，先暂时关闭发送心跳的线程
-            // 释放心跳线程的资源
             HeartController.stopHeart();
-
             //关机
             NetCardController.Shutdown(0, this);
-            Log.e(TAG, "Enter: 立即关机");
         }
     }
 
@@ -366,66 +351,65 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
     public void myHandler(int position, Object object) {
 
         if (position == ActivityCode.LOOKPC) {
-            // 重新开启一个心跳线程
-//            SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-//            SendHeartThread.isClose = false;
-//            sendHeartThread.start();
             HeartController.startHeart();
 
             LookPCRsp lookPCRsp = (LookPCRsp) object;
             if (lookPCRsp.getSuccess() == 0) {
-                if (BlinkWeb.STATE == BlinkWeb.TCP) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_lock_recved);
-                        }
-                    });
-                } else {
-                    MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_lock_recved);
-                }
-
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_lock_recved);
+                    }
+                });
             }
         }
 
         // 电脑重启返回的结果
         if (position == ActivityCode.Restart) {
-            // 重新开启一个心跳线程
             HeartController.startHeart();
 
             RestartRsp restartRsp = (RestartRsp) object;
             if (restartRsp.getSuccess() == 0) {
-                if (BlinkWeb.STATE == BlinkWeb.TCP) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_restart_recved);
-                        }
-                    });
-                } else {
-                    MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_restart_recved);
-                }
-
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_restart_recved);
+                    }
+                });
             }
         }
 
         // 电脑关机返回的结果
         if (position == ActivityCode.Shutdown) {
-            // 重新开启一个心跳线程
             HeartController.startHeart();
 
             ShutdownRsp shutdownRsp = (ShutdownRsp) object;
-            Log.e(TAG, "myHandler: shutdownRsp.getSuccess() ==" + shutdownRsp.getSuccess());
             if (shutdownRsp.getSuccess() == 0) {
-                //MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_shutdown_recved);
-                Toast.makeText(context, R.string.main_handler_shutdown_recved, Toast.LENGTH_SHORT).show();
-                MyPersonalProgressDIalog.getInstance(getActivity()).dissmissProgress();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_shutdown_recved);
+                    }
+                });
             }
         }
 
+        // 定时关机返回的结果
+        if (position == ActivityCode.setTimeShutdown) {
+            HeartController.startHeart();
+            ShutdownRsp shutdownRsp = (ShutdownRsp) object;
+            if (shutdownRsp.getSuccess() == 0) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        MyPersonalProgressDIalog.getInstance(getActivity()).dissmissProgress();
+                        Toast.makeText(context,R.string.main_handler_shutdown_recved,Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
         // 修改pc密码返回的结果
         if (position == ActivityCode.ChangePcPwd) {
-            // 重新开启一个心跳线程
             HeartController.startHeart();
 
             ChangePcPwdRsp changePcPwdRsp = (ChangePcPwdRsp) object;
@@ -438,7 +422,6 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
                 MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_original_error, context);
             }
         }
-
     }
 
     /**
@@ -450,9 +433,7 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
     @Override
     public void myError(int position, int error) {
         if (position == ActivityCode.LOOKPC) {
-            // 重新开启一个心跳线程
             HeartController.startHeart();
-
             FragmentDevice.this.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -461,7 +442,6 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
             });
         }
         if (position == ActivityCode.Restart) {
-            // 重新开启一个心跳线程
             HeartController.startHeart();
 
             FragmentDevice.this.getActivity().runOnUiThread(new Runnable() {
@@ -473,23 +453,30 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
         }
 
         if (position == ActivityCode.Shutdown) {
-            // 重新开启一个心跳线程
             HeartController.startHeart();
 
             FragmentDevice.this.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_shutdown_lost, FragmentDevice.this.getActivity());
-                    MyPersonalProgressDIalog.getInstance(getActivity()).dissmissProgress();
-                    Toast.makeText(context, R.string.main_handler_shutdown_lost, Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "run: ActivityCode.Shutdown");
                 }
             });
         }
 
+        if (position == ActivityCode.setTimeShutdown) {
+            HeartController.startHeart();
+
+            FragmentDevice.this.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MyPersonalProgressDIalog.getInstance(getActivity()).dissmissProgress();
+                    Toast.makeText(context, R.string.main_handler_shutdown_lost, Toast.LENGTH_SHORT).show();
+
+                }
+            });
+        }
 
         if (position == ActivityCode.ChangePcPwd) {
-            // 重新开启一个心跳线程
             HeartController.startHeart();
 
             FragmentDevice.this.getActivity().runOnUiThread(new Runnable() {

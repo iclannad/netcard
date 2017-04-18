@@ -31,6 +31,7 @@ public class ActivityCode {
      * 关机和定时关机
      */
     public final static int Shutdown = 4;
+    public final static int setTimeShutdown = 20;
 
     /**
      * 重启和定时重启

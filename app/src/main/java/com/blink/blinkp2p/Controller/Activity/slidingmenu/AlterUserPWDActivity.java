@@ -169,6 +169,9 @@ public class AlterUserPWDActivity extends MyBaseActivity implements HandlerImpl 
      */
     @Override
     public void myError(int position, int error) {
-
+        if (position == ActivityCode.ChangePwd) {
+            MyProgressDIalog.dissmissProgress();
+            UIHelper.ToastMessageNetError(this, R.string.main_handler_change_lost);
+        }
     }
 }

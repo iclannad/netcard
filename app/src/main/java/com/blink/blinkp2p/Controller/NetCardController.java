@@ -156,6 +156,20 @@ public class NetCardController {
         });
     }
 
+    public static void setTimeShutdown(int seconds, final HandlerImpl handler) {
+        BlinkNetCardSDK.Shutdown(seconds, new BlinkNetCardCall() {
+            @Override
+            public void onSuccess(int position, MainObject mainObject) {
+                handler.myHandler(ActivityCode.setTimeShutdown, mainObject);
+            }
+
+            @Override
+            public void onFail(int error) {
+                handler.myError(ActivityCode.setTimeShutdown, error);
+            }
+        });
+    }
+
     /**
      * 重启和定时重启
      *

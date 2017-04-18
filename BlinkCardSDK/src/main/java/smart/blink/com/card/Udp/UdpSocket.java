@@ -115,9 +115,7 @@ public class UdpSocket {
                 // test 发送心跳的逻辑
                 if (UdpSocket.position == Protocol.Heart) {
 
-                } else if (UdpSocket.position == Protocol.SetUploadDir) {
-
-                }  else {
+                } else {
                     Log.e(TAG, "run: 已经连接不到服务器了");
                     RevicedTools.failEventHandlerByUdp(position, UdpSocket.call);
                 }

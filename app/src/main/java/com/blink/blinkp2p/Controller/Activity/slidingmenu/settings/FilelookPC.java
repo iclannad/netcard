@@ -157,7 +157,11 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
         if (v.getId() == R.id.activity_save_filepath) {
             // 可能文档会有错误,请注意
             Log.e(TAG, "onClick: " + "当前的位置是" + currentfile);
-            //NetCardController.SetUploadDir(currentfile, FilelookPC.this);
+            // 弹出提示框
+            MyPersonalProgressDIalog.getInstance(this).setContent("设置上传路径...").showProgressDialog();
+
+            HeartController.stopHeart();
+            NetCardController.SetUploadDir(currentfile, FilelookPC.this);
         }
     }
 
@@ -277,7 +281,16 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
         }
 
         if (position == ActivityCode.SetUploadDir) {
+            HeartController.startHeart();
             Log.e(TAG, "myHandler: " + "设置目录成功");
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // 关闭提示框
+                    MyPersonalProgressDIalog.getInstance(FilelookPC.this).dissmissProgress();
+                    Toast.makeText(FilelookPC.this, "上传路径设置成功", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -332,6 +345,19 @@ public class FilelookPC extends MyBaseActivity implements AdapterView.OnItemClic
                 }
             });
 
+        }
+
+        if (position == ActivityCode.SetUploadDir) {
+            Log.e(TAG, "myError: 路径设置失败");
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // 关闭提示框
+                    MyPersonalProgressDIalog.getInstance(FilelookPC.this).dissmissProgress();
+                    Toast.makeText(FilelookPC.this, "上传路径设置失败", Toast.LENGTH_SHORT).show();
+                }
+            });
+            HeartController.startHeart();
         }
     }
 }
