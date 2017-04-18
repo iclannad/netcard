@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.blink.blinkp2p.Controller.Activity.login.Login;
 import com.blink.blinkp2p.Controller.NetCardController;
+import com.blink.blinkp2p.Controller.receiver.NetWorkStateReceiver;
 import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Protocol;
 import com.blink.blinkp2p.Tool.System.Tools;
@@ -16,6 +17,7 @@ import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
 import com.blink.blinkp2p.View.MyPersonalProgressDIalog;
 import com.blink.blinkp2p.View.ReconnectDialog;
 import com.blink.blinkp2p.application.MyApplication;
+
 import smart.blink.com.card.Tcp.TcpSocket;
 import smart.blink.com.card.Udp.UdpSocket;
 
@@ -72,13 +74,15 @@ public class HeartHandler extends Handler {
             case Protocol.YES:
                 Log.e(TAG, "handleMessage: Protocol.YES");
                 // 重新跳到登录界面
+                NetWorkStateReceiver.isFirstTimer = true;
                 context.startActivity(new Intent(context, Login.class));
                 MyApplication.getInstance().exit();
                 break;
             case Protocol.NO:
                 if (!Tools.isOnline(context)) {
-                    Toast.makeText(context, "当前网络不可用，请检查连接", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, R.string.attention_net_error, Toast.LENGTH_SHORT).show();
                     // 重新跳到登录界面
+                    NetWorkStateReceiver.isFirstTimer = true;
                     context.startActivity(new Intent(context, Login.class));
                     MyApplication.getInstance().exit();
                     return;

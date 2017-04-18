@@ -64,7 +64,7 @@
     <string name="update">获取更新</string>
 
     <string name="attention">提示</string>
-    <string name="attention_net_error">检测到网络发生变化，请重新登录</string>
+    <string name="attention_net_error">网络已断开，请检查连接</string>
 
     <string name="findversion">发现新版本，是否检测更新?</string>
     <string name="update_info">正在更新App</string>

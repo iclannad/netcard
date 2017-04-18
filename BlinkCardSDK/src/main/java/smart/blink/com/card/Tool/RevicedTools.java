@@ -57,7 +57,7 @@ public class RevicedTools {
     public RevicedTools(int position, byte[] buffer, int length, BlinkNetCardCall call) {
         RevicedTools.position = position;
 
-        //Log.e(TAG, "RevicedTools: " + buffer[0]);
+        Log.e(TAG, "RevicedTools: " + buffer[0]);
 
         switch (buffer[0]) {
             //解析want 的数据
@@ -106,7 +106,6 @@ public class RevicedTools {
                 break;
             //查看文件
             case Protocol.LookFileMsgReviced:
-                Log.e(TAG, "RevicedTools: LookFileMsgReviced");
                 LookFileMsg(buffer, call);
                 break;
             //开始下载的返回的数据
@@ -141,32 +140,12 @@ public class RevicedTools {
                 break;
             case 71:
                 // 与子服务器进行连接时，下载中返回的结果
-                //Log.e(TAG, "RevicedTools: 与子服务器进行连接时，下载中返回的结果");
                 DownloadingBySubServer(0, 0, buffer, call);
                 break;
             case 80:
                 // 与子服务器进行连接时，上传中返回的结果
                 UploadingBySubServer(0, 0, buffer, call);
                 break;
-            case 0:
-                if (position == Protocol.LookFileMsg) {
-                    Log.e(TAG, "RevicedTools: 访问电脑目录失败");
-//                    receivedDataCount++;
-//                    final Timer timer = new Timer();
-//                    timer.schedule(new TimerTask() {
-//                        @Override
-//                        public void run() {
-//                            if (timer != null) {
-//                                receivedDataCount = 0;
-//                                Log.e(TAG, "run: receivedDataCount重新清0，允许下一次失败数据的接收");
-//                                timer.cancel();
-//                            }
-//                        }
-//                    }, 1500, 1500);
-//                    LookFileMsgFail(call);
-                }
-                break;
-
         }
     }
 

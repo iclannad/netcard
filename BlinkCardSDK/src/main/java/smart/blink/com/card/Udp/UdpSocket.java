@@ -102,21 +102,15 @@ public class UdpSocket {
             }
         }
 
-//        else if (UdpSocket.position == Protocol.LookFileMsg) {
-//            Log.e(TAG, "run: 该问电脑文件目录失败");
-//            RevicedTools.LookFileMsgFail(call);
-//        }
-
         timer = null;
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                // test 发送心跳的逻辑
                 if (UdpSocket.position == Protocol.Heart) {
-
+                    Log.e(TAG, "run: 发送的心跳无响应");
                 } else {
-                    Log.e(TAG, "run: 已经连接不到服务器了");
+                    //Log.e(TAG, "run: 已经连接不到服务器了");
                     RevicedTools.failEventHandlerByUdp(position, UdpSocket.call);
                 }
 
@@ -207,10 +201,10 @@ public class UdpSocket {
 
 
     private void CloseTime() {
-        BlinkLog.Error("************" + timer);
+        //BlinkLog.Error("************" + timer);
         synchronized (this) {
             if (timer != null) {
-                BlinkLog.Error("定时器关闭");
+                //BlinkLog.Error("定时器关闭");
                 timer.cancel();
                 timer = null;
             }

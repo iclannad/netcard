@@ -236,6 +236,13 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
 
         initHeartThread();
 
+        // 注册了一个广播接收者
+        if (netWorkStateReceiver == null) {
+            netWorkStateReceiver = new NetWorkStateReceiver();
+        }
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(netWorkStateReceiver, filter);
     }
 
     /**
@@ -768,7 +775,6 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
     public void myHandler(int position, Object object) {
 
         if (position == ActivityCode.WANT && MyApplication.wantCount.get() == 0) {
-
             MyApplication.wantCount.getAndIncrement();
             WantRsp wantRsp = (WantRsp) object;
 
@@ -827,7 +833,6 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
             //打洞成功
             CommonIntent.IntentActivity(context, MainActivity.class);
             MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
-            Log.e(TAG, "myHandler: " + "重连成功");
             UIHelper.ToastSetSuccess(this, R.string.reconnect_success);
             initHeartThread();
         }
@@ -1009,13 +1014,6 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
 
     @Override
     protected void onResume() {
-        if (netWorkStateReceiver == null) {
-            netWorkStateReceiver = new NetWorkStateReceiver();
-        }
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(netWorkStateReceiver, filter);
-        Log.e(TAG, "onResume: " + "注册了一个广播接收者");
         super.onResume();
     }
 
