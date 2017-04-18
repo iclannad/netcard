@@ -53,6 +53,9 @@ import com.blink.blinkp2p.Tool.UploadUtils;
 import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
 import com.blink.blinkp2p.Tool.Utils.UIHelper;
 import com.blink.blinkp2p.Tool.Utils.Utils;
+import com.blink.blinkp2p.Tool.Utils.download.tcp.MyTcpUploadUtils;
+import com.blink.blinkp2p.Tool.Utils.upload.MyUploadUtils;
+import com.blink.blinkp2p.Tool.Utils.upload.UploadTask;
 import com.blink.blinkp2p.View.DialogClick;
 import com.blink.blinkp2p.View.MyDialog;
 import com.blink.blinkp2p.View.MyPersonalProgressDIalog;
@@ -73,6 +76,7 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import smart.blink.com.card.API.BlinkWeb;
 import smart.blink.com.card.bean.ChangePcPwdRsp;
 import smart.blink.com.card.bean.ConnectPcRsp;
 import smart.blink.com.card.bean.LookPCRsp;
@@ -226,7 +230,7 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
         activity_ll_myfiles.setOnClickListener(this);
         activity_ll_devices.setOnClickListener(this);
 
-        Log.e(TAG, "onClick: 开启屏幕常亮");
+        //开启屏幕常亮
         getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         initHeartThread();
@@ -690,7 +694,25 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
                         downorUpload.setFLAG(DownorUpload.UPLOAD);
                         downorUpload.setPath(path);
                         Comment.Uploadlist.add(downorUpload);
-                        new UploadUtils(MainActivity.this);
+                        //new UploadUtils(MainActivity.this);
+
+                        UploadTask uploadTask = new UploadTask();
+                        uploadTask.name = name;
+                        uploadTask.path = path;
+                        uploadTask.id = Comment.uploadlist.size();
+                        uploadTask.progress = 0;
+                        uploadTask.status = 0;
+                        uploadTask.speed = "0";
+                        Comment.uploadlist.add(uploadTask);
+
+                        //new UploadUtils(getActivity());
+
+                        if (BlinkWeb.STATE == BlinkWeb.TCP) {
+                            new MyTcpUploadUtils(MainActivity.this);
+                        } else {
+                            // 测试多任务同时上传
+                            new MyUploadUtils(MainActivity.this);
+                        }
 
                         bmp.recycle();
                         dialog.dismiss();

@@ -108,13 +108,18 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Log.e(TAG, "run: taskCount===" + taskCount + " Comment.downlist.size()===" + Comment.downlist.size());
+
+                Activity activity = (Activity) context;
+
                 final DownTask downTask = Comment.downlist.get(taskCount);
 
                 // 如果当前任务已经在任务列表中删除的话，就不开启下一个任务
                 if (downTask.status == 2) {
                     // 任务标记　自加
                     taskCount++;
+                    currentTaskCount++;
+                    finishTask(downTask.id);
+
                     continue;
                 }
 
@@ -124,10 +129,8 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
 //                downorUpload.setName(downTask.name);
 //                downorUpload.setFLAG(DownorUpload.DOWN);
 //                downorUpload.setPath(downTask.path);
-                // 开启一个下载任务的逻辑
-                //new ＭyDownloadThread(downTask.id, downorUpload, context, this, this).start();
                 // 开启一个Tcp下载任务的逻辑
-                Activity activity = (Activity) context;
+
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

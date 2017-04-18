@@ -62,13 +62,11 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
         setRightTitleVisiable(false);
         setTopColor(R.color.MainColorBlue);
 
-
         list = new ArrayList<>();
 
         taskListView = (ListView) view.findViewById(R.id.taskListView);
         taskDownText = (TextView) view.findViewById(R.id.taskDownText);
         taskUploadText = (TextView) view.findViewById(R.id.taskUploadText);
-
 
         taskDownText.setOnClickListener(this);
         taskUploadText.setOnClickListener(this);

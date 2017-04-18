@@ -83,6 +83,7 @@ public class Login extends BaseActivity implements HandlerImpl {
     private boolean isAutoLogin = false;
     private boolean isRemeberPwd = false;
     private boolean isReLogin = false;
+    private boolean isNeedToClearOlderPwd = false;
     // 为了方式混乱和上面用户分开，不同的逻辑
     private String loginUserName = "";
     private String loginPwd = "";
@@ -184,6 +185,7 @@ public class Login extends BaseActivity implements HandlerImpl {
      */
     private void initSaveAutoLoginDataCompatOldVersion() {
         isReLogin = SharedPrefsUtils.getBooleanPreference(this, Comment.IS_RELOGIN, false);
+        isNeedToClearOlderPwd = SharedPrefsUtils.getBooleanPreference(this, Comment.IS_NEED_CLEAR_OLDER_PWD, false);
 
         LoginBeanGson l = getLoginBeanGson();
         if (l != null) {
@@ -214,6 +216,19 @@ public class Login extends BaseActivity implements HandlerImpl {
             if (isAutoLogin) {
                 startWantRequest();
             }
+        }
+
+        // 清空原来的密码标志位,将sharedPrefs保存的密码置为空
+        if (isNeedToClearOlderPwd) {
+            activityInitEditPasswd.setText("");
+            LoginBeanGson l2 = new LoginBeanGson();
+            l2.setPassword("");
+            l2.setUsername(loginUserName);
+            l2.setRemeber(false);
+            l2.setAutologin(false);
+            l2.setTime(System.currentTimeMillis());
+            SharedPrefsUtils.setStringPreference(this, Comment.LOGINDATA, l2.toString());
+
         }
         // 设置checkbox的点击事件
         activityCheckboxAutologin.setOnClickListener(this);
@@ -561,6 +576,7 @@ public class Login extends BaseActivity implements HandlerImpl {
     private void SaveAutoLoginDataCompatOldVersion() {
         // 重新置为false
         SharedPrefsUtils.setBooleanPreference(this, Comment.IS_RELOGIN, false);
+        SharedPrefsUtils.setBooleanPreference(this, Comment.IS_NEED_CLEAR_OLDER_PWD, false);
 
         LoginBeanGson l = new LoginBeanGson();
         if (isRemeberPwd) {
@@ -575,7 +591,7 @@ public class Login extends BaseActivity implements HandlerImpl {
         }
         l.setTime(System.currentTimeMillis());
         SharedPrefsUtils.setStringPreference(this, Comment.LOGINDATA, l.toString());
-        Log.e(TAG, "SaveAutoLoginDataCompatOldVersion: l===" + l.toString());
+        //Log.e(TAG, "SaveAutoLoginDataCompatOldVersion: l===" + l.toString());
     }
 
 

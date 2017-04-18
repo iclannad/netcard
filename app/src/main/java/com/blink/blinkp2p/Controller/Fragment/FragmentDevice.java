@@ -31,6 +31,9 @@ import com.blink.blinkp2p.Controller.Activity.MainActivity;
 import com.blink.blinkp2p.Controller.ActivityCode;
 import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
+import com.blink.blinkp2p.Tool.Utils.download.tcp.MyTcpUploadUtils;
+import com.blink.blinkp2p.Tool.Utils.upload.MyUploadUtils;
+import com.blink.blinkp2p.Tool.Utils.upload.UploadTask;
 import com.blink.blinkp2p.View.MyPersonalProgressDIalog;
 import com.blink.blinkp2p.heart.HeartController;
 import com.example.administrator.ui_sdk.DensityUtil;
@@ -275,7 +278,24 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
                         downorUpload.setFLAG(DownorUpload.UPLOAD);
                         downorUpload.setPath(path);
                         Comment.Uploadlist.add(downorUpload);
-                        new UploadUtils(getActivity());
+
+                        UploadTask uploadTask = new UploadTask();
+                        uploadTask.name = name;
+                        uploadTask.path = path;
+                        uploadTask.id = Comment.uploadlist.size();
+                        uploadTask.progress = 0;
+                        uploadTask.status = 0;
+                        uploadTask.speed = "0";
+                        Comment.uploadlist.add(uploadTask);
+
+                        //new UploadUtils(getActivity());
+
+                        if (BlinkWeb.STATE == BlinkWeb.TCP) {
+                            new MyTcpUploadUtils(getActivity());
+                        } else {
+                            // 测试多任务同时上传
+                            new MyUploadUtils(getActivity());
+                        }
 
                         bmp.recycle();
                         dialog.dismiss();

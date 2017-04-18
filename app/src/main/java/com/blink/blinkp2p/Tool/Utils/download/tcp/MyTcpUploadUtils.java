@@ -92,7 +92,7 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
     @Override
     public void run() {
         while (isNeedMonitorTask) {
-            Log.e(TAG, "run: taskCount===" + taskCount + " Comment.uploadlist.size()===" + Comment.uploadlist.size() + " currentTaskCount===" + currentTaskCount);
+            //Log.e(TAG, "run: taskCount===" + taskCount + " Comment.uploadlist.size()===" + Comment.uploadlist.size() + " currentTaskCount===" + currentTaskCount);
             while (taskCount < Comment.uploadlist.size() && currentTaskCount < 1) {
                 // 开启一个上传任务的逻辑
                 try {
@@ -105,6 +105,8 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
                 // 如果当前任务已经被删除的话就不需求开启下载
                 if (uploadTask.status == 2) {
                     taskCount++;
+                    currentTaskCount++;
+                    finishTask(uploadTask.id);
                     continue;
                 }
 

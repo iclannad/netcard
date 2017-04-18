@@ -22,6 +22,7 @@ import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
 import com.blink.blinkp2p.Tool.Utils.UIHelper;
 import com.blink.blinkp2p.View.MyProgressDIalog;
 import com.blink.blinkp2p.application.MyApplication;
+
 import smart.blink.com.card.bean.ChangePwdRsp;
 
 /**
@@ -149,6 +150,9 @@ public class AlterUserPWDActivity extends MyBaseActivity implements HandlerImpl 
                 startActivity(new Intent(this, Login.class));
                 // 重新登录
                 SharedPrefsUtils.setBooleanPreference(this, Comment.IS_RELOGIN, true);
+                // 如果修改密码成功以后，重新登录必须清空原来的密码
+                SharedPrefsUtils.setBooleanPreference(this, Comment.IS_NEED_CLEAR_OLDER_PWD, true);
+
                 MyApplication.getInstance().exit();
             } else {
                 MyProgressDIalog.dissmissProgress();

@@ -50,6 +50,7 @@ public class Comment {
     public static final String USERNAME = "login_username";
     public static final String PASSWORD = "login_password";
     public static final String IS_RELOGIN = "is_relogin";
+    public static final String IS_NEED_CLEAR_OLDER_PWD = "is_need_clear_older_pwd";
 
     /**
      * 这是为了兼容旧版本
