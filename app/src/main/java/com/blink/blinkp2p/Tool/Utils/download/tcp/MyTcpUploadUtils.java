@@ -40,7 +40,7 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
     public static boolean isNeedMonitorTask = false;
     public static DownUpCallback downUpCallback;
 
-    private static Object getItem(int id, Drawable drawable, String title, String speed, String present, int progress) {
+    private static Object getItem(int id, int status, Drawable drawable, String title, String speed, String present, int progress) {
         Item item = new Item();
         item.setListImage(drawable);
         item.setListText(title);
@@ -50,6 +50,7 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
         item.setHeight((int) context.getResources().getDimension(R.dimen.itemHeight));
 
         item.id = id;
+        item.status = status;
 
         return item;
     }
@@ -68,7 +69,7 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
                     continue;
                 }
 
-                Object object = getItem(uploadTask.id, context.getResources().getDrawable(R.mipmap.upload), uploadTask.name, uploadTask.speed, uploadTask.progress + "%", uploadTask.progress);
+                Object object = getItem(uploadTask.id, uploadTask.status, context.getResources().getDrawable(R.mipmap.upload), uploadTask.name, uploadTask.speed, uploadTask.progress + "%", uploadTask.progress);
                 allUploadingTask.add(object);
             }
         return allUploadingTask;
@@ -96,7 +97,7 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
 
     @Override
     public void run() {
-        Log.e(TAG, "run: Comment.tcpIsTaskStartFlag.get()==" + Comment.tcpIsTaskStartFlag.get() );
+        Log.e(TAG, "run: Comment.tcpIsTaskStartFlag.get()==" + Comment.tcpIsTaskStartFlag.get());
         // 下载列表中是否有任务
         while (Comment.tcpIsTaskStartFlag.get()) {
             try {

@@ -44,7 +44,7 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
 
     public static DownUpCallback downUpCallback;
 
-    private static Object getItem(int id, Drawable drawable, String title, String speed, String present, int progress) {
+    private static Object getItem(int id, int status, Drawable drawable, String title, String speed, String present, int progress) {
         Item item = new Item();
         item.setListImage(drawable);
         item.setListText(title);
@@ -54,6 +54,7 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
         item.setHeight((int) context.getResources().getDimension(R.dimen.itemHeight));
 
         item.id = id;
+        item.status = status;
 
         return item;
     }
@@ -73,7 +74,7 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
                 if (downTask.status == 2) {
                     continue;
                 }
-                Object object = getItem(downTask.id, context.getResources().getDrawable(R.mipmap.download), downTask.name, downTask.speed, downTask.progress + "%", downTask.progress);
+                Object object = getItem(downTask.id, downTask.status, context.getResources().getDrawable(R.mipmap.download), downTask.name, downTask.speed, downTask.progress + "%", downTask.progress);
                 allDownloadingTask.add(object);
             }
         }

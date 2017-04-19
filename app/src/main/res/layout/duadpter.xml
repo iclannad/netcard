@@ -15,6 +15,7 @@
         android:src="@mipmap/ic_launcher" />
 
 
+
     <LinearLayout
         android:id="@+id/itemRightLinear"
         android:layout_width="wrap_content"
@@ -45,7 +46,25 @@
             android:text="100K/S"
             android:textColor="@color/GreyDeep"
             android:textSize="@dimen/textsize_small" />
+
+        <RelativeLayout
+            android:id="@+id/rl_wait"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/tv_taskstate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/textsize_medium"
+                android:text="等待"
+                android:textColor="@color/logincolor"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/y10"
+                />
+        </RelativeLayout>
     </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/ll_delete"

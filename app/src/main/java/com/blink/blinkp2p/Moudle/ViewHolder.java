@@ -60,6 +60,8 @@ public class ViewHolder {
     public RelativeLayout duLinear;
     public ImageView taskDeleteImage;
 
+    public RelativeLayout rlWait;
+
 
     public ViewHolder(View view, String position) {
         //带有侧滑菜单的
@@ -106,6 +108,8 @@ public class ViewHolder {
                 speedBar = (ProgressBar) view.findViewById(R.id.speedBar);
                 duLinear = (RelativeLayout) view.findViewById(R.id.duLinear);
                 taskDeleteImage = (ImageView) view.findViewById(R.id.iv_delete);
+
+                rlWait = (RelativeLayout) view.findViewById(R.id.rl_wait);
                 break;
 
 //            case "SortListView":

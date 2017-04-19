@@ -74,9 +74,22 @@ public class DownUpAdapter extends BaseAdapter {
         viewHolder.duImage.setImageDrawable(item.getListImage());
         if (item.getListText() != null || !"".equals(item.getListText()))
             viewHolder.titleText.setText(item.getListText());
-        viewHolder.speedText.setText(item.getListRightText1());
-        viewHolder.presentText.setText(item.getListRightText());
         viewHolder.speedBar.setProgress(item.getProgressBar());
+
+        // 等待下载的条目
+        if (item.status == 0) {
+            viewHolder.speedText.setVisibility(View.GONE);
+            viewHolder.presentText.setVisibility(View.GONE);
+            viewHolder.rlWait.setVisibility(View.VISIBLE);
+        } else {
+            // 正在下载的条目
+            viewHolder.speedText.setVisibility(View.VISIBLE);
+            viewHolder.presentText.setVisibility(View.VISIBLE);
+            viewHolder.rlWait.setVisibility(View.GONE);
+            viewHolder.speedText.setText(item.getListRightText1());
+            viewHolder.presentText.setText(item.getListRightText());
+        }
+
 //        // 任务删除
         viewHolder.taskDeleteImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,10 +107,10 @@ public class DownUpAdapter extends BaseAdapter {
                                     public void onClick(DialogInterface dialog,
                                                         int which) {
 //                                        if (BlinkWeb.STATE == BlinkWeb.UDP) {
-                                            if (taskDelete != null) {
-                                                // 此处应该传入要删除任务id
-                                                taskDelete.delete(item.id, type);
-                                            }
+                                        if (taskDelete != null) {
+                                            // 此处应该传入要删除任务id
+                                            taskDelete.delete(item.id, type);
+                                        }
 //                                        } else {
 //                                            list.remove(position);
 //                                            DownUpAdapter.this.notifyDataSetChanged();

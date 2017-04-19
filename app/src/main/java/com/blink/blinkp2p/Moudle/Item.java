@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 public class Item {
 
     public int id;
+    public int status;
 
     private String delete = null;
     private String edit = null;

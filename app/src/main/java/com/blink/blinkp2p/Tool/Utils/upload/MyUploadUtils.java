@@ -40,7 +40,7 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
     public static boolean isNeedMonitorTask = false;
     public static DownUpCallback downUpCallback;
 
-    private static Object getItem(int id, Drawable drawable, String title, String speed, String present, int progress) {
+    private static Object getItem(int id, int status, Drawable drawable, String title, String speed, String present, int progress) {
         Item item = new Item();
         item.setListImage(drawable);
         item.setListText(title);
@@ -50,6 +50,7 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
         item.setHeight((int) context.getResources().getDimension(R.dimen.itemHeight));
 
         item.id = id;
+        item.status = status;
 
         return item;
     }
@@ -69,7 +70,7 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
                     continue;
                 }
 
-                Object object = getItem(uploadTask.id, context.getResources().getDrawable(R.mipmap.upload), uploadTask.name, uploadTask.speed, uploadTask.progress + "%", uploadTask.progress);
+                Object object = getItem(uploadTask.id, uploadTask.status, context.getResources().getDrawable(R.mipmap.upload), uploadTask.name, uploadTask.speed, uploadTask.progress + "%", uploadTask.progress);
                 allUploadingTask.add(object);
             }
         }
