@@ -13,6 +13,7 @@ import com.blink.blinkp2p.Tool.Utils.upload.UploadTask;
 import com.google.gson.FieldNamingStrategy;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created by Ruanjiahui on 2017/1/6.
@@ -72,10 +73,14 @@ public class Comment {
 
 
     /**
+     * 外网下载的标志位
+     */
+    public static AtomicBoolean tcpIsTaskStartFlag = new AtomicBoolean(false);
+
+    /**
      * 下载列表的链表
      */
     public static ArrayList<Object> list = new ArrayList<>();
-
     public static ArrayList<DownTask> downlist = new ArrayList<>();
 
     public static final int DOWNLOAD = 1;

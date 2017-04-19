@@ -90,12 +90,24 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
         }
 
         //　停止心跳线程
-        HeartController.stopHeart();
+        //HeartController.stopHeart();
         Log.e(TAG, "MyTcpUploadUtils: 所有的任务将开始上传");
     }
 
     @Override
     public void run() {
+        Log.e(TAG, "run: Comment.tcpIsTaskStartFlag.get()==" + Comment.tcpIsTaskStartFlag.get() );
+        // 下载列表中是否有任务
+        while (Comment.tcpIsTaskStartFlag.get()) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        HeartController.stopHeart();
+        Comment.tcpIsTaskStartFlag.set(true);
+
         while (isNeedMonitorTask) {
             //Log.e(TAG, "run: taskCount===" + taskCount + " Comment.uploadlist.size()===" + Comment.uploadlist.size() + " currentTaskCount===" + currentTaskCount);
             while (taskCount.get() < Comment.uploadlist.size() && currentTaskCount.get() < 1) {
@@ -153,6 +165,7 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
 
         currentTaskCount.getAndDecrement();
         if (currentTaskCount.get() == 0 && taskCount.get() >= Comment.uploadlist.size()) {
+            Comment.tcpIsTaskStartFlag.set(false);
             Comment.uploadlist.clear();
             taskCount.set(0);
             isNeedMonitorTask = false;  // 关闭开启任务的while循环

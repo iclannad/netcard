@@ -120,6 +120,7 @@ public class NetWorkStateReceiver extends BroadcastReceiver {
             Comment.uploadlist.clear();
             Comment.Uploadlist.clear();
         }
+        Comment.tcpIsTaskStartFlag.set(false);
     }
 }
 

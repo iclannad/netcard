@@ -95,9 +95,6 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
             maintenceThread.start();
         }
 
-        //　停止心跳线程
-        HeartController.stopHeart();
-
 
     }
 
@@ -106,6 +103,18 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
      */
     @Override
     public void run() {
+        Log.e(TAG, "run: Comment.tcpIsTaskStartFlag.get()==" + Comment.tcpIsTaskStartFlag.get());
+        // 如果上传列表中有任务，就不会开启下载任务
+        while (Comment.tcpIsTaskStartFlag.get()) {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        HeartController.stopHeart();
+        Comment.tcpIsTaskStartFlag.set(true);
+
         while (isNeedMonitorTask) {
             //　开启任务，最多同时能开启5个线程
             while (taskCount.get() < Comment.downlist.size() && currentTaskCount.get() < 1) {
@@ -201,6 +210,8 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
                     Toast.makeText(context, "任务下载完毕", Toast.LENGTH_SHORT).show();
                 }
             });
+
+            Comment.tcpIsTaskStartFlag.set(false);
             // 重新开启心跳线程
             Comment.downlist.clear();
             taskCount.set(0);
