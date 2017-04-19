@@ -69,14 +69,16 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
     public static ArrayList<Object> getAllDownloadingTask() {
         ArrayList<Object> allDownloadingTask = new ArrayList<>();
 
-        for (int i = 0; i < Comment.downlist.size(); i++) {
-            DownTask downTask = Comment.downlist.get(i);
-            // 如果任务下载完成的就不会在传输列表中显示
-            if (downTask.status == 2) {
-                continue;
+        if (context != null && Comment.downlist.size() > 0) {
+            for (int i = 0; i < Comment.downlist.size(); i++) {
+                DownTask downTask = Comment.downlist.get(i);
+                // 如果任务下载完成的就不会在传输列表中显示
+                if (downTask.status == 2) {
+                    continue;
+                }
+                Object object = getItem(downTask.id, context.getResources().getDrawable(R.mipmap.download), downTask.name, downTask.speed, downTask.progress + "%", downTask.progress);
+                allDownloadingTask.add(object);
             }
-            Object object = getItem(downTask.id, context.getResources().getDrawable(R.mipmap.download), downTask.name, downTask.speed, downTask.progress + "%", downTask.progress);
-            allDownloadingTask.add(object);
         }
         return allDownloadingTask;
     }
@@ -202,6 +204,11 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
      */
     @Override
     public void downloading(int position, Object object) {
+        int size = Comment.downlist.size();
+        if (size <= 0) {
+            return;
+        }
+
         DownLoadingRsp downLoadingRsp = (DownLoadingRsp) object;
         DownTask downTask = Comment.downlist.get(position);
         downTask.speed = downLoadingRsp.getSpeed();

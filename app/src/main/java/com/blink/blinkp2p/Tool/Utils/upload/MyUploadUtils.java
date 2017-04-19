@@ -61,14 +61,17 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
      */
     public static ArrayList<Object> getAllUploadingTask() {
         ArrayList<Object> allUploadingTask = new ArrayList<>();
-        for (int i = 0; i < Comment.uploadlist.size(); i++) {
-            UploadTask uploadTask = Comment.uploadlist.get(i);
-            if (uploadTask.status == 2) {
-                continue;
-            }
 
-            Object object = getItem(uploadTask.id, context.getResources().getDrawable(R.mipmap.upload), uploadTask.name, uploadTask.speed, uploadTask.progress + "%", uploadTask.progress);
-            allUploadingTask.add(object);
+        if (context != null && Comment.uploadlist.size() > 0) {
+            for (int i = 0; i < Comment.uploadlist.size(); i++) {
+                UploadTask uploadTask = Comment.uploadlist.get(i);
+                if (uploadTask.status == 2) {
+                    continue;
+                }
+
+                Object object = getItem(uploadTask.id, context.getResources().getDrawable(R.mipmap.upload), uploadTask.name, uploadTask.speed, uploadTask.progress + "%", uploadTask.progress);
+                allUploadingTask.add(object);
+            }
         }
         return allUploadingTask;
     }
@@ -181,6 +184,11 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
      */
     @Override
     public void Uploading(int position, Object object) {
+        int size = Comment.uploadlist.size();
+        if (size <= 0) {
+            return;
+        }
+
         UploadReq uploadReq = (UploadReq) object;
         UploadTask uploadTask = Comment.uploadlist.get(position);
         uploadTask.speed = uploadReq.getSpeed();

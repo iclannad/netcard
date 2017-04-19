@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.blink.blinkp2p.Controller.Activity.MainActivity;
 import com.blink.blinkp2p.Controller.Activity.TransSportActivity;
+import com.blink.blinkp2p.Moudle.Comment;
 import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.View.ReconnectDialog;
 import com.blink.blinkp2p.application.MyApplication;
@@ -44,7 +45,7 @@ public class NetWorkStateReceiver extends BroadcastReceiver {
             return;
         }
 
-        // 8s内只能接收一次网络变化请求
+        // 3s内只能接收一次网络变化请求
         if (timer == null) {
             this.context = context;
 
@@ -57,7 +58,7 @@ public class NetWorkStateReceiver extends BroadcastReceiver {
                     timer.cancel();
                     timer = null;
                 }
-            }, 5000);
+            }, 3000);
         }
 
     }
@@ -66,6 +67,10 @@ public class NetWorkStateReceiver extends BroadcastReceiver {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+
+            // 如果网络变化的时候，如果任务列表中有任务就应该清空任务列表
+            clearAllTask();
+
             boolean online = Tools.isOnline(context);
             if (online) {
                 HeartController.stopHeart();
@@ -102,5 +107,19 @@ public class NetWorkStateReceiver extends BroadcastReceiver {
 
         }
     };
+
+    /**
+     * 清空下载和上传列表中的任务
+     */
+    private void clearAllTask() {
+        if (Comment.downlist.size() > 0) {
+            Comment.downlist.clear();
+            Comment.list.clear();
+        }
+        if (Comment.uploadlist.size() > 0) {
+            Comment.uploadlist.clear();
+            Comment.Uploadlist.clear();
+        }
+    }
 }
 

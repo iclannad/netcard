@@ -289,16 +289,40 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
 
                     } catch (IOException e) {
                         BlinkLog.Error(e.toString());
+
                         //socket异常断开
-                        if (ErrorNo.SocketError.equals(e.getMessage()) || ErrorNo.ReadError.equals(e.getMessage())) {
-                            CloseTimer();
-                            call.onFail(ErrorNo.ErrorSocket);
-                            return;
+//                        if (ErrorNo.SocketError.equals(e.getMessage()) || ErrorNo.ReadError.equals(e.getMessage())) {
+//                            Log.e(TAG, "run: 网络异常断开");
+//                            CloseTimer();
+//                            call.onFail(ErrorNo.ErrorSocket);
+//                            return;
+//                        }
+
+                        // 当网络异常时释放所有的资源
+                        threadArray[k] = false;
+                        if (out != null) {
+                            try {
+                                out.close();
+                                out = null;
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                        if (in != null) {
+                            try {
+                                in.close();
+                                in = null;
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
                         }
                         //发生异常时移除链路
                         try {
-                            if (socket != null)
+                            if (socket != null) {
                                 socket.close();
+                                socket = null;
+                            }
+
                         } catch (IOException e1) {
                             BlinkLog.Error(e.toString());
                         }
@@ -378,7 +402,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
         }
 
         speed = totalSize - lateSize;
-        downLoadingRsp.setSpeed(speed  + "K/S");
+        downLoadingRsp.setSpeed(speed + "K/S");
         downLoadingRsp.setBlockId(totalSize);
         downLoadingRsp.setFilename(fileWrite.getFilename());
         downLoadingRsp.setTotolSize((int) size);

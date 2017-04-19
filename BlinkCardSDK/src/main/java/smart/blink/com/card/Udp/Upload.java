@@ -173,7 +173,35 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                             //重新上传不用修改下表，继续传相同的数据
                         }
                     } catch (IOException e) {
+                        // socket连接异常
                         BlinkLog.Error(e.toString());
+
+                        threadArray[k] = false;
+                        if (in != null) {
+                            try {
+                                in.close();
+                                in = null;
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                        if (out != null) {
+                            try {
+                                out.close();
+                                out = null;
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                        if (socket != null) {
+                            try {
+                                socket.close();
+                                socket = null;
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+
                     }
 
                 }

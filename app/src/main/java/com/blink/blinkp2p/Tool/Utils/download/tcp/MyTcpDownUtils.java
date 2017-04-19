@@ -20,6 +20,7 @@ import com.blink.blinkp2p.heart.HeartController;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import smart.blink.com.card.bean.DownLoadingRsp;
 
@@ -32,8 +33,11 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
 
     private static Context context;
 
-    public static int taskCount = 0;   // 已经启动了的任务数
-    public static int currentTaskCount = 0;    //　当前正在下载的任务数
+    //    public static int taskCount = 0;   // 已经启动了的任务数
+//    public static int currentTaskCount = 0;    //　当前正在下载的任务数
+    AtomicInteger taskCount = new AtomicInteger(0);
+    AtomicInteger currentTaskCount = new AtomicInteger(0);
+
     public static Thread maintenceThread = null;      // 维护下载任务的线程
     public static boolean isNeedMonitorTask = false;
     public static ArrayList<Integer> finishTask = new ArrayList<>();    // 存放下载完成的任务
@@ -62,14 +66,16 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
     public static ArrayList<Object> getAllDownloadingTask() {
         ArrayList<Object> allDownloadingTask = new ArrayList<>();
 
-        for (int i = 0; i < Comment.downlist.size(); i++) {
-            DownTask downTask = Comment.downlist.get(i);
-            // 如果任务下载完成的就不会在传输列表中显示
-            if (downTask.status == 2) {
-                continue;
+        if (context != null && Comment.downlist.size() > 0) {
+            for (int i = 0; i < Comment.downlist.size(); i++) {
+                DownTask downTask = Comment.downlist.get(i);
+                // 如果任务下载完成的就不会在传输列表中显示
+                if (downTask.status == 2) {
+                    continue;
+                }
+                Object object = getItem(downTask.id, context.getResources().getDrawable(R.mipmap.download), downTask.name, downTask.speed, downTask.progress + "%", downTask.progress);
+                allDownloadingTask.add(object);
             }
-            Object object = getItem(downTask.id, context.getResources().getDrawable(R.mipmap.download), downTask.name, downTask.speed, downTask.progress + "%", downTask.progress);
-            allDownloadingTask.add(object);
         }
         return allDownloadingTask;
     }
@@ -102,7 +108,7 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
     public void run() {
         while (isNeedMonitorTask) {
             //　开启任务，最多同时能开启5个线程
-            while (taskCount < Comment.downlist.size() && currentTaskCount < 1) {
+            while (taskCount.get() < Comment.downlist.size() && currentTaskCount.get() < 1) {
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
@@ -111,13 +117,13 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
 
                 Activity activity = (Activity) context;
 
-                final DownTask downTask = Comment.downlist.get(taskCount);
+                final DownTask downTask = Comment.downlist.get(taskCount.get());
 
                 // 如果当前任务已经在任务列表中删除的话，就不开启下一个任务
                 if (downTask.status == 2) {
                     // 任务标记　自加
-                    taskCount++;
-                    currentTaskCount++;
+                    taskCount.getAndIncrement();
+                    currentTaskCount.getAndIncrement();
                     finishTask(downTask.id);
 
                     continue;
@@ -138,9 +144,9 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
                     }
                 });
 
-                currentTaskCount++;
+                currentTaskCount.getAndIncrement();
                 // 任务标记　自加
-                taskCount++;
+                taskCount.getAndIncrement();
             }
 
             try {
@@ -186,8 +192,8 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
         downTask.progress = 100;
         downTask.status = 2;
 
-        currentTaskCount--;
-        if (currentTaskCount == 0 && taskCount >= Comment.downlist.size()) {
+        currentTaskCount.getAndDecrement();
+        if (currentTaskCount.get() == 0 && taskCount.get() >= Comment.downlist.size()) {
             Activity activity = (Activity) MyTcpDownUtils.context;
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -197,7 +203,7 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
             });
             // 重新开启心跳线程
             Comment.downlist.clear();
-            taskCount = 0;
+            taskCount.set(0);
             isNeedMonitorTask = false;
 
             try {

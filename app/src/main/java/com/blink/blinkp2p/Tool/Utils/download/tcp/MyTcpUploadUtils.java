@@ -20,6 +20,7 @@ import com.blink.blinkp2p.heart.HeartController;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import smart.blink.com.card.bean.UploadReq;
 
@@ -30,8 +31,11 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
     private static final String TAG = MyTcpUploadUtils.class.getSimpleName();
 
     private static Context context;
-    public static int taskCount = 0;   // 已经启动了的任务数
-    public static int currentTaskCount = 0;
+    //    public static int taskCount = 0;   // 已经启动了的任务数
+//    public static int currentTaskCount = 0;
+    AtomicInteger taskCount = new AtomicInteger(0);
+    AtomicInteger currentTaskCount = new AtomicInteger(0);
+
     public static Thread maintenceThread = null;
     public static boolean isNeedMonitorTask = false;
     public static DownUpCallback downUpCallback;
@@ -57,15 +61,16 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
      */
     public static ArrayList<Object> getAllUploadingTask() {
         ArrayList<Object> allUploadingTask = new ArrayList<>();
-        for (int i = 0; i < Comment.uploadlist.size(); i++) {
-            UploadTask uploadTask = Comment.uploadlist.get(i);
-            if (uploadTask.status == 2) {
-                continue;
-            }
+        if (context != null && Comment.uploadlist.size() > 0)
+            for (int i = 0; i < Comment.uploadlist.size(); i++) {
+                UploadTask uploadTask = Comment.uploadlist.get(i);
+                if (uploadTask.status == 2) {
+                    continue;
+                }
 
-            Object object = getItem(uploadTask.id, context.getResources().getDrawable(R.mipmap.upload), uploadTask.name, uploadTask.speed, uploadTask.progress + "%", uploadTask.progress);
-            allUploadingTask.add(object);
-        }
+                Object object = getItem(uploadTask.id, context.getResources().getDrawable(R.mipmap.upload), uploadTask.name, uploadTask.speed, uploadTask.progress + "%", uploadTask.progress);
+                allUploadingTask.add(object);
+            }
         return allUploadingTask;
     }
 
@@ -93,19 +98,19 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
     public void run() {
         while (isNeedMonitorTask) {
             //Log.e(TAG, "run: taskCount===" + taskCount + " Comment.uploadlist.size()===" + Comment.uploadlist.size() + " currentTaskCount===" + currentTaskCount);
-            while (taskCount < Comment.uploadlist.size() && currentTaskCount < 1) {
+            while (taskCount.get() < Comment.uploadlist.size() && currentTaskCount.get() < 1) {
                 // 开启一个上传任务的逻辑
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                final UploadTask uploadTask = Comment.uploadlist.get(taskCount);
+                final UploadTask uploadTask = Comment.uploadlist.get(taskCount.get());
 
                 // 如果当前任务已经被删除的话就不需求开启下载
                 if (uploadTask.status == 2) {
-                    taskCount++;
-                    currentTaskCount++;
+                    taskCount.getAndIncrement();
+                    currentTaskCount.getAndIncrement();
                     finishTask(uploadTask.id);
                     continue;
                 }
@@ -124,8 +129,8 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
                 });
 
                 // 任务标记　自加
-                taskCount++;
-                currentTaskCount++;
+                taskCount.getAndIncrement();
+                currentTaskCount.getAndIncrement();
             }
 
             try {
@@ -146,10 +151,10 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
         uploadTask.speed = "";
         uploadTask.progress = 100;
 
-        currentTaskCount--;
-        if (currentTaskCount == 0 && taskCount >= Comment.uploadlist.size()) {
+        currentTaskCount.getAndDecrement();
+        if (currentTaskCount.get() == 0 && taskCount.get() >= Comment.uploadlist.size()) {
             Comment.uploadlist.clear();
-            taskCount = 0;
+            taskCount.set(0);
             isNeedMonitorTask = false;  // 关闭开启任务的while循环
 
             Activity activity = (Activity) MyTcpUploadUtils.context;

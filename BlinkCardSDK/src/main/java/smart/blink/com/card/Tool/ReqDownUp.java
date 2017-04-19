@@ -51,7 +51,7 @@ public class ReqDownUp {
                 }
                 if (socket == null) {
                     try {
-                        Log.e(TAG, "run: IP" + IP + "---" + "PORT" + PORT );
+                        Log.e(TAG, "run: IP==" + IP + "---" + "PORT==" + PORT);
                         socket = new Socket(IP, PORT);
                         buf = new byte[1024];
                         in = new DataInputStream(socket.getInputStream());
@@ -90,15 +90,16 @@ public class ReqDownUp {
         thread.start();
     }
 
-    // TCP发送数据
+
     private void Read(byte[] buffer) {
-        BlinkLog.Print("发送的数据包：" + Arrays.toString(buffer));
+        BlinkLog.Print("发送的数据包: " + Arrays.toString(buffer));
         try {
             out = new DataOutputStream(socket.getOutputStream());
             out.write(buffer);
             out.flush();
         } catch (IOException e) {
             BlinkLog.Error(e.toString());
+            isError = true;
         }
     }
 
@@ -108,7 +109,7 @@ public class ReqDownUp {
         try {
             // 获取buffer的长度
             length = in.read(buffer);
-            BlinkLog.Print("接收的数据包：" + Arrays.toString(buffer));
+            BlinkLog.Print("接收的数据包: " + Arrays.toString(buffer));
         } catch (IOException e) {
             BlinkLog.Error(e.toString());
             if (ErrorNo.ReadError.equals(e.getMessage())) {
@@ -116,8 +117,12 @@ public class ReqDownUp {
                 CloseSocket();
                 return;
             }
+            //isError = true;
+            isError = true;
+            CloseSocket();
+            return;
         }
-        //处理返回的结果
+
         //上传的请求
         //下面就是下载的请求
         if (ReqDownUp.buffer[0] == Protocol.UploadStart && !isError) {
@@ -135,10 +140,46 @@ public class ReqDownUp {
      * 关闭Socket
      */
     private void CloseSocket() {
-        thread.interrupt();
-        readThread.interrupt();
-        //终止线程
-        call.onFail(ErrorNo.ErrorRead);
+        if (in != null) {
+            try {
+                in.close();
+                in = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (out != null) {
+            try {
+                out.close();
+                out = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (socket != null) {
+            try {
+                socket.close();
+                socket = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (thread != null) {
+            thread.interrupt();
+            thread = null;
+        }
+
+        if (readThread != null) {
+            readThread.interrupt();
+            readThread = null;
+        }
+//        thread.interrupt();
+//        readThread.interrupt();
+//        //终止线程
+//        call.onFail(ErrorNo.ErrorRead);
     }
 
 }
