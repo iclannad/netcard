@@ -217,6 +217,8 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
             Comment.tcpIsTaskStartFlag.set(false);
             // 重新开启心跳线程
             Comment.downlist.clear();
+            Comment.list.clear();
+
             taskCount.set(0);
             isNeedMonitorTask = false;
 

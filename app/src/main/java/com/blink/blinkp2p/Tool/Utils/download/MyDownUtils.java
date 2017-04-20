@@ -182,6 +182,8 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
             });
             // 重新开启心跳线程
             Comment.downlist.clear();
+            Comment.list.clear();
+
             //taskCount = 0;
             taskCount.set(0);
             isNeedMonitorTask = false;

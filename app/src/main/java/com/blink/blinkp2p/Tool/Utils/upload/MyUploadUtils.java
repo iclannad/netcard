@@ -154,6 +154,8 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
         currentTaskCount.getAndDecrement();
         if (currentTaskCount.get() == 0 && taskCount.get() >= Comment.uploadlist.size()) {
             Comment.uploadlist.clear();
+            Comment.Uploadlist.clear();
+
             taskCount.set(0);
             isNeedMonitorTask = false;  // 关闭开启任务的while循环
 
