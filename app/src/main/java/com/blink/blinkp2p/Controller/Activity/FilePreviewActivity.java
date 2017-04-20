@@ -159,9 +159,10 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
         mFilePathLineayout = (FilePathLineayout) view.findViewById(R.id.activity_myfilepath);
         mlinearlayout = (LinearLayout) view.findViewById(R.id.activity_ll_downll);
 
-
+        // ListView
         fileListAdapter = new FileListAdapter(list, this);
         activity_listview.setAdapter(fileListAdapter);
+
         activity_listview.setOnItemClickListener(this);
         activity_listview.setOnItemLongClickListener(this);
         activityButtonCancel.setOnClickListener(this);

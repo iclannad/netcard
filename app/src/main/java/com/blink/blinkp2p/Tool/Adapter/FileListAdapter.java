@@ -94,7 +94,7 @@ public class FileListAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+        final ViewHolder holder;
         if (convertView != null)
             holder = (ViewHolder) convertView.getTag();
         else {
@@ -110,23 +110,39 @@ public class FileListAdapter extends BaseAdapter {
         }
         if (isSelect && list.get(position).getB() == Protocol.FL) {
             holder.checkbox.setVisibility(View.VISIBLE);
+
             if (checkboxSelect[position] == 1) {
                 holder.checkbox.setChecked(true);
             } else {
                 holder.checkbox.setChecked(false);
             }
 
-            holder.checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+//            holder.checkbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+//
+//                @Override
+//                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                    Log.e(TAG, "onCheckedChanged: ");
+//                    if (isChecked)
+//                        checkboxSelect[position] = 1;
+//                    else
+//                        checkboxSelect[position] = 0;
+//                }
+//            });
 
+            holder.checkbox.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    // TODO Auto-generated method stub
-                    if (isChecked)
+                public void onClick(View v) {
+                    Log.e(TAG, "onClick: ");
+                    boolean checked = holder.checkbox.isChecked();
+                    holder.checkbox.setChecked(checked);
+
+                    if (checked)
                         checkboxSelect[position] = 1;
                     else
                         checkboxSelect[position] = 0;
                 }
             });
+
         } else {
             holder.checkbox.setVisibility(View.GONE);
         }
