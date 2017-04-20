@@ -82,6 +82,8 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
         // 判断是否需要开启上传任务
         if (Comment.uploadlist.size() > 0) {
             isNeedMonitorTask = true;
+        } else {
+            return;
         }
 
         //　开启一个维护任务线程
@@ -168,6 +170,8 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
         if (currentTaskCount.get() == 0 && taskCount.get() >= Comment.uploadlist.size()) {
             Comment.tcpIsTaskStartFlag.set(false);
             Comment.uploadlist.clear();
+            Comment.Uploadlist.clear();
+
             taskCount.set(0);
             isNeedMonitorTask = false;  // 关闭开启任务的while循环
 

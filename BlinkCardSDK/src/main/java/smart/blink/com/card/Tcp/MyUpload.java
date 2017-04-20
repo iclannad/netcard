@@ -27,6 +27,8 @@ public class MyUpload implements BlinkNetCardCall, TimerTaskCall {
     public static int lastReqBlockId = 0;
     public Timer timer;
 
+    private static int failedCount = 0;
+
     private final File file;
 
     public MyUpload(String path, String filename, BlinkNetCardCall call) {
@@ -94,7 +96,17 @@ public class MyUpload implements BlinkNetCardCall, TimerTaskCall {
 
     @Override
     public void onFail(int error) {
+        if (error == Protocol.Uploading) {
+            failedCount++;
+            if (failedCount > 6) {
+                // 请求上传失败的逻辑
 
+                failedCount = 0;
+                return;
+            }
+            reqBlockId--;
+            startUpload();
+        }
     }
 
     /**

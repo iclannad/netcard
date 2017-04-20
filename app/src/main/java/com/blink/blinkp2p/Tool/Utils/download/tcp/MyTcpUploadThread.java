@@ -1,6 +1,7 @@
 package com.blink.blinkp2p.Tool.Utils.download.tcp;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.blink.blinkp2p.Controller.ActivityCode;
 import com.blink.blinkp2p.Controller.NetCardController;
@@ -40,6 +41,7 @@ public class MyTcpUploadThread implements HandlerImpl {
      */
     private void startUpload() {
         downorUpload = (DownorUpload) Comment.Uploadlist.get(this.position);
+        Log.e(TAG, "startUpload: downorUpload.getPath()===" + downorUpload.getPath() + " downorUpload.getName()===" + downorUpload.getName());
         NetCardController.Upload(downorUpload.getPath(), downorUpload.getName(), this);
     }
 

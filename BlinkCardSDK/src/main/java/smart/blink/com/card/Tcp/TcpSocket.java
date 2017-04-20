@@ -1,6 +1,8 @@
 package smart.blink.com.card.Tcp;
 
 
+import android.graphics.BitmapFactory;
+import android.graphics.PixelXorXfermode;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -40,11 +42,21 @@ public class TcpSocket {
     public static ArrayList<byte[]> bufferList = null;
     public static ArrayList<Integer> controlList = null;
     private static Timer timer;
+    private static Timer pcLookTimer;
+    private static Timer downloadingTimer;
+    private static Timer uploadingTimer;
+    private static Timer lookpcfileTimer;
+
+
     private static boolean isOpen = false;
 
     private static BlinkNetCardCall downloadingcall = null;
     private static BlinkNetCardCall uploadingcall = null;
     private static BlinkNetCardCall heartcall = null;
+    private static BlinkNetCardCall lookpcfile = null;
+
+
+    private static Handler handler = null;
 
     /**
      * 关闭TCP的资源
@@ -85,14 +97,44 @@ public class TcpSocket {
      */
     public TcpSocket(final String ip, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
         TcpSocket.position = position;
+
         if (position == Protocol.Downloading) {
             TcpSocket.downloadingcall = call;
         } else if (position == Protocol.Uploading) {
             TcpSocket.uploadingcall = call;
         } else if (position == Protocol.Heart) {
             heartcall = call;
+        } else if (position == Protocol.LookFileMsg) {
+            lookpcfile = call;
         } else {
             TcpSocket.call = call;
+        }
+
+        // 写在这里是为了放在主线程
+        if (handler == null) {
+            handler = new Handler() {
+                @Override
+                public void dispatchMessage(Message msg) {
+                    byte[] buffer = (byte[]) msg.obj;
+                    int length = msg.what;
+
+                    if (buffer[0] == 71) {
+                        // 下载
+                        new RevicedTools(position, buffer, length, downloadingcall);
+                    } else if (buffer[0] == 80) {
+                        // 上传
+                        new RevicedTools(position, buffer, length, uploadingcall);
+                    } else if (buffer[0] == 7) {
+                        // 心跳
+                        new RevicedTools(position, buffer, length, heartcall);
+                    } else if (buffer[0] == 5) {
+                        // 访问电脑文件
+                        new RevicedTools(position, buffer, length, TcpSocket.lookpcfile);
+                    } else {
+                        new RevicedTools(position, buffer, length, TcpSocket.call);
+                    }
+                }
+            };
         }
 
         bufferList = new ArrayList<>();
@@ -132,7 +174,45 @@ public class TcpSocket {
                     }
                 }
 
-                if (position != Protocol.Heart) {
+                // 开启一个定时器
+                if (position == Protocol.Heart) {
+
+                } else if (position == Protocol.Downloading) {
+                    downloadingTimer = new Timer();
+                    downloadingTimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            // 请求下载失败的处理逻辑
+                            RevicedTools.failDownloadingHandlerByTcp(downloadingcall);
+
+                            downloadingTimer.cancel();
+                            downloadingTimer = null;
+                        }
+                    }, 6000);
+                } else if (position == Protocol.Uploading) {
+                    uploadingTimer = new Timer();
+                    uploadingTimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            // 请求上传失败的逻辑
+                            RevicedTools.failUploadingHandlerByTcp(uploadingcall);
+
+                            uploadingTimer.cancel();
+                            uploadingTimer = null;
+                        }
+                    }, 6000);
+                } else if (position == Protocol.LookFileMsg) {
+                    lookpcfileTimer = new Timer();
+                    lookpcfileTimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            // 访问电脑文件失败
+                            RevicedTools.failLookPcFileByTcp(lookpcfile);
+                            lookpcfileTimer.cancel();
+                            lookpcfileTimer = null;
+                        }
+                    }, 6000);
+                } else {
                     timer = new Timer();
                     timer.schedule(new TimerTask() {
                         @Override
@@ -190,7 +270,30 @@ public class TcpSocket {
         }
         BlinkLog.Print("received: " + Arrays.toString(buffer));
 
-        if (position != Protocol.Heart) {
+        if (buffer[0] == 7) {
+            // 心跳
+
+        } else if (buffer[0] == 71) {
+            // 下载
+            // 如果接收到数据就把定时器给关掉
+            if (downloadingTimer != null) {
+                downloadingTimer.cancel();
+                downloadingTimer = null;
+            }
+        } else if (buffer[0] == 80) {
+            // 上传
+            if (uploadingTimer != null) {
+                uploadingTimer.cancel();
+                uploadingTimer = null;
+            }
+
+        } else if (buffer[0] == 5) {
+            // 访问电脑目录
+            if (lookpcfileTimer != null) {
+                lookpcfileTimer.cancel();
+                lookpcfileTimer = null;
+            }
+        } else {
             // 如果接收到数据就把定时器给关掉
             if (timer != null) {
                 timer.cancel();
@@ -201,19 +304,42 @@ public class TcpSocket {
 
         /**
          * Tcp访问电脑文件的逻辑
+         *
+         * 在访问电脑文件的时候有时候会收不到 buffer[4]==3的情况，
+         * 如果规定时间没有收到buffer[4]==3那么直接说明访问失败
          */
         if (buffer[0] == 5) {
             if (buffer[4] == 4) {
                 // 访问错误
-                RevicedTools.failEventHandlerByUdp(position, call);
+                //RevicedTools.failEventHandlerByUdp(position, call);
+                RevicedTools.failLookPcFileByTcp(lookpcfile);
             } else if (buffer[4] == 3) {
                 //closeTcpSocket();
+                if (pcLookTimer != null) {
+                    pcLookTimer.cancel();
+                    pcLookTimer = null;
+                }
+
                 Message message = new Message();
                 message.obj = new byte[]{5};
                 message.what = 0;
                 handler.sendMessage(message);
                 return;
             } else {
+                if (pcLookTimer == null) {
+                    pcLookTimer = new Timer();
+                    pcLookTimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            RevicedTools.failEventHandlerByUdp(position, call);
+
+                            if (pcLookTimer != null) {
+                                pcLookTimer.cancel();
+                                pcLookTimer = null;
+                            }
+                        }
+                    }, 6000);
+                }
                 // 访问文件的数据添加到集合中
                 //bufferList.add(Arrays.copyOfRange(buffer, 0, buffer.length));
                 bufferList.add(buffer);
@@ -230,27 +356,27 @@ public class TcpSocket {
 
     }
 
-    // 这个方法是在主线程中调用的
-    private Handler handler = new Handler() {
-
-        @Override
-        public void dispatchMessage(Message msg) {
-            byte[] buffer = (byte[]) msg.obj;
-            int length = msg.what;
-
-            if (buffer[0] == 71) {
-                // 下载
-                new RevicedTools(position, buffer, length, downloadingcall);
-            } else if (buffer[0] == 80) {
-                // 上传
-                new RevicedTools(position, buffer, length, uploadingcall);
-            } else if (buffer[0] == 7) {
-                // 心跳
-                new RevicedTools(position, buffer, length, heartcall);
-            } else {
-                new RevicedTools(position, buffer, length, call);
-            }
-        }
-    };
+//    // 这个方法是在主线程中调用的
+//    private static Handler handler = new Handler() {
+//
+//        @Override
+//        public void dispatchMessage(Message msg) {
+//            byte[] buffer = (byte[]) msg.obj;
+//            int length = msg.what;
+//
+//            if (buffer[0] == 71) {
+//                // 下载
+//                new RevicedTools(position, buffer, length, downloadingcall);
+//            } else if (buffer[0] == 80) {
+//                // 上传
+//                new RevicedTools(position, buffer, length, uploadingcall);
+//            } else if (buffer[0] == 7) {
+//                // 心跳
+//                new RevicedTools(position, buffer, length, heartcall);
+//            } else {
+//                new RevicedTools(position, buffer, length, call);
+//            }
+//        }
+//    };
 
 }

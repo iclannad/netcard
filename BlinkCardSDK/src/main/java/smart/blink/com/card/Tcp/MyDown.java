@@ -34,6 +34,8 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
 
     String transport_filename = "";
 
+    private static int failedCount = 0;
+
     /**
      * 构造方法
      *
@@ -75,6 +77,9 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
         DownLoadingRsp downLoadingRsp = (DownLoadingRsp) mainObject;
         byte[] wdata = downLoadingRsp.data;
         if (downLoadingRsp.getSuccess() == 0) {
+            // 请求成功的话将失败统计清0
+            failedCount = 0;
+
             if (reqBlockId >= wantblock) {
                 // 最后一次下载成功
                 downLoadingRsp.setBlockId(reqBlockId);
@@ -105,7 +110,20 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
 
     @Override
     public void onFail(int error) {
+        if (error == Protocol.Downloading) {
+            // 如果请求次数大于规定次数，则说明该文件下载失败
+            failedCount++;
+            if (failedCount > 6) {
+                // 任务下载失败的处理逻辑
 
+
+                failedCount = 0;
+                return;
+            }
+            // 重新请求下载
+            reqBlockId--;
+            startDownLoad();
+        }
     }
 
     /**

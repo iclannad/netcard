@@ -89,6 +89,8 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
         // 如果任务列表中有任务
         if (Comment.downlist.size() > 0) {
             isNeedMonitorTask = true;
+        } else {
+            return;
         }
 
 

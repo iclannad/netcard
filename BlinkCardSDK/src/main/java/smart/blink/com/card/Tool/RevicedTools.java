@@ -884,4 +884,31 @@ public class RevicedTools {
         }
         return index;
     }
+
+    /**
+     * 当请求下载失败后的回调
+     *
+     * @param call
+     */
+    public static void failDownloadingHandlerByTcp(BlinkNetCardCall call) {
+        call.onFail(Protocol.Downloading);
+    }
+
+    /**
+     * 当请访问电脑文件失败后的回调
+     *
+     * @param call
+     */
+    public static void failLookPcFileByTcp(BlinkNetCardCall call) {
+        call.onFail(Protocol.LookFileMsg);
+    }
+
+    /**
+     * 当上传失败后的回调
+     *
+     * @param call
+     */
+    public static void failUploadingHandlerByTcp(BlinkNetCardCall call) {
+        call.onFail(Protocol.Uploading);
+    }
 }

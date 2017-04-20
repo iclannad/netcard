@@ -88,6 +88,8 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
         // 如果任务列表中有任务
         if (Comment.downlist.size() > 0) {
             isNeedMonitorTask = true;
+        } else {
+            return;
         }
 
         //　开启一个维护任务线程
@@ -104,7 +106,7 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
      */
     @Override
     public void run() {
-        Log.e(TAG, "run: Comment.tcpIsTaskStartFlag.get()==" + Comment.tcpIsTaskStartFlag.get());
+        //Log.e(TAG, "run: Comment.tcpIsTaskStartFlag.get()==" + Comment.tcpIsTaskStartFlag.get());
         // 如果上传列表中有任务，就不会开启下载任务
         while (Comment.tcpIsTaskStartFlag.get()) {
             try {

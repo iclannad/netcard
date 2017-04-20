@@ -116,7 +116,6 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                         onclickfiledir(new File(msg.obj.toString()));
                     } else {
 
-
                         // 释放心跳线程的资源
                         HeartController.stopHeart();
                         MyPersonalProgressDIalog.getInstance(FilePreviewActivity.this).setContent("正读取文件").showProgressDialog();
@@ -593,9 +592,9 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                     HeartController.startHeart();
 
                     // 关闭对话框
-                    FilePreviewActivity.this.finish();
                     MyPersonalProgressDIalog.getInstance(FilePreviewActivity.this).dissmissProgress();
-                    Toast.makeText(FilePreviewActivity.this, "访问失败，请再次进入", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FilePreviewActivity.this, "出现异常，请重新访问", Toast.LENGTH_SHORT).show();
+                    FilePreviewActivity.this.finish();
                 }
             });
         }

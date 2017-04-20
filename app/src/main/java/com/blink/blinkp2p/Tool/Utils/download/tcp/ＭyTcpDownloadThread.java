@@ -16,6 +16,7 @@ import com.blink.blinkp2p.Tool.Utils.download.ThreadHandlerImpl;
 import java.io.File;
 import java.io.FileWriter;
 
+import smart.blink.com.card.Tcp.File.FileWrite;
 import smart.blink.com.card.Tool.FileWriteStream;
 import smart.blink.com.card.Tool.Util;
 import smart.blink.com.card.bean.DownLoadStartByServerRsp;
@@ -102,7 +103,6 @@ public class ＭyTcpDownloadThread implements HandlerImpl {
      */
     @Override
     public void myError(int position, int error) {
-
     }
 
     /**

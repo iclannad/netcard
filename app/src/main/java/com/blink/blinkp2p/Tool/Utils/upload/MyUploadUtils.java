@@ -83,6 +83,8 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
         // 判断是否需要开启上传任务
         if (Comment.uploadlist.size() > 0) {
             isNeedMonitorTask = true;
+        } else {
+            return;
         }
 
         //　开启一个维护任务线程

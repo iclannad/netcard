@@ -12,6 +12,7 @@ public class HeartController {
      * 开启心跳的线程
      */
     public static void startHeart() {
+        // 如果Tcp模式下载有任务正在下载，不会开启心跳，避免过多的干扰
         if (Comment.tcpIsTaskStartFlag.get()) {
             return;
         }
