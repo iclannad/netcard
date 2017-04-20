@@ -8,8 +8,13 @@ import android.widget.Toast;
 import com.blink.blinkp2p.Controller.ActivityCode;
 import com.blink.blinkp2p.Controller.NetCardController;
 import com.blink.blinkp2p.Moudle.DownorUpload;
+import com.blink.blinkp2p.R;
+import com.blink.blinkp2p.Tool.Dao.MsgDAO;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
 import com.blink.blinkp2p.Tool.Utils.download.ThreadHandlerImpl;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import smart.blink.com.card.bean.UploadReq;
 import smart.blink.com.card.bean.UploadStartReq;
@@ -81,9 +86,21 @@ public class MyUploadThread extends Thread implements HandlerImpl {
                 return;
             }
 
+            if (context != null) {
+                // 当下载完成的时候，将数据保存在本地数据库中
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                MsgDAO msgdao = new MsgDAO(context);
+                msgdao.insertdb(df.format(new Date()),
+                        context.getResources().getString(R.string.phone),
+                        context.getResources().getString(R.string.send),
+                        this.context.getResources().getString(R.string.pc),
+                        null);
+                msgdao.close();
+            }
+
             // 上传一个任务成功后的回调
             threadHandler.finishTask(this.position);
-            Log.e(TAG, "myHandler: 上传一个任务成功");
+
         }
     }
 
