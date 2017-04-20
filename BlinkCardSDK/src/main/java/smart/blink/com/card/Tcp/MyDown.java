@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import java.util.Timer;
 
 import smart.blink.com.card.API.BlinkWeb;
+import smart.blink.com.card.API.Protocol;
 import smart.blink.com.card.BlinkNetCardCall;
 import smart.blink.com.card.Tool.FileWriteStream;
 import smart.blink.com.card.Tool.MyTimerTask;
@@ -65,7 +66,7 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
     private void startDownLoad() {
         //Log.e(TAG, "init: 文件的名字是:" + filename);
         byte[] buffer = SendTools.DownloadingOldVersion(reqBlockId, filename);
-        new TcpSocket(BlinkWeb.zIP, BlinkWeb.zPORT, buffer, 0, this);
+        new TcpSocket(BlinkWeb.zIP, BlinkWeb.zPORT, buffer, Protocol.Downloading, this);
         reqBlockId++;
     }
 

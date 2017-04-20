@@ -246,7 +246,6 @@ public class BlinkNetCardSDK {
                 UdpUtils.LookFileMsg(path, call);
                 break;
             case BlinkWeb.TCP:
-                Log.e(TAG, "LookFileMsg: 我走的是tcp方式查看电脑的文件目录");
                 TcpUtils.LookFileMsg(path, call);
                 break;
             case BlinkWeb.UNONLINE:

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Timer;
 
 import smart.blink.com.card.API.BlinkWeb;
+import smart.blink.com.card.API.Protocol;
 import smart.blink.com.card.BlinkNetCardCall;
 import smart.blink.com.card.Tool.MyTimerTask;
 import smart.blink.com.card.Tool.SendTools;
@@ -55,7 +56,7 @@ public class MyUpload implements BlinkNetCardCall, TimerTaskCall {
     private void startUpload() {
 //        Log.e(TAG, "startUpload: reqBlockId===" + reqBlockId);
         byte[] buffer = SendTools.UploadingOldVersion(reqBlockId, wantblock, filename, file);
-        new TcpSocket(BlinkWeb.zIP, BlinkWeb.zPORT, buffer, 0, this);
+        new TcpSocket(BlinkWeb.zIP, BlinkWeb.zPORT, buffer, Protocol.Uploading, this);
         reqBlockId++;
     }
 

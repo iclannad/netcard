@@ -42,6 +42,10 @@ public class TcpSocket {
     private static Timer timer;
     private static boolean isOpen = false;
 
+    private static BlinkNetCardCall downloadingcall = null;
+    private static BlinkNetCardCall uploadingcall = null;
+    private static BlinkNetCardCall heartcall = null;
+
     /**
      * 关闭TCP的资源
      */
@@ -81,7 +85,15 @@ public class TcpSocket {
      */
     public TcpSocket(final String ip, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
         TcpSocket.position = position;
-        TcpSocket.call = call;
+        if (position == Protocol.Downloading) {
+            TcpSocket.downloadingcall = call;
+        } else if (position == Protocol.Uploading) {
+            TcpSocket.uploadingcall = call;
+        } else if (position == Protocol.Heart) {
+            heartcall = call;
+        } else {
+            TcpSocket.call = call;
+        }
 
         bufferList = new ArrayList<>();
         controlList = new ArrayList<>();
@@ -126,12 +138,12 @@ public class TcpSocket {
                         @Override
                         public void run() {
                             if (timer != null) {
-                                RevicedTools.failEventHandlerByUdp(position, TcpSocket.call = call);
+                                RevicedTools.failEventHandlerByUdp(position, call);
                                 timer.cancel();
                                 timer = null;
                             }
                         }
-                    }, 5000);
+                    }, 6000);
                 }
                 Send(buffer);
             }
@@ -191,7 +203,10 @@ public class TcpSocket {
          * Tcp访问电脑文件的逻辑
          */
         if (buffer[0] == 5) {
-            if (buffer[4] == 3) {
+            if (buffer[4] == 4) {
+                // 访问错误
+                RevicedTools.failEventHandlerByUdp(position, call);
+            } else if (buffer[4] == 3) {
                 //closeTcpSocket();
                 Message message = new Message();
                 message.obj = new byte[]{5};
@@ -222,9 +237,19 @@ public class TcpSocket {
         public void dispatchMessage(Message msg) {
             byte[] buffer = (byte[]) msg.obj;
             int length = msg.what;
-            //处理返回的结果
-            new RevicedTools(position, buffer, length, call);
 
+            if (buffer[0] == 71) {
+                // 下载
+                new RevicedTools(position, buffer, length, downloadingcall);
+            } else if (buffer[0] == 80) {
+                // 上传
+                new RevicedTools(position, buffer, length, uploadingcall);
+            } else if (buffer[0] == 7) {
+                // 心跳
+                new RevicedTools(position, buffer, length, heartcall);
+            } else {
+                new RevicedTools(position, buffer, length, call);
+            }
         }
     };
 
