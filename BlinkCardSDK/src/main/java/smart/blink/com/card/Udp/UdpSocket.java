@@ -41,6 +41,9 @@ public class UdpSocket {
     private static BlinkNetCardCall call = null;
     private static int count = 0;
 
+    private static BlinkNetCardCall heartcall = null;
+    private static BlinkNetCardCall lookfilemsgcall = null;
+
 
     public static ArrayList<byte[]> bufferList = null;
     public static ArrayList<Integer> controlList = null;
@@ -72,7 +75,14 @@ public class UdpSocket {
 
     public UdpSocket(final String ip, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
         UdpSocket.position = position;
-        UdpSocket.call = call;
+
+        if (position == Protocol.Heart) {
+            UdpSocket.heartcall = call;
+        } else if (position == Protocol.LookFileMsg) {
+            UdpSocket.lookfilemsgcall = call;
+        } else {
+            UdpSocket.call = call;
+        }
 
         isOpen = true;
 
@@ -109,6 +119,8 @@ public class UdpSocket {
             public void run() {
                 if (UdpSocket.position == Protocol.Heart) {
                     Log.e(TAG, "run: 发送的心跳无响应");
+                } else if (UdpSocket.position == Protocol.LookFileMsg) {
+                    RevicedTools.failEventHandlerByUdp(position, UdpSocket.lookfilemsgcall);
                 } else {
                     //Log.e(TAG, "run: 已经连接不到服务器了");
                     RevicedTools.failEventHandlerByUdp(position, UdpSocket.call);
@@ -116,7 +128,7 @@ public class UdpSocket {
 
                 CloseTime();
             }
-        }, 3000);
+        }, 8000);
 
         //　然后再开启一个发送线程
         thread = null;
@@ -164,12 +176,23 @@ public class UdpSocket {
     }
 
     // 这个方法是在主线程中调用的
-    private Handler handler = new Handler() {
+    private static Handler handler = new Handler() {
 
         @Override
         public void dispatchMessage(Message msg) {
-            new RevicedTools(position, (byte[]) msg.obj, msg.what, call);
-            thread = null;
+            byte[] data = (byte[]) msg.obj;
+            if (data[0] == 7) {
+                // 心跳
+                new RevicedTools(position, (byte[]) msg.obj, msg.what, heartcall);
+            } else if (data[0] == 5) {
+                //　访问电脑文件
+                new RevicedTools(position, (byte[]) msg.obj, msg.what, lookfilemsgcall);
+            } else {
+                new RevicedTools(position, (byte[]) msg.obj, msg.what, call);
+            }
+
+            //new RevicedTools(position, (byte[]) msg.obj, msg.what, call);
+            //thread = null;
             buf = null;
         }
     };
@@ -184,6 +207,8 @@ public class UdpSocket {
                     message.obj = new byte[]{5};
                     message.what = 0;
                     handler.sendMessage(message);
+
+                    thread = null;
                 } else {
                     bufferList.add(buffer);
                     controlList.add((int) buffer[4]);
@@ -195,6 +220,8 @@ public class UdpSocket {
                 message.obj = buffer;
                 message.what = length;
                 handler.sendMessage(message);
+
+                thread = null;
             }
         }
     }

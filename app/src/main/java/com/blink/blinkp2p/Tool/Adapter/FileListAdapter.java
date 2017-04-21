@@ -48,7 +48,7 @@ public class FileListAdapter extends BaseAdapter {
             if (checkboxSelect[i] == 0) {
                 checkboxSelect[i] = 1;
             } else {
-                checkboxSelect[i] = 0;
+                checkboxSelect[i] = 1;
             }
         }
         notifyDataSetChanged();

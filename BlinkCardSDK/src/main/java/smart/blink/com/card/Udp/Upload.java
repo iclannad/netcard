@@ -11,6 +11,7 @@ import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import smart.blink.com.card.API.BlinkLog;
 import smart.blink.com.card.API.Protocol;
@@ -109,6 +110,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
      */
     private void StartThread(final String IP, final int PORT, final int flag, final String filename) {
         new Thread(new Runnable() {
+
             @Override
             public void run() {
                 int k = flag;
@@ -200,6 +202,11 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                             } catch (IOException e1) {
                                 e1.printStackTrace();
                             }
+                        }
+
+                        if (timer != null) {
+                            timer.cancel();
+                            timer = null;
                         }
 
                     }

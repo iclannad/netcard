@@ -99,7 +99,11 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
 
     @Override
     public void run() {
+        Log.e(TAG, "run: isNeedMonitorTask===" + isNeedMonitorTask);
         while (isNeedMonitorTask) {
+            Log.e(TAG, "run: taskCount.get()===" + taskCount.get());
+            Log.e(TAG, "run: Comment.uploadlist.size()===" + Comment.uploadlist.size());
+            Log.e(TAG, "run: currentTaskCount.get()===" + currentTaskCount.get());
             while (taskCount.get() < Comment.uploadlist.size() && currentTaskCount.get() < 5) {
                 UploadTask uploadTask = Comment.uploadlist.get(taskCount.get());
 

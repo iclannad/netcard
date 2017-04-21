@@ -42,7 +42,7 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
         this.threadHandler = threadHandler;
         this.position = position;
         this.downloading = downloading;
-        Log.e(TAG, "ＭyDownloadThread: 开启一个下载任务");
+        Log.e(TAG, "ＭyDownloadThread: 开启下载任务:" + downorUpload.getName());
     }
 
     @Override
@@ -91,6 +91,7 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
                 msgdao.close();
             }
 
+            Log.e(TAG, "ＭyDownloadThread: 任务下载完成:" + downorUpload.getName());
             // 下载完成后的回调
             threadHandler.finishTask(this.position);
         }

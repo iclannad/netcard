@@ -326,6 +326,11 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                         } catch (IOException e1) {
                             BlinkLog.Error(e.toString());
                         }
+
+                        if (timer != null) {
+                            timer.cancel();
+                            timer = null;
+                        }
                     }
                 }
             }

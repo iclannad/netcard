@@ -168,6 +168,10 @@ public class FragmentFilePhone extends Fragment implements AdapterView.OnItemCli
     private Object getItem(int Drawable, String title) {
         Item item = new Item();
 
+        if (!isAdded()) {
+            return item;
+        }
+
         if (Drawable != 0)
             item.setGridImage(getResources().getDrawable(Drawable));
         item.setGridText(title);

@@ -19,6 +19,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.CRC32;
 
@@ -45,7 +47,6 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
     public static ArrayList<Integer> finishTask = new ArrayList<>();    // 存放下载完成的任务
 
     public static DownUpCallback downUpCallback;
-
 
     private static Object getItem(int id, int status, Drawable drawable, String title, String speed, String present, int progress) {
         Item item = new Item();
@@ -116,7 +117,7 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
             // taskCount < Comment.downlist.size() && currentTaskCount
             while (taskCount.get() < Comment.downlist.size() && currentTaskCount.get() < 5) {
                 Log.e(TAG, "run: taskCount===" + taskCount + " Comment.downlist.size()===" + Comment.downlist.size());
-                DownTask downTask = Comment.downlist.get(taskCount.get());
+                final DownTask downTask = Comment.downlist.get(taskCount.get());
 
                 // 如果当前任务已经在任务列表中删除的话，就不开启下一个任务
                 if (downTask.status == 2) {
