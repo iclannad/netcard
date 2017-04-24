@@ -8,6 +8,9 @@ import com.blink.blinkp2p.Moudle.Comment;
  */
 public class HeartController {
 
+    // 判断心跳是否开启，如果开启的话就不会再开启
+    private static boolean isStart = false;
+
     /**
      * 开启心跳的线程
      */
@@ -16,10 +19,15 @@ public class HeartController {
         if (Comment.tcpIsTaskStartFlag.get()) {
             return;
         }
+        if (isStart) {
+            return;
+        }
 
         SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
         SendHeartThread.isClose = false;
         sendHeartThread.start();
+
+        isStart = true;
     }
 
 
@@ -27,10 +35,17 @@ public class HeartController {
      * 关闭心跳的线程
      */
     public static void stopHeart() {
+
+        if (!isStart) {
+            return;
+        }
+
         // 释放心跳线程的资源
         SendHeartThread.isClose = true;
         synchronized (SendHeartThread.HeartLock) {
             SendHeartThread.HeartLock.notify();
         }
+
+        isStart = false;
     }
 }

@@ -44,6 +44,7 @@ public class HeartHandler extends Handler {
                 NetCardController.Heart(handler);
                 break;
             case SendHeartThread.HEART_LOSS:
+                HeartController.stopHeart();
                 // 与服务器失去连接的逻辑
                 SendHeartThread sendHeartThread = (SendHeartThread) msg.obj;
                 sendHeartThread.interrupt();    // 中断当前线程

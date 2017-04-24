@@ -123,8 +123,14 @@ public class Login extends BaseActivity implements HandlerImpl {
                             break;
                         }
                     }
-                    // 将数据保存在本地
-                    SharedPrefsUtils.setStringPreference(Login.this, Comment.LOGINDATA, g.toJson(arraylist));
+
+                    if (arraylist.size() == 0) {
+                        SharedPrefsUtils.setStringPreference(Login.this, Comment.LOGINDATA, null);
+                    } else {
+                        // 将数据保存在本地
+                        SharedPrefsUtils.setStringPreference(Login.this, Comment.LOGINDATA, g.toJson(arraylist));
+                    }
+
 
                     mDownPopWindows.removedatasItem(delIndex);
 

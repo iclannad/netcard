@@ -104,9 +104,10 @@ public class UploadUtils implements HandlerImpl {
                         Toast.makeText(activity, "文件在电脑已存在，没有权限覆盖", Toast.LENGTH_SHORT).show();
                     }
                 });
-                SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
-                SendHeartThread.isClose = false;
-                sendHeartThread.start();
+//                SendHeartThread sendHeartThread = new SendHeartThread(MainActivity.heartHandler);
+//                SendHeartThread.isClose = false;
+//                sendHeartThread.start();
+                HeartController.startHeart();
 
                 Comment.Uploadlist.remove(downorUpload);
                 count--;

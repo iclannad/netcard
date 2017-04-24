@@ -250,9 +250,10 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
      */
     private void initHeartThread() {
         heartHandler = new HeartHandler(this, this);
-        SendHeartThread sendHeartThread = new SendHeartThread(heartHandler);
-        SendHeartThread.isClose = false;
-        sendHeartThread.start();
+//        SendHeartThread sendHeartThread = new SendHeartThread(heartHandler);
+//        SendHeartThread.isClose = false;
+//        sendHeartThread.start();
+        HeartController.startHeart();
         //MyApplication.getInstance().addThread(sendHeartThread);
     }
 
@@ -793,7 +794,7 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
                                     MyApplication.getInstance().exit();
                                 }
                             });
-                            Log.e(TAG, "run: " + "我已经清除了标志位");
+                            //Log.e(TAG, "run: " + "我已经清除了标志位");
                             this.cancel();
                         }
                     }
