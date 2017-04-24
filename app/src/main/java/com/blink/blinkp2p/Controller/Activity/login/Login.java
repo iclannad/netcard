@@ -33,6 +33,9 @@ import com.example.administrator.ui_sdk.Applications;
 import com.example.administrator.ui_sdk.DensityUtil;
 import com.example.administrator.ui_sdk.MyBaseActivity.BaseActivity;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -103,7 +106,26 @@ public class Login extends BaseActivity implements HandlerImpl {
                     break;
                 case 2:
                     int delIndex = data.getInt("delIndex");
+                    // 删除保存在本地的数据
                     String removeuser = mDownPopWindows.getdatas(delIndex);
+                    Log.e(TAG, "handleMessage: removeuser===" + removeuser);
+
+                    // 删除本地的数据
+                    String userlist = SharedPrefsUtils.getStringPreference(Login.this, Comment.LOGINDATA);
+                    Gson g = new Gson();
+                    Type lt = new TypeToken<List<LoginBeanGson>>() {
+                    }.getType();
+                    ArrayList<LoginBeanGson> arraylist = g.fromJson(userlist, lt);
+                    for (int i = 0; i < arraylist.size(); i++) {
+                        LoginBeanGson t = arraylist.get(i);
+                        if (t.getUsername().equals(removeuser)) {
+                            arraylist.remove(i);
+                            break;
+                        }
+                    }
+                    // 将数据保存在本地
+                    SharedPrefsUtils.setStringPreference(Login.this, Comment.LOGINDATA, g.toJson(arraylist));
+
                     mDownPopWindows.removedatasItem(delIndex);
 
                     mDownPopWindows.AdapterUpdate();
@@ -228,7 +250,6 @@ public class Login extends BaseActivity implements HandlerImpl {
             l2.setAutologin(false);
             l2.setTime(System.currentTimeMillis());
             SharedPrefsUtils.setStringPreference(this, Comment.LOGINDATA, l2.toString());
-
         }
         // 设置checkbox的点击事件
         activityCheckboxAutologin.setOnClickListener(this);
@@ -504,7 +525,7 @@ public class Login extends BaseActivity implements HandlerImpl {
                     MyToast.Toast(context, R.string.activity_init_others_already_connected);
                     break;
                 case 4:
-                    MyToast.Toast(context, R.string.activity_init_login_error_len);
+                    MyToast.Toast(context, R.string.activity_init_user_error);
                     break;
             }
         }
@@ -578,19 +599,65 @@ public class Login extends BaseActivity implements HandlerImpl {
         SharedPrefsUtils.setBooleanPreference(this, Comment.IS_RELOGIN, false);
         SharedPrefsUtils.setBooleanPreference(this, Comment.IS_NEED_CLEAR_OLDER_PWD, false);
 
-        LoginBeanGson l = new LoginBeanGson();
-        if (isRemeberPwd) {
-            l.setAutologin(isAutoLogin);
-            l.setRemeber(isRemeberPwd);
-            l.setUsername(ID);
-            l.setPassword(password);
+        String userlist = SharedPrefsUtils.getStringPreference(this, Comment.LOGINDATA);
+        if (userlist == null) {
+            LoginBeanGson l = new LoginBeanGson();
+            if (isRemeberPwd) {
+                l.setAutologin(isAutoLogin);
+                l.setRemeber(isRemeberPwd);
+                l.setUsername(ID);
+                l.setPassword(password);
 
+            } else {
+                l.setUsername("");
+                l.setPassword("");
+            }
+            l.setTime(System.currentTimeMillis());
+            SharedPrefsUtils.setStringPreference(this, Comment.LOGINDATA, l.toString());
         } else {
-            l.setUsername("");
-            l.setPassword("");
+            // 从SharedPrefs中读取数据
+            Gson g = new Gson();
+            Type lt = new TypeToken<List<LoginBeanGson>>() {
+            }.getType();
+            ArrayList<LoginBeanGson> arraylist;
+            try {
+                arraylist = g.fromJson(userlist, lt);
+            } catch (Exception e) {
+                arraylist = new ArrayList<>();
+                arraylist.add(g.fromJson(userlist, LoginBeanGson.class));
+            }
+
+            boolean iswirte = true;
+            for (LoginBeanGson t : arraylist) {
+                if (t.getUsername().equals(ID)) {
+                    t.setPassword(password);
+                    t.setTime(System.currentTimeMillis());
+                    t.setRemeber(isRemeberPwd);
+                    t.setAutologin(isAutoLogin);
+                    iswirte = false;
+                    break;
+                }
+            }
+
+            if (iswirte) {
+                LoginBeanGson t = new LoginBeanGson();
+                t.setUsername(ID);
+                t.setPassword(password);
+                t.setTime(System.currentTimeMillis());
+                t.setRemeber(isRemeberPwd);
+                t.setAutologin(isAutoLogin);
+                arraylist.add(t);
+            }
+
+            // 重新排序
+            SortComparator<LoginBeanGson> cmp = new SortComparator<>();
+            Collections.sort(arraylist, cmp);
+
+            // 将数据保存在本地
+            SharedPrefsUtils.setStringPreference(Login.this, Comment.LOGINDATA, g.toJson(arraylist));
         }
-        l.setTime(System.currentTimeMillis());
-        SharedPrefsUtils.setStringPreference(this, Comment.LOGINDATA, l.toString());
+
+
         //Log.e(TAG, "SaveAutoLoginDataCompatOldVersion: l===" + l.toString());
     }
 

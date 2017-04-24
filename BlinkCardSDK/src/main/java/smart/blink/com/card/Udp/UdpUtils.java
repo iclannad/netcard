@@ -99,10 +99,10 @@ public class UdpUtils {
         new ReqDownUp(BlinkWeb.nIP, 8000, SendTools.DownloadStart(path), Protocol.DownloadStart, call);
     }
 
-    // 测试而已，会删除
-    public static void TCPDownLoadStart(String path, BlinkNetCardCall call) {
-        new ReqDownUp(BlinkWeb.zIP, BlinkWeb.zPORT, SendTools.DownloadStart(path), Protocol.DownloadStart, call);
-    }
+//    // 测试而已，会删除
+//    public static void TCPDownLoadStart(String path, BlinkNetCardCall call) {
+//        new ReqDownUp(BlinkWeb.zIP, BlinkWeb.zPORT, SendTools.DownloadStart(path), Protocol.DownloadStart, call);
+//    }
 
     public static void DownLoading(String path, String filename, long wantblock, BlinkNetCardCall call) {
         new Down(BlinkWeb.nIP, 8000, wantblock, filename, path, Protocol.Downloading, call);

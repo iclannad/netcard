@@ -63,6 +63,7 @@ public class DropDownPopWindows {
         Type lt = new TypeToken<List<LoginBeanGson>>() {
         }.getType();
         try {
+            // ArrayList
             ArrayList<LoginBeanGson> arraylist = g.fromJson(userlist, lt);
             for (int i = 0; i < arraylist.size(); i++) {
                 LoginBeanGson t = arraylist.get(i);

@@ -9,6 +9,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Arrays;
+import java.util.PriorityQueue;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import smart.blink.com.card.API.BlinkLog;
 import smart.blink.com.card.API.ErrorNo;
@@ -17,6 +20,8 @@ import smart.blink.com.card.BlinkNetCardCall;
 
 /**
  * Created by Ruanjiahui on 2017/1/10.
+ * <p/>
+ * 未添加下载超时等操作
  */
 public class ReqDownUp {
     public static final String TAG = ReqDownUp.class.getSimpleName();
@@ -36,10 +41,17 @@ public class ReqDownUp {
     private static boolean isError = false;
 
 
+    /**
+     * ----------自己添加--------
+     */
+//    private static BlinkNetCardCall downloadstartcall;
+//    private static BlinkNetCardCall uploadstartcall;
+
     public ReqDownUp(final String IP, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
         ReqDownUp.call = call;
         ReqDownUp.buffer = buffer;
         ReqDownUp.position = position;
+
         thread = new Thread(new Runnable() {
 
             @Override
@@ -65,6 +77,9 @@ public class ReqDownUp {
                                         BlinkLog.Error(e.toString());
                                     }
                                     Reviced(buf);
+
+                                    // 接收完毕数据之后重新清0
+                                    buf = new byte[1024];
                                 }
                             }
                         });
@@ -92,7 +107,7 @@ public class ReqDownUp {
 
 
     private void Read(byte[] buffer) {
-        BlinkLog.Print("发送的数据包: " + Arrays.toString(buffer));
+        BlinkLog.Print("请求上传或下载 send " + Arrays.toString(buffer));
         try {
             out = new DataOutputStream(socket.getOutputStream());
             out.write(buffer);
@@ -109,14 +124,21 @@ public class ReqDownUp {
         try {
             // 获取buffer的长度
             length = in.read(buffer);
-            BlinkLog.Print("接收的数据包: " + Arrays.toString(buffer));
-        } catch (IOException e) {
-            BlinkLog.Error(e.toString());
-            if (ErrorNo.ReadError.equals(e.getMessage())) {
-                isError = true;
-                CloseSocket();
+            BlinkLog.Print("请求上传或下载 Reviced: " + Arrays.toString(buffer));
+
+            // 服务器挂了的处理逻辑
+            if (buffer[0] == 0) {
                 return;
             }
+
+
+        } catch (IOException e) {
+            BlinkLog.Error(e.toString());
+//            if (ErrorNo.ReadError.equals(e.getMessage())) {
+//                isError = true;
+//                CloseSocket();
+//                return;
+//            }
             //isError = true;
             isError = true;
             CloseSocket();
@@ -126,7 +148,7 @@ public class ReqDownUp {
         //上传的请求
         //下面就是下载的请求
         if (ReqDownUp.buffer[0] == Protocol.UploadStart && !isError) {
-            Log.e(TAG, "Reviced: 请求上传返回的结果：buffer===" + buffer[0]);
+            //Log.e(TAG, "Reviced: 请求上传返回的结果：buffer===" + buffer[0]);
             RevicedTools.UploadStart(buffer, position, call);
         }
 

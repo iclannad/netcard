@@ -113,6 +113,7 @@ public class MyUploadThread extends Thread implements HandlerImpl {
      */
     @Override
     public void myError(int position, int error) {
+        Log.e(TAG, "myError: 有数据过来");
         if (position == ActivityCode.UploadStart) {
             Log.e(TAG, "myError: 请求上传失败");
         }
