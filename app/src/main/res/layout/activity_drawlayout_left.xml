@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/left_Linear"
             android:divider="@color/White"
-            android:paddingLeft="@dimen/marginBigger"
+
             android:dividerHeight="@dimen/listpaddingsmaller" />
 
     </RelativeLayout>

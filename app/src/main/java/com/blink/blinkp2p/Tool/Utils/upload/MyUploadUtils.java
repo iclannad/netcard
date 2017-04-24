@@ -150,6 +150,11 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
      */
     @Override
     public void finishTask(int position) {
+        int size = Comment.uploadlist.size();
+        if (size <= 0) {
+            return;
+        }
+
         UploadTask uploadTask = Comment.uploadlist.get(position);
         uploadTask.status = 2;
         uploadTask.speed = "";

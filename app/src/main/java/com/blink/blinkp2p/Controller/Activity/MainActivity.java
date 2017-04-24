@@ -77,6 +77,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import smart.blink.com.card.API.BlinkWeb;
+import smart.blink.com.card.Tcp.TcpSocket;
+import smart.blink.com.card.Udp.UdpSocket;
 import smart.blink.com.card.bean.ChangePcPwdRsp;
 import smart.blink.com.card.bean.ConnectPcRsp;
 import smart.blink.com.card.bean.LookPCRsp;
@@ -457,11 +459,11 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
             case 6:
                 // 重新登录
                 // 必联商城
+
                 intent = new Intent(MainActivity.this, Login.class);
                 startActivity(intent);
                 finish();
-                // 重新登录
-                SharedPrefsUtils.setBooleanPreference(this, Comment.IS_RELOGIN, true);
+                Comment.releaseSystemResource();
                 break;
 
             default:

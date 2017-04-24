@@ -148,6 +148,9 @@ public class AlterUserPWDActivity extends MyBaseActivity implements HandlerImpl 
                 Toast.makeText(this, this.getResources().getString(R.string.main_handler_change_sucess), Toast.LENGTH_SHORT).show();
                 // 重新跳到登录界面
                 startActivity(new Intent(this, Login.class));
+
+                Comment.releaseSystemResource();
+
                 // 重新登录
                 SharedPrefsUtils.setBooleanPreference(this, Comment.IS_RELOGIN, true);
                 // 如果修改密码成功以后，重新登录必须清空原来的密码

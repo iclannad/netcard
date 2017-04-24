@@ -8,12 +8,21 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 
+import com.blink.blinkp2p.Controller.receiver.NetWorkStateReceiver;
 import com.blink.blinkp2p.Tool.Utils.download.DownTask;
+import com.blink.blinkp2p.Tool.Utils.download.MyDownUtils;
+import com.blink.blinkp2p.Tool.Utils.download.tcp.MyTcpDownUtils;
+import com.blink.blinkp2p.Tool.Utils.download.tcp.MyTcpUploadUtils;
+import com.blink.blinkp2p.Tool.Utils.upload.MyUploadUtils;
 import com.blink.blinkp2p.Tool.Utils.upload.UploadTask;
+import com.blink.blinkp2p.heart.HeartController;
 import com.google.gson.FieldNamingStrategy;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import smart.blink.com.card.Tcp.TcpSocket;
+import smart.blink.com.card.Udp.UdpSocket;
 
 /**
  * Created by Ruanjiahui on 2017/1/6.
@@ -114,5 +123,29 @@ public class Comment {
             return;
         }
         context.startActivity(intent);
+    }
+
+    /**
+     * 释放系统的资源
+     */
+    public static void releaseSystemResource() {
+        HeartController.stopHeart();
+        // 释放Tcp资源
+        TcpSocket.closeTcpSocket();
+        // 释放Udp的资源
+        UdpSocket.closeUdpSocket();
+
+        // 清空任务列表中的任务
+        Comment.list.clear();
+        Comment.Uploadlist.clear();
+        Comment.uploadlist.clear();
+        Comment.downlist.clear();
+        Comment.tcpIsTaskStartFlag.set(false);
+
+        NetWorkStateReceiver.isFirstTimer = true;
+        MyUploadUtils.isNeedMonitorTask = false;
+        MyDownUtils.isNeedMonitorTask = false;
+        MyTcpUploadUtils.isNeedMonitorTask = false;
+        MyTcpDownUtils.isNeedMonitorTask = false;
     }
 }

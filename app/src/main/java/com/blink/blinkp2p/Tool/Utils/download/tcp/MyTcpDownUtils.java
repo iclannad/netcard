@@ -199,6 +199,11 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
 
     @Override
     public void finishTask(int position) {
+        int size = Comment.downlist.size();
+        if (size <= 0) {
+            return;
+        }
+
         DownTask downTask = Comment.downlist.get(position);
         downTask.speed = "";
         downTask.progress = 100;

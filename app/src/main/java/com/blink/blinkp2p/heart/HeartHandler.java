@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.blink.blinkp2p.Controller.Activity.login.Login;
 import com.blink.blinkp2p.Controller.NetCardController;
 import com.blink.blinkp2p.Controller.receiver.NetWorkStateReceiver;
+import com.blink.blinkp2p.Moudle.Comment;
 import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Protocol;
 import com.blink.blinkp2p.Tool.System.Tools;
@@ -44,7 +45,7 @@ public class HeartHandler extends Handler {
                 NetCardController.Heart(handler);
                 break;
             case SendHeartThread.HEART_LOSS:
-                HeartController.stopHeart();
+//                HeartController.stopHeart();
                 // 与服务器失去连接的逻辑
                 SendHeartThread sendHeartThread = (SendHeartThread) msg.obj;
                 sendHeartThread.interrupt();    // 中断当前线程
@@ -53,10 +54,18 @@ public class HeartHandler extends Handler {
                 MyApplication.wantCount.set(0);
                 MyApplication.helloCount.set(0);
 
-                // 释放Tcp资源
-                TcpSocket.closeTcpSocket();
-                // 释放Udp的资源
-                UdpSocket.closeUdpSocket();
+//                // 释放Tcp资源
+//                TcpSocket.closeTcpSocket();
+//                // 释放Udp的资源
+//                UdpSocket.closeUdpSocket();
+//
+//                // 清空任务列表中的任务
+//                Comment.list.clear();
+//                Comment.Uploadlist.clear();
+//                Comment.uploadlist.clear();
+//                Comment.downlist.clear();
+//                Comment.tcpIsTaskStartFlag.set(false);
+                Comment.releaseSystemResource();
 
                 // 弹出重新连接的对话框
                 try {

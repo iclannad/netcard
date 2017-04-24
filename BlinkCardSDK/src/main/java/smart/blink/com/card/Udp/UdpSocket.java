@@ -54,6 +54,9 @@ public class UdpSocket {
 
     public static boolean isOpen;
 
+    private static Handler handler = null;
+
+
     /**
      * 释放资源的接口
      */
@@ -71,6 +74,7 @@ public class UdpSocket {
             timer.cancel();
             timer = null;
         }
+
     }
 
     public UdpSocket(final String ip, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
@@ -82,6 +86,28 @@ public class UdpSocket {
             UdpSocket.lookfilemsgcall = call;
         } else {
             UdpSocket.call = call;
+        }
+
+        if (handler == null) {
+            handler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    byte[] data = (byte[]) msg.obj;
+                    if (data[0] == 7) {
+                        // 心跳
+                        new RevicedTools(position, (byte[]) msg.obj, msg.what, heartcall);
+                    } else if (data[0] == 5) {
+                        //　访问电脑文件
+                        new RevicedTools(position, (byte[]) msg.obj, msg.what, lookfilemsgcall);
+                    } else {
+                        new RevicedTools(position, (byte[]) msg.obj, msg.what, UdpSocket.call);
+                    }
+
+                    //new RevicedTools(position, (byte[]) msg.obj, msg.what, call);
+                    //thread = null;
+                    buf = null;
+                }
+            };
         }
 
         isOpen = true;
@@ -174,28 +200,28 @@ public class UdpSocket {
             BlinkLog.Error(e.toString());
         }
     }
-
-    // 这个方法是在主线程中调用的
-    private static Handler handler = new Handler() {
-
-        @Override
-        public void dispatchMessage(Message msg) {
-            byte[] data = (byte[]) msg.obj;
-            if (data[0] == 7) {
-                // 心跳
-                new RevicedTools(position, (byte[]) msg.obj, msg.what, heartcall);
-            } else if (data[0] == 5) {
-                //　访问电脑文件
-                new RevicedTools(position, (byte[]) msg.obj, msg.what, lookfilemsgcall);
-            } else {
-                new RevicedTools(position, (byte[]) msg.obj, msg.what, call);
-            }
-
-            //new RevicedTools(position, (byte[]) msg.obj, msg.what, call);
-            //thread = null;
-            buf = null;
-        }
-    };
+//
+//    // 这个方法是在主线程中调用的
+//    private static Handler handler = new Handler() {
+//
+//        @Override
+//        public void dispatchMessage(Message msg) {
+//            byte[] data = (byte[]) msg.obj;
+//            if (data[0] == 7) {
+//                // 心跳
+//                new RevicedTools(position, (byte[]) msg.obj, msg.what, heartcall);
+//            } else if (data[0] == 5) {
+//                //　访问电脑文件
+//                new RevicedTools(position, (byte[]) msg.obj, msg.what, lookfilemsgcall);
+//            } else {
+//                new RevicedTools(position, (byte[]) msg.obj, msg.what, call);
+//            }
+//
+//            //new RevicedTools(position, (byte[]) msg.obj, msg.what, call);
+//            //thread = null;
+//            buf = null;
+//        }
+//    };
 
 
     private void setData(byte[] buffer, int length) {
