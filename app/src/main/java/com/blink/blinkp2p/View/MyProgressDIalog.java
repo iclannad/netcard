@@ -1,7 +1,7 @@
 package com.blink.blinkp2p.View;
 
 import android.app.AlertDialog;
-import android.app.TimePickerDialog;
+import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
@@ -297,7 +297,7 @@ public class MyProgressDIalog {
         Calendar c;
         c = Calendar.getInstance();
         MyTimerDialogTime timePickerDialog = new MyTimerDialogTime(context,
-                new TimePickerDialog.OnTimeSetListener() {
+                new OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay,
                                           int minute) {
@@ -310,13 +310,11 @@ public class MyProgressDIalog {
                         MyPersonalProgressDIalog.getInstance(context).setContent("向电脑发送关闭信息...").showProgressDialog();
                         Log.e(TAG, "onTimeSet: " + msgtime);
                         NetCardController.setTimeShutdown(-msgtime, mHandler);
-
                     }
                 }, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true);
         timePickerDialog.show();
 
     }
-
 
 
     // 对话框的内容设置
