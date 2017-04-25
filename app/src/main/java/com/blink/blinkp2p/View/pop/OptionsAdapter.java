@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.blink.blinkp2p.R;
@@ -56,6 +57,7 @@ public class OptionsAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(activity).inflate(R.layout.option_item, null);
             holder.textView = (TextView) convertView.findViewById(R.id.item_text);
             holder.imageView = (ImageView) convertView.findViewById(R.id.delImage);
+            holder.optionItem = (LinearLayout) convertView.findViewById(R.id.option_item);
 
             convertView.setTag(holder);
         } else {
@@ -64,7 +66,7 @@ public class OptionsAdapter extends BaseAdapter {
 
         holder.textView.setText(list.get(position));
 
-        holder.textView.setOnClickListener(new View.OnClickListener() {
+        holder.optionItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Message msg = new Message();
@@ -76,6 +78,19 @@ public class OptionsAdapter extends BaseAdapter {
                 handler.sendMessage(msg);
             }
         });
+
+//        holder.textView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Message msg = new Message();
+//                Bundle data = new Bundle();
+//                //����ѡ������
+//                data.putInt("selIndex", position);
+//                msg.setData(data);
+//                msg.what = 1;
+//                handler.sendMessage(msg);
+//            }
+//        });
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +115,7 @@ public class OptionsAdapter extends BaseAdapter {
 class ViewHolder {
     TextView textView;
     ImageView imageView;
+    LinearLayout optionItem;
 }
 
 
