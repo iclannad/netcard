@@ -491,10 +491,9 @@ public class Login extends BaseActivity implements HandlerImpl {
      */
     @Override
     public void myHandler(int position, Object object) {
+        Log.e(TAG, "myHandler: wantCount.get()===" + wantCount.get());
         if (position == ActivityCode.WANT && wantCount.get() == 0) {
-            Log.e(TAG, "myHandler: wantCount.get()===" + wantCount.get());
             wantCount.getAndIncrement();
-
             WantRsp wantRsp = (WantRsp) object;
             // 请求不成功，250ms后重新标志位清0
             if (wantRsp.getSuccess() != 0) {
@@ -697,6 +696,8 @@ public class Login extends BaseActivity implements HandlerImpl {
                     //打洞失败则申请子服务器
                     MyPersonalProgressDIalog.getInstance(Login.this).dissmissProgress();
                     Toast.makeText(Login.this, "访问主服务器失败", Toast.LENGTH_SHORT).show();
+
+                    wantCount.set(0);
                 }
             });
         }
@@ -709,6 +710,8 @@ public class Login extends BaseActivity implements HandlerImpl {
                     //打洞失败则申请子服务器
                     MyPersonalProgressDIalog.getInstance(Login.this).dissmissProgress();
                     Toast.makeText(Login.this, "访问子服务器失败", Toast.LENGTH_SHORT).show();
+
+                    wantCount.set(0);
                 }
             });
         }
@@ -721,6 +724,8 @@ public class Login extends BaseActivity implements HandlerImpl {
                     //打洞失败则申请子服务器
                     MyPersonalProgressDIalog.getInstance(Login.this).dissmissProgress();
                     Toast.makeText(Login.this, "连接子服务器失败", Toast.LENGTH_SHORT).show();
+
+                    wantCount.set(0);
                 }
             });
         }

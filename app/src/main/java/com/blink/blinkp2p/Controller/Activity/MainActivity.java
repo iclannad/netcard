@@ -904,10 +904,12 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
             int value = changePcPwdRsp.getSuccess();
             if (value == 0) {
                 MyPersonalProgressDIalog.getInstance(MainActivity.this).dissmissProgress();
-                MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_change_sucess);
+                //MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_change_sucess);
+                Toast.makeText(context,R.string.main_handler_change_sucess,Toast.LENGTH_SHORT).show();
             } else {
                 MyPersonalProgressDIalog.getInstance(MainActivity.this).dissmissProgress();
-                MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_original_error, MainActivity.this);
+                //MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_original_error, MainActivity.this);
+                Toast.makeText(context,R.string.main_handler_original_error,Toast.LENGTH_SHORT).show();
             }
         }
 

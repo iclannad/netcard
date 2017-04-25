@@ -188,19 +188,20 @@ public class TcpSocket {
                             downloadingTimer.cancel();
                             downloadingTimer = null;
                         }
-                    }, 6000);
+                    }, 4000);
                 } else if (position == Protocol.Uploading) {
                     uploadingTimer = new Timer();
                     uploadingTimer.schedule(new TimerTask() {
                         @Override
                         public void run() {
                             // 请求上传失败的逻辑
+                            Log.e(TAG, "run: 请求上传失败的逻辑");
                             RevicedTools.failUploadingHandlerByTcp(uploadingcall);
 
                             uploadingTimer.cancel();
                             uploadingTimer = null;
                         }
-                    }, 6000);
+                    }, 4000);
                 } else if (position == Protocol.LookFileMsg) {
                     lookpcfileTimer = new Timer();
                     lookpcfileTimer.schedule(new TimerTask() {
@@ -223,7 +224,7 @@ public class TcpSocket {
                                 timer = null;
                             }
                         }
-                    }, 6000);
+                    }, 8000);
                 }
                 Send(buffer);
             }
@@ -246,6 +247,7 @@ public class TcpSocket {
             } catch (IOException e) {
                 BlinkLog.Error(e.toString());
                 closeTcpSocket();
+                Log.e(TAG, "Send: closeTcpSocket()");
 //                Log.e(TAG, "Send: TcpSocket占用的资源");
             }
         }
@@ -262,6 +264,7 @@ public class TcpSocket {
             BlinkLog.Error(e.toString());
             // 释放资源
             closeTcpSocket();
+            Log.e(TAG, "Write: closeTcpSocket()");
 //            Log.e(TAG, "Write: 服务器挂了");
         }
 

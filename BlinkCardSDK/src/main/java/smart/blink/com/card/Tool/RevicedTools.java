@@ -742,15 +742,19 @@ public class RevicedTools {
                 fileSize[i - 2] = buffer[i];
             }
 
+            //Log.e(TAG, "DownloadStart: fileSize===" + Arrays.toString(fileSize));
             String Size = "";
             for (int i = 0; i < fileSize.length; i++) {
                 if (fileSize[i] != 0) {
                     char c = (char) fileSize[i];
                     Size += Character.getNumericValue((int) c);
+                    //Log.e(TAG, "DownloadStart: Character.getNumericValue((int) c);==" + Character.getNumericValue((int) c));
                 }
             }
+            //Log.e(TAG, "DownloadStart: Size==" + Size);
 
             downLoadStartRsp.setFilesize(Long.parseLong(Size));
+            //Log.e(TAG, "DownloadStart: Long.parseLong(Size)==" + Long.parseLong(Size));
             // 设置请求块的大小
             int block;
             if (Long.parseLong(Size) % 1024 == 0) {
@@ -758,6 +762,7 @@ public class RevicedTools {
             } else {
                 block = (int) Long.parseLong(Size) / 1024 + 1;
             }
+            //Log.e(TAG, "DownloadStart: block==" + block);
             downLoadStartRsp.setTotalblock(block);
         }
         call.onSuccess(position, downLoadStartRsp);

@@ -1,7 +1,9 @@
 package com.blink.blinkp2p.Tool.Utils.download.tcp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.blink.blinkp2p.Controller.ActivityCode;
 import com.blink.blinkp2p.Controller.NetCardController;
@@ -17,6 +19,7 @@ import com.blink.blinkp2p.Tool.Utils.upload.UploadingImpl;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import smart.blink.com.card.API.Protocol;
 import smart.blink.com.card.bean.UploadReq;
 
 /**
@@ -92,6 +95,16 @@ public class MyTcpUploadThread implements HandlerImpl {
      */
     @Override
     public void myError(int position, int error) {
-
+        if (position == ActivityCode.Upload) {
+            Activity activity = (Activity) context;
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.e(TAG, "run:任务上传失败");
+                    Toast.makeText(context, "任务上传失败:" + downorUpload.getName(), Toast.LENGTH_SHORT).show();
+                    threadHandler.finishTask(MyTcpUploadThread.this.position);
+                }
+            });
+        }
     }
 }

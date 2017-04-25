@@ -151,6 +151,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
 
         // 打印块数
         BlinkLog.Print(count);
+        Log.e(TAG, "Down: count==" + count);
         length = count;
         if (count > countThread)
             length = countThread;

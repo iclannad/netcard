@@ -227,7 +227,10 @@ public class UdpSocket {
     private void setData(byte[] buffer, int length) {
         synchronized (this) {
             if (buffer[0] == 5) {
-                if (buffer[4] == 3) {
+                if (buffer[4] == 4) {
+                    // 访问错误
+                    RevicedTools.failEventHandlerByUdp(position, UdpSocket.lookfilemsgcall);
+                } else if (buffer[4] == 3) {
                     CloseTime();
                     Message message = new Message();
                     message.obj = new byte[]{5};

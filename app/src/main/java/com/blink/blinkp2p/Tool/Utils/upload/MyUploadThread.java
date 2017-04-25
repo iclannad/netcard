@@ -15,6 +15,8 @@ import com.blink.blinkp2p.Tool.Utils.download.ThreadHandlerImpl;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import smart.blink.com.card.bean.UploadReq;
 import smart.blink.com.card.bean.UploadStartReq;
@@ -34,6 +36,8 @@ public class MyUploadThread extends Thread implements HandlerImpl {
     private int position;
     private UploadingImpl uploading;
 
+    private Timer uploadingstarttimer;
+
 
     public MyUploadThread(int position, DownorUpload downorUpload, Context context, ThreadHandlerImpl threadHandler, UploadingImpl uploading) {
         this.downorUpload = downorUpload;
@@ -41,10 +45,24 @@ public class MyUploadThread extends Thread implements HandlerImpl {
         this.threadHandler = threadHandler;
         this.position = position;
         this.uploading = uploading;
+
+
     }
 
     @Override
     public void run() {
+        // 如果6s后无响应，则说明请求下载任务失败
+        uploadingstarttimer = new Timer();
+        uploadingstarttimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (uploadingstarttimer != null) {
+                    uploadingstarttimer.cancel();
+                    uploadingstarttimer = null;
+                    MyUploadThread.this.myError(ActivityCode.UploadStart, -1);
+                }
+            }
+        }, 6000);
         NetCardController.UploadStart(downorUpload.getPath(), downorUpload.getName(), this);
     }
 
@@ -58,6 +76,12 @@ public class MyUploadThread extends Thread implements HandlerImpl {
     public void myHandler(int position, Object object) {
 
         if (position == ActivityCode.UploadStart) {
+            // 有数据过来说明请求下载成功
+            if (uploadingstarttimer != null) {
+                uploadingstarttimer.cancel();
+                uploadingstarttimer = null;
+            }
+
             UploadStartReq uploadStartReq = (UploadStartReq) object;
             int success = uploadStartReq.getSuccess();
             // 上传请求成功
@@ -113,13 +137,20 @@ public class MyUploadThread extends Thread implements HandlerImpl {
      */
     @Override
     public void myError(int position, int error) {
-        Log.e(TAG, "myError: 有数据过来");
+
         if (position == ActivityCode.UploadStart) {
-            Log.e(TAG, "myError: 请求上传失败");
+            Activity activity = (Activity) context;
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, "任务上传失败:" + downorUpload.getName(), Toast.LENGTH_SHORT).show();
+                    threadHandler.finishTask(MyUploadThread.this.position);
+                }
+            });
         }
 
         if (position == ActivityCode.Upload) {
-            Log.e(TAG, "myError: 上传失败");
+
         }
     }
 }

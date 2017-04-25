@@ -46,7 +46,6 @@ public class ReqDownUp {
      */
 //    private static BlinkNetCardCall downloadstartcall;
 //    private static BlinkNetCardCall uploadstartcall;
-
     public ReqDownUp(final String IP, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
         ReqDownUp.call = call;
         ReqDownUp.buffer = buffer;
@@ -86,13 +85,17 @@ public class ReqDownUp {
                         readThread.start();
                     } catch (IOException e) {
                         BlinkLog.Error(e.toString());
-                        if (ErrorNo.SocketError.equals(e.getMessage())) {
-                            call.onFail(ErrorNo.ErrorSocket);
-                            return;
-                        }
+//                        if (ErrorNo.SocketError.equals(e.getMessage())) {
+//                            call.onFail(ErrorNo.ErrorSocket);
+//                            return;
+//                        }
                         //发生异常移除链路
                         try {
-                            socket.close();
+                            if (socket != null) {
+                                socket.close();
+                                socket = null;
+                            }
+                            isError = true;
                         } catch (IOException e1) {
                             BlinkLog.Error(e.toString());
                         }
@@ -108,13 +111,15 @@ public class ReqDownUp {
 
     private void Read(byte[] buffer) {
         BlinkLog.Print("请求上传或下载 send " + Arrays.toString(buffer));
-        try {
-            out = new DataOutputStream(socket.getOutputStream());
-            out.write(buffer);
-            out.flush();
-        } catch (IOException e) {
-            BlinkLog.Error(e.toString());
-            isError = true;
+        if (socket != null) {
+            try {
+                out = new DataOutputStream(socket.getOutputStream());
+                out.write(buffer);
+                out.flush();
+            } catch (IOException e) {
+                BlinkLog.Error(e.toString());
+                isError = true;
+            }
         }
     }
 

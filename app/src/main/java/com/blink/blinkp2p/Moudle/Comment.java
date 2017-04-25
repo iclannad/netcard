@@ -130,6 +130,8 @@ public class Comment {
      */
     public static void releaseSystemResource() {
         HeartController.stopHeart();
+        HeartController.isStart = false;
+
         // 释放Tcp资源
         TcpSocket.closeTcpSocket();
         // 释放Udp的资源

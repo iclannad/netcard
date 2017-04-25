@@ -1,8 +1,10 @@
 package com.blink.blinkp2p.Tool.Utils.download.tcp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.blink.blinkp2p.Controller.ActivityCode;
 import com.blink.blinkp2p.Controller.NetCardController;
@@ -19,6 +21,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import smart.blink.com.card.Tcp.File.FileWrite;
 import smart.blink.com.card.Tool.FileWriteStream;
@@ -66,6 +70,7 @@ public class ＭyTcpDownloadThread implements HandlerImpl {
     @Override
     public void myHandler(int position, Object object) {
         if (position == ActivityCode.DownloadStart) {
+
             DownLoadStartByServerRsp downLoadStartByServerRsp = (DownLoadStartByServerRsp) object;
             if (downLoadStartByServerRsp.getSuccess() == 0) {
                 // 如果能进来这里的话就说明解析数据成功了
@@ -119,6 +124,26 @@ public class ＭyTcpDownloadThread implements HandlerImpl {
      */
     @Override
     public void myError(int position, int error) {
+        if (position == ActivityCode.DownloadStart) {
+            Activity activity = (Activity) context;
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, "任务下载失败:" + downorUpload.getName(), Toast.LENGTH_SHORT).show();
+                    threadHandler.finishTask(ＭyTcpDownloadThread.this.position);
+                }
+            });
+        }
+        if (position == ActivityCode.Downloading) {
+            Activity activity = (Activity) context;
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, "任务下载失败:" + downorUpload.getName(), Toast.LENGTH_SHORT).show();
+                    threadHandler.finishTask(ＭyTcpDownloadThread.this.position);
+                }
+            });
+        }
     }
 
     /**

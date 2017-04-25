@@ -1,5 +1,7 @@
 package smart.blink.com.card.Tcp;
 
+import android.util.Log;
+
 import java.io.File;
 import java.util.Timer;
 
@@ -66,6 +68,8 @@ public class MyUpload implements BlinkNetCardCall, TimerTaskCall {
     public void onSuccess(int position, MainObject mainObject) {
         UpLoadByServerRsp upLoadByServerRsp = (UpLoadByServerRsp) mainObject;
         if (upLoadByServerRsp.getSuccess() == 0) {
+            failedCount = 0;
+
             //上传一块成功
             if (reqBlockId >= wantblock) {
                 // 清空定时器
@@ -97,9 +101,12 @@ public class MyUpload implements BlinkNetCardCall, TimerTaskCall {
     @Override
     public void onFail(int error) {
         if (error == Protocol.Uploading) {
+            Log.e(TAG, "onFail: 上传失败");
             failedCount++;
-            if (failedCount > 6) {
+            if (failedCount > 2) {
                 // 请求上传失败的逻辑
+                Log.e(TAG, "onFail: 该任务上传失败");
+                call.onFail(Protocol.Uploading);
 
                 failedCount = 0;
                 return;

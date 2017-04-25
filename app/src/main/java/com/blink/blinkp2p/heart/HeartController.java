@@ -9,7 +9,7 @@ import com.blink.blinkp2p.Moudle.Comment;
 public class HeartController {
 
     // 判断心跳是否开启，如果开启的话就不会再开启
-    private static boolean isStart = false;
+    public static boolean isStart = false;
 
     /**
      * 开启心跳的线程

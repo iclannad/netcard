@@ -1,8 +1,10 @@
 package com.blink.blinkp2p.Tool.Utils.download;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.blink.blinkp2p.Controller.ActivityCode;
 import com.blink.blinkp2p.Controller.NetCardController;
@@ -35,6 +37,8 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
     private DownloadingImpl downloading;
     private int position;
 
+    private Timer downloadingstarttimer;
+
     // 构造方法
     public ＭyDownloadThread(int position, DownorUpload downorUpload, Context context, ThreadHandlerImpl threadHandler, DownloadingImpl downloading) {
         this.downorUpload = downorUpload;
@@ -42,6 +46,18 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
         this.threadHandler = threadHandler;
         this.position = position;
         this.downloading = downloading;
+        // 如果6s后无响应，则说明请求下载任务失败
+        downloadingstarttimer = new Timer();
+        downloadingstarttimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (downloadingstarttimer != null) {
+                    downloadingstarttimer.cancel();
+                    downloadingstarttimer = null;
+                    ＭyDownloadThread.this.myError(ActivityCode.DownloadStart, -1);
+                }
+            }
+        }, 6000);
         Log.e(TAG, "ＭyDownloadThread: 开启下载任务:" + downorUpload.getName());
     }
 
@@ -59,6 +75,12 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
     @Override
     public void myHandler(int position, Object object) {
         if (position == ActivityCode.DownloadStart) {
+            // 有数据过来说明请求下载成功
+            if (downloadingstarttimer != null) {
+                downloadingstarttimer.cancel();
+                downloadingstarttimer = null;
+            }
+
             DownLoadStartRsp downLoadStartRsp = (DownLoadStartRsp) object;
             // 正在下载
             // 获取下载的路径
@@ -69,6 +91,18 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
             } else {
                 path = Environment.getExternalStorageDirectory() + "";
             }
+
+//            isDownloading = true;
+//            // 开启一个定时器用于检测是否正在下载
+//            downloadingtimer = new Timer();
+//            downloadingtimer.schedule(new TimerTask() {
+//                @Override
+//                public void run() {
+//
+//                }
+//            }, 0, 8000);
+
+            //Log.e(TAG, "myHandler: downLoadStartRsp.getTotalblock()===" + downLoadStartRsp.getTotalblock());
             NetCardController.DownLoading(path, downorUpload.getPath(), downLoadStartRsp.getTotalblock(), this);
         }
         if (position == ActivityCode.Downloading) {
@@ -106,6 +140,14 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
     @Override
     public void myError(int position, int error) {
         if (position == ActivityCode.DownloadStart) {
+            Activity activity = (Activity) context;
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, "任务下载失败:" + downorUpload.getName(), Toast.LENGTH_SHORT).show();
+                    threadHandler.finishTask(ＭyDownloadThread.this.position);
+                }
+            });
 
         }
 

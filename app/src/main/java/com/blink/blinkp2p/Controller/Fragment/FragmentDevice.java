@@ -416,10 +416,12 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
             int value = changePcPwdRsp.getSuccess();
             if (value == 0) {
                 MyPersonalProgressDIalog.getInstance(getActivity()).dissmissProgress();
-                MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_change_sucess);
+                //MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_change_sucess);
+                Toast.makeText(context,R.string.main_handler_change_sucess,Toast.LENGTH_SHORT).show();
             } else {
                 MyPersonalProgressDIalog.getInstance(getActivity()).dissmissProgress();
-                MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_original_error, context);
+                //MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_original_error, context);
+                Toast.makeText(context,R.string.main_handler_original_error,Toast.LENGTH_SHORT).show();
             }
         }
     }
