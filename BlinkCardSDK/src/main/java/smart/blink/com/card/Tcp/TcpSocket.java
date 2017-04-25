@@ -20,6 +20,7 @@ import java.util.TooManyListenersException;
 import smart.blink.com.card.API.BlinkLog;
 import smart.blink.com.card.API.Protocol;
 import smart.blink.com.card.BlinkNetCardCall;
+import smart.blink.com.card.Tcp.bean.Operation;
 import smart.blink.com.card.Tool.RevicedTools;
 
 /**
@@ -57,6 +58,13 @@ public class TcpSocket {
 
 
     private static Handler handler = null;
+    private static Operation changPcPwdOperation;
+    private static Operation pcShutdownOperation;
+    private static Operation pcRestartOperation;
+    private static Operation lookPcFileOperation;
+    private static Operation lockPcOperation;
+//    private static Operation downloadingOperation;
+//    private static Operation uploadingOperation;
 
     /**
      * 关闭TCP的资源
@@ -97,18 +105,109 @@ public class TcpSocket {
      */
     public TcpSocket(final String ip, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
         TcpSocket.position = position;
-
-        if (position == Protocol.Downloading) {
+        if (position == Protocol.ChangePcPwd) {
+            Log.e(TAG, "TcpSocket: changPcPwdOperation = new Operation();");
+            // 修改密码
+            changPcPwdOperation = new Operation();
+            changPcPwdOperation.position = position;
+            changPcPwdOperation.call = call;
+            changPcPwdOperation.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (changPcPwdOperation.timer != null) {
+                        changPcPwdOperation.timer.cancel();
+                        changPcPwdOperation.timer = null;
+                        changPcPwdOperation.call.onFail(changPcPwdOperation.position);
+                        changPcPwdOperation = null;
+                    }
+                }
+            }, 6000);
+        } else if (position == Protocol.Shutdown) {
+            // 立即关机
+            pcShutdownOperation = new Operation();
+            pcShutdownOperation.position = position;
+            pcShutdownOperation.call = call;
+            pcShutdownOperation.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (pcShutdownOperation.timer != null) {
+                        pcShutdownOperation.timer.cancel();
+                        pcShutdownOperation.timer = null;
+                        pcShutdownOperation.call.onFail(pcShutdownOperation.position);
+                        pcShutdownOperation = null;
+                    }
+                }
+            }, 6000);
+        } else if (position == Protocol.Restart) {
+            // 立即重启
+            pcRestartOperation = new Operation();
+            pcRestartOperation.position = position;
+            pcRestartOperation.call = call;
+            pcRestartOperation.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (pcRestartOperation.timer != null) {
+                        pcRestartOperation.timer.cancel();
+                        pcRestartOperation.timer = null;
+                        pcRestartOperation.call.onFail(pcRestartOperation.position);
+                        pcRestartOperation = null;
+                    }
+                }
+            }, 6000);
+        } else if (position == Protocol.LookFileMsg) {
+            //　查看电脑文件
+            lookPcFileOperation = new Operation();
+            lookPcFileOperation.position = position;
+            lookPcFileOperation.call = call;
+            lookPcFileOperation.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (lookPcFileOperation.timer != null) {
+                        lookPcFileOperation.timer.cancel();
+                        lookPcFileOperation.timer = null;
+                        lookPcFileOperation.call.onFail(lookPcFileOperation.position);
+                        lookPcFileOperation = null;
+                    }
+                }
+            }, 6000);
+        } else if (position == Protocol.LOOKPC) {
+            //　PC锁屏
+            lockPcOperation = new Operation();
+            lockPcOperation.position = position;
+            lockPcOperation.call = call;
+            lockPcOperation.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (lockPcOperation.timer != null) {
+                        lockPcOperation.timer.cancel();
+                        lockPcOperation.timer = null;
+                        lockPcOperation.call.onFail(lockPcOperation.position);
+                        lockPcOperation = null;
+                    }
+                }
+            }, 6000);
+        } else if (position == Protocol.Downloading) {
             TcpSocket.downloadingcall = call;
         } else if (position == Protocol.Uploading) {
             TcpSocket.uploadingcall = call;
         } else if (position == Protocol.Heart) {
             heartcall = call;
-        } else if (position == Protocol.LookFileMsg) {
-            lookpcfile = call;
         } else {
             TcpSocket.call = call;
         }
+
+
+//        if (position == Protocol.Downloading) {
+//            TcpSocket.downloadingcall = call;
+//        } else if (position == Protocol.Uploading) {
+//            TcpSocket.uploadingcall = call;
+//        } else if (position == Protocol.Heart) {
+//            heartcall = call;
+//        } else if (position == Protocol.LookFileMsg) {
+//            lookpcfile = call;
+//        } else {
+//            TcpSocket.call = call;
+//        }
 
         // 写在这里是为了放在主线程
         if (handler == null) {
@@ -125,11 +224,41 @@ public class TcpSocket {
                         // 上传
                         new RevicedTools(position, buffer, length, uploadingcall);
                     } else if (buffer[0] == 7) {
-                        // 心跳
-                        new RevicedTools(position, buffer, length, heartcall);
+                        // 正常接收心跳
+                        new RevicedTools(-1, buffer, length, heartcall);
                     } else if (buffer[0] == 5) {
+                        if (lookPcFileOperation != null) {
+                            new RevicedTools(lookPcFileOperation.position, buffer, length, lookPcFileOperation.call);
+                            lookPcFileOperation = null;
+                        }
+
                         // 访问电脑文件
-                        new RevicedTools(position, buffer, length, TcpSocket.lookpcfile);
+                        //new RevicedTools(position, buffer, length, TcpSocket.lookpcfile);
+                    } else if (buffer[0] == 85) {
+                        //锁屏
+                        if (lockPcOperation != null) {
+                            new RevicedTools(lockPcOperation.position, buffer, length, lockPcOperation.call);
+                            lockPcOperation = null;
+                        }
+                    } else if (buffer[0] == 75) {
+                        // 重启
+                        if (pcRestartOperation != null) {
+                            new RevicedTools(pcRestartOperation.position, buffer, length, pcRestartOperation.call);
+                            pcRestartOperation = null;
+                        }
+                    } else if (buffer[0] == 74) {
+                        //　立即关机
+                        if (pcShutdownOperation != null) {
+                            new RevicedTools(pcShutdownOperation.position, buffer, length, pcShutdownOperation.call);
+                            pcShutdownOperation = null;
+                        }
+                    } else if (buffer[0] == 89 || buffer[0] == 40) {
+                        //　修改密码成功
+                        if (changPcPwdOperation != null) {
+                            Log.e(TAG, "dispatchMessage: new RevicedTools(changPcPwdOperation.position, buffer, length, changPcPwdOperation.call);");
+                            new RevicedTools(changPcPwdOperation.position, buffer, length, changPcPwdOperation.call);
+                            changPcPwdOperation = null;
+                        }
                     } else {
                         new RevicedTools(position, buffer, length, TcpSocket.call);
                     }
@@ -175,7 +304,17 @@ public class TcpSocket {
                 }
 
                 // 开启一个定时器
-                if (position == Protocol.Heart) {
+                if (position == Protocol.ChangePcPwd) {
+
+                } else if (position == Protocol.LookFileMsg) {
+
+                } else if (position == Protocol.LOOKPC) {
+
+                } else if (position == Protocol.Heart) {
+
+                } else if (position == Protocol.Restart) {
+
+                } else if (position == Protocol.Shutdown) {
 
                 } else if (position == Protocol.Downloading) {
                     downloadingTimer = new Timer();
@@ -202,17 +341,6 @@ public class TcpSocket {
                             uploadingTimer = null;
                         }
                     }, 4000);
-                } else if (position == Protocol.LookFileMsg) {
-                    lookpcfileTimer = new Timer();
-                    lookpcfileTimer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-                            // 访问电脑文件失败
-                            RevicedTools.failLookPcFileByTcp(lookpcfile);
-                            lookpcfileTimer.cancel();
-                            lookpcfileTimer = null;
-                        }
-                    }, 6000);
                 } else {
                     timer = new Timer();
                     timer.schedule(new TimerTask() {
@@ -226,6 +354,59 @@ public class TcpSocket {
                         }
                     }, 8000);
                 }
+
+//                // 开启一个定时器
+//                if (position == Protocol.Heart) {
+//
+//                } else if (position == Protocol.Downloading) {
+//                    downloadingTimer = new Timer();
+//                    downloadingTimer.schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            // 请求下载失败的处理逻辑
+                //                    RevicedTools.failDownloadingHandlerByTcp(downloadingcall);
+//
+//                            downloadingTimer.cancel();
+//                            downloadingTimer = null;
+//                        }
+//                    }, 4000);
+//                } else if (position == Protocol.Uploading) {
+//                    uploadingTimer = new Timer();
+//                    uploadingTimer.schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            // 请求上传失败的逻辑
+//                            Log.e(TAG, "run: 请求上传失败的逻辑");
+//                            RevicedTools.failUploadingHandlerByTcp(uploadingcall);
+//
+//                            uploadingTimer.cancel();
+//                            uploadingTimer = null;
+//                        }
+//                    }, 4000);
+//                } else if (position == Protocol.LookFileMsg) {
+//                    lookpcfileTimer = new Timer();
+//                    lookpcfileTimer.schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            // 访问电脑文件失败
+//                            RevicedTools.failLookPcFileByTcp(lookpcfile);
+//                            lookpcfileTimer.cancel();
+//                            lookpcfileTimer = null;
+//                        }
+//                    }, 6000);
+//                } else {
+//                    timer = new Timer();
+//                    timer.schedule(new TimerTask() {
+//                        @Override
+//                        public void run() {
+//                            if (timer != null) {
+//                                RevicedTools.failEventHandlerByUdp(position, call);
+//                                timer.cancel();
+//                                timer = null;
+//                            }
+//                        }
+//                    }, 8000);
+//                }
                 Send(buffer);
             }
         });
@@ -273,9 +454,48 @@ public class TcpSocket {
         }
         BlinkLog.Print("received: " + Arrays.toString(buffer));
 
-        if (buffer[0] == 7) {
-            // 心跳
-
+        if (buffer[0] == 89 || buffer[0] == 40) {
+            // 修改密码成功
+            if (changPcPwdOperation != null) {
+                if (changPcPwdOperation.timer != null) {
+                    changPcPwdOperation.timer.cancel();
+                    changPcPwdOperation.timer = null;
+                }
+            }
+        } else if (buffer[0] == 74) {
+            // 关机
+            if (pcShutdownOperation != null) {
+                if (pcShutdownOperation.timer != null) {
+                    pcShutdownOperation.timer.cancel();
+                    pcShutdownOperation.timer = null;
+                }
+            }
+        } else if (buffer[0] == 75) {
+            // 重启
+            if (pcRestartOperation != null) {
+                if (pcRestartOperation.timer != null) {
+                    pcRestartOperation.timer.cancel();
+                    pcRestartOperation.timer = null;
+                }
+            }
+        } else if (buffer[0] == 5) {
+            // 查看文件
+            if (lookPcFileOperation != null) {
+                if (lookPcFileOperation.timer != null) {
+                    lookPcFileOperation.timer.cancel();
+                    lookPcFileOperation.timer = null;
+                }
+            }
+        } else if (buffer[0] == 7) {
+            //　心跳逻辑
+        } else if (buffer[0] == 85) {
+            //  锁屏
+            if (lockPcOperation != null) {
+                if (lockPcOperation.timer != null) {
+                    lockPcOperation.timer.cancel();
+                    lockPcOperation.timer = null;
+                }
+            }
         } else if (buffer[0] == 71) {
             // 下载
             // 如果接收到数据就把定时器给关掉
@@ -289,21 +509,71 @@ public class TcpSocket {
                 uploadingTimer.cancel();
                 uploadingTimer = null;
             }
-
-        } else if (buffer[0] == 5) {
-            // 访问电脑目录
-            if (lookpcfileTimer != null) {
-                lookpcfileTimer.cancel();
-                lookpcfileTimer = null;
-            }
         } else {
             // 如果接收到数据就把定时器给关掉
             if (timer != null) {
                 timer.cancel();
                 timer = null;
-                //Log.e(TAG, "Write: 我接收到数据现在要关闭时定时器");
             }
         }
+
+//        if (buffer[0] == 7) {
+//            // 心跳
+//
+//        } else if (buffer[0] == 71) {
+//            // 下载
+//            // 如果接收到数据就把定时器给关掉
+//            if (downloadingTimer != null) {
+//                downloadingTimer.cancel();
+//                downloadingTimer = null;
+//            }
+//        } else if (buffer[0] == 80) {
+//            // 上传
+//            if (uploadingTimer != null) {
+//                uploadingTimer.cancel();
+//                uploadingTimer = null;
+//            }
+//
+//        } else {
+//            // 如果接收到数据就把定时器给关掉
+//            if (timer != null) {
+//                timer.cancel();
+//                timer = null;
+//                //Log.e(TAG, "Write: 我接收到数据现在要关闭时定时器");
+//            }
+//        }
+
+//        if (buffer[0] == 7) {
+//            // 心跳
+//
+//        } else if (buffer[0] == 71) {
+//            // 下载
+//            // 如果接收到数据就把定时器给关掉
+//            if (downloadingTimer != null) {
+//                downloadingTimer.cancel();
+//                downloadingTimer = null;
+//            }
+//        } else if (buffer[0] == 80) {
+//            // 上传
+//            if (uploadingTimer != null) {
+//                uploadingTimer.cancel();
+//                uploadingTimer = null;
+//            }
+//
+//        } else if (buffer[0] == 5) {
+//            // 访问电脑目录
+//            if (lookpcfileTimer != null) {
+//                lookpcfileTimer.cancel();
+//                lookpcfileTimer = null;
+//            }
+//        } else {
+//            // 如果接收到数据就把定时器给关掉
+//            if (timer != null) {
+//                timer.cancel();
+//                timer = null;
+//                //Log.e(TAG, "Write: 我接收到数据现在要关闭时定时器");
+//            }
+//        }
 
         /**
          * Tcp访问电脑文件的逻辑
@@ -315,7 +585,11 @@ public class TcpSocket {
             if (buffer[4] == 4) {
                 // 访问错误
                 //RevicedTools.failEventHandlerByUdp(position, call);
-                RevicedTools.failLookPcFileByTcp(lookpcfile);
+                //RevicedTools.failLookPcFileByTcp(lookpcfile);
+                if (lookPcFileOperation != null) {
+                    lookPcFileOperation.call.onFail(lookPcFileOperation.position);
+                    lookPcFileOperation = null;
+                }
             } else if (buffer[4] == 3) {
                 //closeTcpSocket();
                 if (pcLookTimer != null) {
@@ -334,7 +608,11 @@ public class TcpSocket {
                     pcLookTimer.schedule(new TimerTask() {
                         @Override
                         public void run() {
-                            RevicedTools.failEventHandlerByUdp(position, call);
+                            //RevicedTools.failEventHandlerByUdp(position, call);
+                            if (lookPcFileOperation != null) {
+                                lookPcFileOperation.call.onFail(lookPcFileOperation.position);
+                                lookPcFileOperation = null;
+                            }
 
                             if (pcLookTimer != null) {
                                 pcLookTimer.cancel();
@@ -358,28 +636,5 @@ public class TcpSocket {
         buf = new byte[1296];
 
     }
-
-//    // 这个方法是在主线程中调用的
-//    private static Handler handler = new Handler() {
-//
-//        @Override
-//        public void dispatchMessage(Message msg) {
-//            byte[] buffer = (byte[]) msg.obj;
-//            int length = msg.what;
-//
-//            if (buffer[0] == 71) {
-//                // 下载
-//                new RevicedTools(position, buffer, length, downloadingcall);
-//            } else if (buffer[0] == 80) {
-//                // 上传
-//                new RevicedTools(position, buffer, length, uploadingcall);
-//            } else if (buffer[0] == 7) {
-//                // 心跳
-//                new RevicedTools(position, buffer, length, heartcall);
-//            } else {
-//                new RevicedTools(position, buffer, length, call);
-//            }
-//        }
-//    };
 
 }
