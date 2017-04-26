@@ -21,6 +21,7 @@ import smart.blink.com.card.Tool.MyTimerTask;
 import smart.blink.com.card.Tool.RevicedTools;
 import smart.blink.com.card.Tool.SendTools;
 import smart.blink.com.card.Tool.TimerTaskCall;
+import smart.blink.com.card.bean.ConnectPcRsp;
 import smart.blink.com.card.bean.DownLoadingRsp;
 import smart.blink.com.card.bean.MainObject;
 
@@ -125,6 +126,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
 
     public Down(final String IP, final int PORT, long size, final String filename, String path, final int position, final BlinkNetCardCall call) {
         //计算文件大小开启线程数
+
         if ((size % downSize) == 0) {
             count = (int) (size / downSize);
         } else
@@ -141,6 +143,17 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
         this.blinkcall = this;
         downLoadingRsp = new DownLoadingRsp();
         fileWrite = new FileWrite(path, filename);
+
+        // 处理文件大小为０的情况
+        if (count == 0) {
+            Log.e(TAG, "Down: 下载文件的大小为空");
+            fileWrite.Close();
+            downLoadingRsp.setEnd(true);
+            this.call.onSuccess(Protocol.Downloading, downLoadingRsp);
+            //downLoadingRsp = null;
+            return;
+        }
+
         //开启定时
         timer = new Timer();
         // 改成每统计一次下载速度

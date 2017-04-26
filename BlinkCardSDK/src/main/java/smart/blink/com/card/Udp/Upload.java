@@ -76,6 +76,16 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
         } else
             count = (int) (size / downSize) + 1;
 
+        // 处理文件大小为０的情况
+        if (count == 0) {
+            Log.e(TAG, "Upload: 上传文件的大小为空");
+            //关闭写入流
+            fileRead.Close();
+            uploadReq.setEnd(true);
+            this.call.onSuccess(Protocol.Uploading, uploadReq);
+            return;
+        }
+
         countArray = new int[count + 1];
         threadArray = new boolean[count + 1];
         socketArray = new Socket[count + 1];
