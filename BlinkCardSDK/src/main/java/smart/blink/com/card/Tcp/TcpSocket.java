@@ -58,6 +58,9 @@ public class TcpSocket {
 
 
     private static Handler handler = null;
+    private static Operation setUploadDirOperatioin;
+    private static Operation getUploadDirOperatioin;
+    private static Operation connectSubServerOperation;
     private static Operation changPcPwdOperation;
     private static Operation pcShutdownOperation;
     private static Operation pcRestartOperation;
@@ -105,8 +108,56 @@ public class TcpSocket {
      */
     public TcpSocket(final String ip, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
         TcpSocket.position = position;
-        if (position == Protocol.ChangePcPwd) {
-            Log.e(TAG, "TcpSocket: changPcPwdOperation = new Operation();");
+
+        if (position == Protocol.SetUploadDir) {
+            // 设置上传目录
+            setUploadDirOperatioin = new Operation();
+            setUploadDirOperatioin.position = position;
+            setUploadDirOperatioin.call = call;
+            setUploadDirOperatioin.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (setUploadDirOperatioin.timer != null) {
+                        setUploadDirOperatioin.timer.cancel();
+                        setUploadDirOperatioin.timer = null;
+                        setUploadDirOperatioin.call.onFail(setUploadDirOperatioin.position);
+                        setUploadDirOperatioin = null;
+                    }
+                }
+            }, 6000);
+        } else if (position == Protocol.GetUploadDir) {
+            // 获取上传目录
+            getUploadDirOperatioin = new Operation();
+            getUploadDirOperatioin.position = position;
+            getUploadDirOperatioin.call = call;
+            getUploadDirOperatioin.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (getUploadDirOperatioin.timer != null) {
+                        getUploadDirOperatioin.timer.cancel();
+                        getUploadDirOperatioin.timer = null;
+                        getUploadDirOperatioin.call.onFail(getUploadDirOperatioin.position);
+                        getUploadDirOperatioin = null;
+                    }
+                }
+            }, 6000);
+        } else if (position == Protocol.CONNECT_SERVER) {
+            // 修改密码
+            connectSubServerOperation = new Operation();
+            connectSubServerOperation.position = position;
+            connectSubServerOperation.call = call;
+            connectSubServerOperation.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (connectSubServerOperation.timer != null) {
+                        connectSubServerOperation.timer.cancel();
+                        connectSubServerOperation.timer = null;
+                        connectSubServerOperation.call.onFail(connectSubServerOperation.position);
+                        connectSubServerOperation = null;
+                    }
+                }
+            }, 6000);
+        } else if (position == Protocol.ChangePcPwd) {
             // 修改密码
             changPcPwdOperation = new Operation();
             changPcPwdOperation.position = position;
@@ -255,9 +306,26 @@ public class TcpSocket {
                     } else if (buffer[0] == 89 || buffer[0] == 40) {
                         //　修改密码成功
                         if (changPcPwdOperation != null) {
-                            Log.e(TAG, "dispatchMessage: new RevicedTools(changPcPwdOperation.position, buffer, length, changPcPwdOperation.call);");
                             new RevicedTools(changPcPwdOperation.position, buffer, length, changPcPwdOperation.call);
                             changPcPwdOperation = null;
+                        }
+                    } else if (buffer[0] == 110) {
+                        // 连接子务器成功
+                        if (connectSubServerOperation != null) {
+                            new RevicedTools(connectSubServerOperation.position, buffer, length, connectSubServerOperation.call);
+                            connectSubServerOperation = null;
+                        }
+                    } else if (buffer[0] == 87) {
+                        // 获取上传目录成功
+                        if (getUploadDirOperatioin != null) {
+                            new RevicedTools(getUploadDirOperatioin.position, buffer, length, getUploadDirOperatioin.call);
+                            getUploadDirOperatioin = null;
+                        }
+                    } else if (buffer[0] == 86) {
+                        // 设置上传目录成功
+                        if (setUploadDirOperatioin != null) {
+                            new RevicedTools(setUploadDirOperatioin.position, buffer, length, setUploadDirOperatioin.call);
+                            setUploadDirOperatioin = null;
                         }
                     } else {
                         new RevicedTools(position, buffer, length, TcpSocket.call);
@@ -304,7 +372,13 @@ public class TcpSocket {
                 }
 
                 // 开启一个定时器
-                if (position == Protocol.ChangePcPwd) {
+                if (position == Protocol.SetUploadDir) {
+
+                } else if (position == Protocol.GetUploadDir) {
+
+                } else if (position == Protocol.CONNECT_SERVER) {
+
+                } else if (position == Protocol.ChangePcPwd) {
 
                 } else if (position == Protocol.LookFileMsg) {
 
@@ -355,58 +429,6 @@ public class TcpSocket {
                     }, 8000);
                 }
 
-//                // 开启一个定时器
-//                if (position == Protocol.Heart) {
-//
-//                } else if (position == Protocol.Downloading) {
-//                    downloadingTimer = new Timer();
-//                    downloadingTimer.schedule(new TimerTask() {
-//                        @Override
-//                        public void run() {
-//                            // 请求下载失败的处理逻辑
-                //                    RevicedTools.failDownloadingHandlerByTcp(downloadingcall);
-//
-//                            downloadingTimer.cancel();
-//                            downloadingTimer = null;
-//                        }
-//                    }, 4000);
-//                } else if (position == Protocol.Uploading) {
-//                    uploadingTimer = new Timer();
-//                    uploadingTimer.schedule(new TimerTask() {
-//                        @Override
-//                        public void run() {
-//                            // 请求上传失败的逻辑
-//                            Log.e(TAG, "run: 请求上传失败的逻辑");
-//                            RevicedTools.failUploadingHandlerByTcp(uploadingcall);
-//
-//                            uploadingTimer.cancel();
-//                            uploadingTimer = null;
-//                        }
-//                    }, 4000);
-//                } else if (position == Protocol.LookFileMsg) {
-//                    lookpcfileTimer = new Timer();
-//                    lookpcfileTimer.schedule(new TimerTask() {
-//                        @Override
-//                        public void run() {
-//                            // 访问电脑文件失败
-//                            RevicedTools.failLookPcFileByTcp(lookpcfile);
-//                            lookpcfileTimer.cancel();
-//                            lookpcfileTimer = null;
-//                        }
-//                    }, 6000);
-//                } else {
-//                    timer = new Timer();
-//                    timer.schedule(new TimerTask() {
-//                        @Override
-//                        public void run() {
-//                            if (timer != null) {
-//                                RevicedTools.failEventHandlerByUdp(position, call);
-//                                timer.cancel();
-//                                timer = null;
-//                            }
-//                        }
-//                    }, 8000);
-//                }
                 Send(buffer);
             }
         });
@@ -454,7 +476,31 @@ public class TcpSocket {
         }
         BlinkLog.Print("received: " + Arrays.toString(buffer));
 
-        if (buffer[0] == 89 || buffer[0] == 40) {
+        if (buffer[0] == 86) {
+            // 设置上传目录
+            if (setUploadDirOperatioin != null) {
+                if (setUploadDirOperatioin.timer != null) {
+                    setUploadDirOperatioin.timer.cancel();
+                    setUploadDirOperatioin.timer = null;
+                }
+            }
+        } else if (buffer[0] == 87) {
+            // 获取上传目录
+            if (getUploadDirOperatioin != null) {
+                if (getUploadDirOperatioin.timer != null) {
+                    getUploadDirOperatioin.timer.cancel();
+                    getUploadDirOperatioin.timer = null;
+                }
+            }
+        } else if (buffer[0] == 110) {
+            // 连接子务器成功
+            if (connectSubServerOperation != null) {
+                if (connectSubServerOperation.timer != null) {
+                    connectSubServerOperation.timer.cancel();
+                    connectSubServerOperation.timer = null;
+                }
+            }
+        } else if (buffer[0] == 89 || buffer[0] == 40) {
             // 修改密码成功
             if (changPcPwdOperation != null) {
                 if (changPcPwdOperation.timer != null) {

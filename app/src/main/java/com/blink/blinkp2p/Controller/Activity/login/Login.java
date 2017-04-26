@@ -112,10 +112,13 @@ public class Login extends BaseActivity implements HandlerImpl {
 
                     // 删除本地的数据
                     String userlist = SharedPrefsUtils.getStringPreference(Login.this, Comment.LOGINDATA);
+                    Log.e(TAG, "handleMessage: userlist===" + userlist);
+
                     Gson g = new Gson();
                     Type lt = new TypeToken<List<LoginBeanGson>>() {
                     }.getType();
                     ArrayList<LoginBeanGson> arraylist = g.fromJson(userlist, lt);
+                    Log.e(TAG, "handleMessage: arraylist.size()==" + arraylist.size());
                     for (int i = 0; i < arraylist.size(); i++) {
                         LoginBeanGson t = arraylist.get(i);
                         if (t.getUsername().equals(removeuser)) {
@@ -249,13 +252,38 @@ public class Login extends BaseActivity implements HandlerImpl {
         // 清空原来的密码标志位,将sharedPrefs保存的密码置为空
         if (isNeedToClearOlderPwd) {
             activityInitEditPasswd.setText("");
-            LoginBeanGson l2 = new LoginBeanGson();
-            l2.setPassword("");
-            l2.setUsername(loginUserName);
-            l2.setRemeber(false);
-            l2.setAutologin(false);
-            l2.setTime(System.currentTimeMillis());
-            SharedPrefsUtils.setStringPreference(this, Comment.LOGINDATA, l2.toString());
+
+            //　修改用户的信息
+            String userName = MyApplication.userName;
+            String userlist = SharedPrefsUtils.getStringPreference(this, Comment.LOGINDATA);
+
+            Gson g = new Gson();
+            Type lt = new TypeToken<List<LoginBeanGson>>() {
+            }.getType();
+            ArrayList<LoginBeanGson> arraylist;
+            try {
+                if (userlist == null) {
+                    arraylist = new ArrayList<>();
+                } else {
+                    arraylist = g.fromJson(userlist, lt);
+                }
+
+            } catch (Exception e) {
+                arraylist = new ArrayList<>();
+                arraylist.add(g.fromJson(userlist, LoginBeanGson.class));
+            }
+
+            for (LoginBeanGson t : arraylist) {
+                if (t.getUsername().equals(userName)) {
+                    t.setPassword("");
+                    t.setTime(System.currentTimeMillis());
+                    t.setRemeber(isRemeberPwd);
+                    t.setAutologin(isAutoLogin);
+                    break;
+                }
+            }
+            // 将数据保存在本地
+            SharedPrefsUtils.setStringPreference(Login.this, Comment.LOGINDATA, g.toJson(arraylist));
         }
         // 设置checkbox的点击事件
         activityCheckboxAutologin.setOnClickListener(this);
@@ -605,65 +633,52 @@ public class Login extends BaseActivity implements HandlerImpl {
         SharedPrefsUtils.setBooleanPreference(this, Comment.IS_NEED_CLEAR_OLDER_PWD, false);
 
         String userlist = SharedPrefsUtils.getStringPreference(this, Comment.LOGINDATA);
-        if (userlist == null) {
-            LoginBeanGson l = new LoginBeanGson();
-            if (isRemeberPwd) {
-                l.setAutologin(isAutoLogin);
-                l.setRemeber(isRemeberPwd);
-                l.setUsername(ID);
-                l.setPassword(password);
 
-            } else {
-                l.setUsername("");
-                l.setPassword("");
-            }
-            l.setTime(System.currentTimeMillis());
-            SharedPrefsUtils.setStringPreference(this, Comment.LOGINDATA, l.toString());
-        } else {
-            // 从SharedPrefs中读取数据
-            Gson g = new Gson();
-            Type lt = new TypeToken<List<LoginBeanGson>>() {
-            }.getType();
-            ArrayList<LoginBeanGson> arraylist;
-            try {
-                arraylist = g.fromJson(userlist, lt);
-            } catch (Exception e) {
+        Gson g = new Gson();
+        Type lt = new TypeToken<List<LoginBeanGson>>() {
+        }.getType();
+        ArrayList<LoginBeanGson> arraylist;
+        try {
+            if (userlist == null) {
                 arraylist = new ArrayList<>();
-                arraylist.add(g.fromJson(userlist, LoginBeanGson.class));
+            } else {
+                arraylist = g.fromJson(userlist, lt);
             }
 
-            boolean iswirte = true;
-            for (LoginBeanGson t : arraylist) {
-                if (t.getUsername().equals(ID)) {
-                    t.setPassword(password);
-                    t.setTime(System.currentTimeMillis());
-                    t.setRemeber(isRemeberPwd);
-                    t.setAutologin(isAutoLogin);
-                    iswirte = false;
-                    break;
-                }
-            }
+        } catch (Exception e) {
+            arraylist = new ArrayList<>();
+            arraylist.add(g.fromJson(userlist, LoginBeanGson.class));
+        }
 
-            if (iswirte) {
-                LoginBeanGson t = new LoginBeanGson();
-                t.setUsername(ID);
+        boolean iswirte = true;
+        for (LoginBeanGson t : arraylist) {
+            if (t.getUsername().equals(ID)) {
                 t.setPassword(password);
                 t.setTime(System.currentTimeMillis());
                 t.setRemeber(isRemeberPwd);
                 t.setAutologin(isAutoLogin);
-                arraylist.add(t);
+                iswirte = false;
+                break;
             }
-
-            // 重新排序
-            SortComparator<LoginBeanGson> cmp = new SortComparator<>();
-            Collections.sort(arraylist, cmp);
-
-            // 将数据保存在本地
-            SharedPrefsUtils.setStringPreference(Login.this, Comment.LOGINDATA, g.toJson(arraylist));
         }
 
+        if (iswirte) {
+            LoginBeanGson t = new LoginBeanGson();
+            t.setUsername(ID);
+            t.setPassword(password);
+            t.setTime(System.currentTimeMillis());
+            t.setRemeber(isRemeberPwd);
+            t.setAutologin(isAutoLogin);
+            arraylist.add(t);
+        }
 
-        //Log.e(TAG, "SaveAutoLoginDataCompatOldVersion: l===" + l.toString());
+        // 重新排序
+        SortComparator<LoginBeanGson> cmp = new SortComparator<>();
+        Collections.sort(arraylist, cmp);
+
+        // 将数据保存在本地
+        SharedPrefsUtils.setStringPreference(Login.this, Comment.LOGINDATA, g.toJson(arraylist));
+
     }
 
 
