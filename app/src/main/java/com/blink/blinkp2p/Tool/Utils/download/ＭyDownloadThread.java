@@ -92,15 +92,6 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
                 path = Environment.getExternalStorageDirectory() + "";
             }
 
-//            isDownloading = true;
-//            // 开启一个定时器用于检测是否正在下载
-//            downloadingtimer = new Timer();
-//            downloadingtimer.schedule(new TimerTask() {
-//                @Override
-//                public void run() {
-//
-//                }
-//            }, 0, 8000);
 
             //Log.e(TAG, "myHandler: downLoadStartRsp.getTotalblock()===" + downLoadStartRsp.getTotalblock());
             NetCardController.DownLoading(path, downorUpload.getPath(), downLoadStartRsp.getTotalblock(), this);
@@ -152,7 +143,14 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
         }
 
         if (position == ActivityCode.Downloading) {
-
+            Activity activity = (Activity) context;
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, "任务下载失败:" + downorUpload.getName(), Toast.LENGTH_SHORT).show();
+                    threadHandler.finishTask(ＭyDownloadThread.this.position);
+                }
+            });
         }
     }
 }

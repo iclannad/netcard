@@ -38,10 +38,13 @@
         <activity
             android:name=".Controller.Activity.login.Login"
             android:launchMode="singleTask"></activity>
-        <activity android:name="com.app.zxing.MipcaActivityCapture"/>
+        <activity android:name="com.app.zxing.MipcaActivityCapture" />
         <activity
             android:name="com.blink.blinkp2p.Controller.Activity.MainActivity"
-            android:launchMode="singleTask" />
+            android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize" />
         <activity android:name="com.blink.blinkp2p.camera.CameraActivity" />
         <activity android:name="com.blink.blinkp2p.Controller.Activity.TransSportActivity" />
         <activity android:name="com.blink.blinkp2p.Controller.Activity.FileRecordActivity" />

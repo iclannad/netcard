@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import smart.blink.com.card.API.BlinkLog;
 import smart.blink.com.card.API.ErrorNo;
@@ -240,6 +241,10 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
      */
     private void StartThread(final String IP, final int PORT, final String filename, final int flag) {
         new Thread(new Runnable() {
+
+
+            private Timer downloadingtimer;
+
             @Override
             public void run() {
                 //下载标识从0开始
@@ -268,31 +273,66 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                             //把链路添加到数组里面
                             socketArray[k] = socket;
                             // 设置连接时间
-                            socket.setSoTimeout(5000);
+                            socket.setSoTimeout(6000);
                         }
                         //如果id为0则说明请求下载
                         //否则就是进入下载东西的过程
                         if (id == 0) {
+                            // 发送数据之前先开启一个定时器，限定操作的时间
+
                             // 0x03 0x00 ./win7.iso 0x00 13 0x00   数据包长度strlen(“./win7.iso”)+5
                             byte[] buffer = SendTools.Downloading(k, filename);
                             BlinkLog.Print(Arrays.toString(buffer));
                             out.write(buffer);
                             out.flush();
                         } else {
+                            //　发送数据之前先开启一个定时器，限定操作的时间
+                            downloadingtimer = new Timer();
+                            downloadingtimer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    if (downloadingtimer != null) {
+                                        downloadingtimer.cancel();
+                                        downloadingtimer = null;
+                                        Log.e(TAG, "run: 向服务器请求下载数据失败　downLoadingRsp.getFilename()===" + downLoadingRsp.getFilename());
+                                        if (fileWrite != null) {
+                                            fileWrite.Close();
+                                        }
+                                        // -1 一般－1表示无意义
+                                        Down.this.onFail(-1);
+                                        Down.this.CloseTimer();
+                                    }
+                                }
+                            }, 10000);
+
                             // 将会发送下载块数据小包数据包
                             byte[] buffer = SendTools.Downloading();
+
+                            Log.e(TAG, "run: 发送数据：buffer[0]" + buffer[0] + "   downLoadingRsp.getFilename()===" + downLoadingRsp.getFilename() + "   flag===" + flag);
                             out.write(buffer);
                             out.flush();
                         }
 
                         //接收数据
                         int length = in.read(buf);
+                        Log.e(TAG, "run: 接收数据：buf[0]==" + buf[0] + "   downLoadingRsp.getFilename()===" + downLoadingRsp.getFilename() + "   flag===" + flag);
+                        if (buf[0] == 0) {
+                            return;
+                        }
+
+
                         if (buf[0] == Protocol.DownloadingReviced) {
                             //当服务器接收到请求下载块数据包之后，正常返回允许下载块数据包，异常发送异常数据包：
                             BlinkLog.Print(Arrays.toString(buf));
                             id = 1;
                         }
                         if (buf[0] == Protocol.DownloadingReviced1) {
+                            if (downloadingtimer != null) {
+                                Log.e(TAG, "run: 重新清空定时器");
+                                downloadingtimer.cancel();
+                                downloadingtimer = null;
+                            }
+
                             j++;
                             //正常则读取数据发送实际数据
                             countArray[k] = j;
@@ -300,10 +340,11 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                             // 此处是在增加多任务下载的时候添加的功能
                             new MyRevicedTools(k, countArray[k], buf, blinkcall);
                         }
+                        //　重新清空接收的数据
+                        buf = new byte[1400];
 
                     } catch (IOException e) {
                         BlinkLog.Error(e.toString());
-
                         //socket异常断开
 //                        if (ErrorNo.SocketError.equals(e.getMessage()) || ErrorNo.ReadError.equals(e.getMessage())) {
 //                            Log.e(TAG, "run: 网络异常断开");
@@ -312,7 +353,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
 //                            return;
 //                        }
 
-                        // 当网络异常时释放所有的资源
+                        // 当网络异常时释放所有的资源----------------------------------------
                         threadArray[k] = false;
                         if (out != null) {
                             try {
@@ -345,6 +386,15 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                             timer.cancel();
                             timer = null;
                         }
+
+                        if (downloadingtimer != null) {
+                            downloadingtimer.cancel();
+                            downloadingtimer = null;
+                        }
+                        if (fileWrite != null) {
+                            fileWrite.Close();
+                        }
+                        // 当网络异常时释放所有的资源----------------------------------------
                     }
                 }
             }

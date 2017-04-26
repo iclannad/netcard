@@ -13,6 +13,7 @@ import com.blink.blinkp2p.Moudle.Item;
 import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.View.DownUpCallback;
 import com.blink.blinkp2p.heart.HeartController;
+import com.example.administrator.data_sdk.Crash.LogException;
 
 import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
@@ -215,14 +216,18 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
      */
     @Override
     public void downloading(int position, Object object) {
+        Log.e(TAG, "downloading: Comment.downlist.size()===" + Comment.downlist.size());
         int size = Comment.downlist.size();
         if (size <= 0) {
             return;
         }
 
+
         DownLoadingRsp downLoadingRsp = (DownLoadingRsp) object;
         DownTask downTask = Comment.downlist.get(position);
         downTask.speed = downLoadingRsp.getSpeed();
+
+        Log.e(TAG, "downloading: 下载中的回调：" + downLoadingRsp.getFilename());
 
         // 当前下载的进行
         DecimalFormat df = new DecimalFormat("0.00");

@@ -150,7 +150,14 @@ public class MyUploadThread extends Thread implements HandlerImpl {
         }
 
         if (position == ActivityCode.Upload) {
-
+            Activity activity = (Activity) context;
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, "任务上传失败:" + downorUpload.getName(), Toast.LENGTH_SHORT).show();
+                    threadHandler.finishTask(MyUploadThread.this.position);
+                }
+            });
         }
     }
 }

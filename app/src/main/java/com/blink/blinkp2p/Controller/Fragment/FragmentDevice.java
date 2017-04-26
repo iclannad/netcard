@@ -165,10 +165,6 @@ public class FragmentDevice extends Fragment implements OnItemClickListener, OnI
         Intent intent = new Intent();
         switch (arg2) {
             case 4:
-                // 访部电脑文件的时候，先暂时关闭发送心跳的线程
-                // 释放心跳线程的资源
-                HeartController.stopHeart();
-
                 // 和旧版对比，已作过修改
                 MyProgressDIalog.CreateChangePCPWDialog(getActivity(), ActivityCode.ChangePcPwd, this);
                 break;

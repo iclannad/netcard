@@ -17,6 +17,7 @@ import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.System.MyToast;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
 import com.blink.blinkp2p.Tool.Utils.UIHelper;
+import com.blink.blinkp2p.heart.HeartController;
 import com.gc.materialdesign.views.ButtonFlat;
 import com.gc.materialdesign.widgets.Dialog;
 import com.gc.materialdesign.widgets.ProgressDialog;
@@ -209,6 +210,7 @@ public class MyProgressDIalog {
                             R.string.error_pw_long);
                     return;
                 }
+                HeartController.stopHeart();
                 // 登录提示
                 MyPersonalProgressDIalog.getInstance(context).setContent("修改电脑锁屏密码中...").showProgressDialog();
                 // 向服务器请求修改锁屏密码
