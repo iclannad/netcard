@@ -1,11 +1,13 @@
 package com.blink.blinkp2p.Controller.Activity.login;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -468,7 +470,17 @@ public class Login extends BaseActivity implements HandlerImpl {
                         return;
                     }
                     initActivityEditText.setText(bundle.getString("result"));
-                    activityInitEditPasswd.setText("123456");
+                    activityInitEditPasswd.setText("");
+                    Timer timer = new Timer();
+                    timer.schedule(new TimerTask() {
+
+                        public void run() {
+                            // 设置自动获取焦点
+                            InputMethodManager inputManager = (InputMethodManager) activityInitEditPasswd.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            inputManager.showSoftInput(activityInitEditPasswd, 0);
+                        }
+
+                    }, 500);
                 }
                 break;
         }

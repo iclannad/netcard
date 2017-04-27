@@ -46,7 +46,7 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
         this.threadHandler = threadHandler;
         this.position = position;
         this.downloading = downloading;
-        // 如果6s后无响应，则说明请求下载任务失败
+        // 如果10s后无响应，则说明请求下载任务失败
         downloadingstarttimer = new Timer();
         downloadingstarttimer.schedule(new TimerTask() {
             @Override
@@ -57,7 +57,7 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
                     ＭyDownloadThread.this.myError(ActivityCode.DownloadStart, -1);
                 }
             }
-        }, 6000);
+        }, 10000);
         Log.e(TAG, "ＭyDownloadThread: 开启下载任务:" + downorUpload.getName());
     }
 

@@ -152,7 +152,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                             BlinkLog.Error(e.toString());
                         }
                         try {
-                            socket.setSoTimeout(5000);
+                            socket.setSoTimeout(30000);
                         } catch (SocketException e) {
                             BlinkLog.Error(e.toString());
                         }

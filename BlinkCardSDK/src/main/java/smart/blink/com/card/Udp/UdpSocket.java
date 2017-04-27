@@ -402,7 +402,10 @@ public class UdpSocket {
         in = new DatagramPacket(buffer, 0, buffer.length);
         length = 0;
         try {
-            socket.receive(in);
+            if (socket != null) {
+                socket.receive(in);
+            }
+
             length = in.getLength();
 
             BlinkLog.Print("接收服务器返回的数据: " + Arrays.toString(buffer));

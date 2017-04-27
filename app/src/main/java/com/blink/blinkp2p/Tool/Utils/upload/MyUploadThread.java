@@ -51,7 +51,7 @@ public class MyUploadThread extends Thread implements HandlerImpl {
 
     @Override
     public void run() {
-        // 如果6s后无响应，则说明请求下载任务失败
+        // 如果10s后无响应，则说明请求下载任务失败
         uploadingstarttimer = new Timer();
         uploadingstarttimer.schedule(new TimerTask() {
             @Override
@@ -62,7 +62,7 @@ public class MyUploadThread extends Thread implements HandlerImpl {
                     MyUploadThread.this.myError(ActivityCode.UploadStart, -1);
                 }
             }
-        }, 6000);
+        }, 10000);
         NetCardController.UploadStart(downorUpload.getPath(), downorUpload.getName(), this);
     }
 
