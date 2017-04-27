@@ -11,6 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import smart.blink.com.card.API.BlinkLog;
 import smart.blink.com.card.API.ErrorNo;
@@ -124,6 +125,8 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
      */
     private Socket[] socketArray = null;
 
+    AtomicInteger taskFlag = new AtomicInteger(0);
+
 
     public Down(final String IP, final int PORT, long size, final String filename, String path, final int position, final BlinkNetCardCall call) {
         //计算文件大小开启线程数
@@ -150,7 +153,10 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
             Log.e(TAG, "Down: 下载文件的大小为空");
             fileWrite.Close();
             downLoadingRsp.setEnd(true);
-            this.call.onSuccess(Protocol.Downloading, downLoadingRsp);
+            if (this.call != null) {
+                this.call.onSuccess(Protocol.Downloading, downLoadingRsp);
+            }
+
             //downLoadingRsp = null;
             return;
         }
@@ -242,9 +248,6 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
     private void StartThread(final String IP, final int PORT, final String filename, final int flag) {
         new Thread(new Runnable() {
 
-
-            private Timer downloadingtimer;
-
             @Override
             public void run() {
                 //下载标识从0开始
@@ -273,7 +276,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                             //把链路添加到数组里面
                             socketArray[k] = socket;
                             // 设置连接时间
-                            socket.setSoTimeout(6000);
+                            socket.setSoTimeout(5000);
                         }
                         //如果id为0则说明请求下载
                         //否则就是进入下载东西的过程
@@ -287,23 +290,6 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                             out.flush();
                         } else {
                             //　发送数据之前先开启一个定时器，限定操作的时间
-                            downloadingtimer = new Timer();
-                            downloadingtimer.schedule(new TimerTask() {
-                                @Override
-                                public void run() {
-                                    if (downloadingtimer != null) {
-                                        downloadingtimer.cancel();
-                                        downloadingtimer = null;
-                                        Log.e(TAG, "run: 向服务器请求下载数据失败　downLoadingRsp.getFilename()===" + downLoadingRsp.getFilename());
-                                        if (fileWrite != null) {
-                                            fileWrite.Close();
-                                        }
-                                        // -1 一般－1表示无意义
-                                        Down.this.onFail(-1);
-                                        Down.this.CloseTimer();
-                                    }
-                                }
-                            }, 10000);
 
                             // 将会发送下载块数据小包数据包
                             byte[] buffer = SendTools.Downloading();
@@ -327,12 +313,6 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                             id = 1;
                         }
                         if (buf[0] == Protocol.DownloadingReviced1) {
-                            if (downloadingtimer != null) {
-                                Log.e(TAG, "run: 重新清空定时器");
-                                downloadingtimer.cancel();
-                                downloadingtimer = null;
-                            }
-
                             j++;
                             //正常则读取数据发送实际数据
                             countArray[k] = j;
@@ -344,6 +324,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                         buf = new byte[1400];
 
                     } catch (IOException e) {
+                        Log.e(TAG, "run: IOException e" + "   downLoadingRsp.getFilename()===" + downLoadingRsp.getFilename() + "   flag===" + flag);
                         BlinkLog.Error(e.toString());
                         //socket异常断开
 //                        if (ErrorNo.SocketError.equals(e.getMessage()) || ErrorNo.ReadError.equals(e.getMessage())) {
@@ -352,6 +333,29 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
 //                            call.onFail(ErrorNo.ErrorSocket);
 //                            return;
 //                        }
+                        if (timer != null) {
+                            timer.cancel();
+                            timer = null;
+                        }
+                        if (fileWrite != null) {
+                            fileWrite.Close();
+                        }
+
+                        if ("java.net.SocketTimeoutException".equals(e.toString()) && taskFlag.get() == 0) {
+                            // 在此处应该释放该任务的所有资源
+                            taskFlag.getAndIncrement();
+                            for (int i = 0; i < threadArray.length; i++) {
+                                threadArray[i] = false;
+                            }
+                            for (int i = 0; i < downList.length; i++) {
+                                downList[i] = 1;
+                            }
+
+                            Log.e(TAG, "run: 下载超时   downLoadingRsp.getFilename()===" + downLoadingRsp.getFilename());
+                            Down.this.onFail(-1);
+
+                            return;
+                        }
 
                         // 当网络异常时释放所有的资源----------------------------------------
                         threadArray[k] = false;
@@ -382,18 +386,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                             BlinkLog.Error(e.toString());
                         }
 
-                        if (timer != null) {
-                            timer.cancel();
-                            timer = null;
-                        }
 
-                        if (downloadingtimer != null) {
-                            downloadingtimer.cancel();
-                            downloadingtimer = null;
-                        }
-                        if (fileWrite != null) {
-                            fileWrite.Close();
-                        }
                         // 当网络异常时释放所有的资源----------------------------------------
                     }
                 }
@@ -442,7 +435,11 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
 
     @Override
     public void onFail(int error) {
-        call.onFail(error);
+        if (call != null) {
+            call.onFail(error);
+            call = null;
+        }
+
     }
 
     private int speed = 0;
@@ -477,7 +474,8 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
         downLoadingRsp.setTotolSize((int) size);
 
         // 存放在全局变量中
-        call.onSuccess(Protocol.Downloading, downLoadingRsp);
-
+        if (call != null) {
+            call.onSuccess(Protocol.Downloading, downLoadingRsp);
+        }
     }
 }

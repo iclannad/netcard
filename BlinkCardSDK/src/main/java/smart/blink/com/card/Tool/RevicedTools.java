@@ -752,8 +752,15 @@ public class RevicedTools {
                 }
             }
             //Log.e(TAG, "DownloadStart: Size==" + Size);
+            long parseLong = 0;
+            try {
+                parseLong = Long.parseLong(Size);
+            } catch (NumberFormatException e) {
+                parseLong = 0;
+            }
 
-            downLoadStartRsp.setFilesize(Long.parseLong(Size));
+            downLoadStartRsp.setFilesize(parseLong);
+            //downLoadStartRsp.setFilesize(Long.parseLong(Size));
             //Log.e(TAG, "DownloadStart: Long.parseLong(Size)==" + Long.parseLong(Size));
             // 设置请求块的大小
             int block;

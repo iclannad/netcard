@@ -54,7 +54,14 @@ public class MyRevicedTools {
         if (Checksum.ckecksum(msg, msg.length) == buffer[2]) {
             downLoadingRsp.setData(msg);
             downLoadingRsp.setBlockId(position);
-            downLoadingRsp.setBlockLength(Integer.parseInt(Size));
+            int parseInt = 0;
+            try {
+                parseInt = Integer.parseInt(Size);
+            } catch (NumberFormatException e) {
+                parseInt = 0;
+            }
+            downLoadingRsp.setBlockLength(parseInt);
+            //downLoadingRsp.setBlockLength(Integer.parseInt(Size));
 
             call.onSuccess(flag, downLoadingRsp);
         } else {

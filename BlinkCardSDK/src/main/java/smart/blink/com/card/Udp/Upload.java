@@ -13,6 +13,7 @@ import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import smart.blink.com.card.API.BlinkLog;
 import smart.blink.com.card.API.Protocol;
@@ -56,6 +57,8 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
     private BlinkNetCardCall call = null;
     private UploadReq uploadReq = null;
 
+    AtomicInteger taskFlag = new AtomicInteger(0);
+
     public Upload(final String IP, final int PORT, final String filename, String path, int position, BlinkNetCardCall call) {
 
         this.IP = IP;
@@ -83,7 +86,9 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
             //关闭写入流
             fileRead.Close();
             uploadReq.setEnd(true);
-            this.call.onSuccess(Protocol.Uploading, uploadReq);
+            if (this.call != null) {
+                this.call.onSuccess(Protocol.Uploading, uploadReq);
+            }
             return;
         }
 
@@ -122,7 +127,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
     private void StartThread(final String IP, final int PORT, final int flag, final String filename) {
         new Thread(new Runnable() {
 
-            private Timer uploadingTimer;
+            //private Timer uploadingTimer;
 
             @Override
             public void run() {
@@ -160,21 +165,21 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
 //                        BlinkLog.Print(Arrays.toString(buffer));
                     } else {
                         // 此处应该开启一个定时器
-                        uploadingTimer = new Timer();
-                        uploadingTimer.schedule(new TimerTask() {
-                            @Override
-                            public void run() {
-                                if (uploadingTimer != null) {
-                                    uploadingTimer.cancel();
-                                    uploadingTimer = null;
-                                    if (fileRead != null) {
-                                        fileRead.Close();
-                                    }
-                                    Log.e(TAG, "run: 上传任务失败");
-                                    Upload.this.onFail(-1);
-                                }
-                            }
-                        }, 10000);
+//                        uploadingTimer = new Timer();
+//                        uploadingTimer.schedule(new TimerTask() {
+//                            @Override
+//                            public void run() {
+//                                if (uploadingTimer != null) {
+//                                    uploadingTimer.cancel();
+//                                    uploadingTimer = null;
+//                                    if (fileRead != null) {
+//                                        fileRead.Close();
+//                                    }
+//                                    Log.e(TAG, "run: 上传任务失败" + "   filename===" + filename + "   flag===" + flag);
+//                                    Upload.this.onFail(-1);
+//                                }
+//                            }
+//                        }, 20000);
 
                         // 从文件中读取一个数据对象
                         UploadReq uploadReq = fileRead.Read(j, k);
@@ -199,11 +204,11 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                         if (buf[0] == Protocol.UploadingReviced1) {
                             // 此处关闭定时器
                             Log.e(TAG, "run: 接收数据:buffer[0]" + buf[0] + "   filename===" + filename + "   flag===" + flag);
-                            if (uploadingTimer != null) {
-                                Log.e(TAG, "run: 清空定时器");
-                                uploadingTimer.cancel();
-                                uploadingTimer = null;
-                            }
+//                            if (uploadingTimer != null) {
+//                                Log.e(TAG, "run: 清空定时器" + "   filename===" + filename + "   flag===" + flag);
+//                                uploadingTimer.cancel();
+//                                uploadingTimer = null;
+//                            }
                             //上传成功之后才允许上传下一个
                             //将下载完成写入数组里面进行统计
                             countArray[k] = j;
@@ -217,6 +222,29 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                     } catch (IOException e) {
                         // socket连接异常
                         BlinkLog.Error(e.toString());
+                        if (timer != null) {
+                            timer.cancel();
+                            timer = null;
+                        }
+                        if (fileRead != null) {
+                            fileRead.Close();
+                        }
+                        if ("java.net.SocketTimeoutException".equals(e.toString()) && taskFlag.get() == 0) {
+                            // 在此处应该释放该任务的所有资源
+                            taskFlag.getAndIncrement();
+                            for (int i = 0; i < threadArray.length; i++) {
+                                threadArray[i] = false;
+                            }
+                            for (int i = 0; i < downList.length; i++) {
+                                downList[i] = 1;
+                            }
+
+
+                            Log.e(TAG, "run: 上传超时 filename===" + filename);
+                            Upload.this.onFail(-1);
+                            return;
+                        }
+                        Log.e(TAG, "run: 网络异常" + "   filename===" + filename + "   flag===" + flag);
 
                         threadArray[k] = false;
                         if (in != null) {
@@ -249,14 +277,12 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                             timer = null;
                         }
 
-                        if (uploadingTimer != null) {
-                            uploadingTimer.cancel();
-                            uploadingTimer = null;
-                        }
+//                        if (uploadingTimer != null) {
+//                            uploadingTimer.cancel();
+//                            uploadingTimer = null;
+//                        }
 
-                        if (fileRead != null) {
-                            fileRead.Close();
-                        }
+
                     }
 
                 }
@@ -288,8 +314,10 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                 timer = null;
             }
 
-            //关闭写入流
-            fileRead.Close();
+            if (fileRead != null) {
+                //关闭写入流
+                fileRead.Close();
+            }
 
             int totalSize = 0;
             int lateSize = 0;
@@ -363,7 +391,10 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
 
     @Override
     public void onFail(int error) {
-        call.onFail(error);
+        if (call != null) {
+            call.onFail(error);
+            call = null;
+        }
     }
 
     /**
@@ -388,7 +419,9 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
         uploadReq.setBlockSize((int) size);
         uploadReq.setFilename(fileRead.getFilename());
         uploadReq.setEnd(false);
-        call.onSuccess(Protocol.Downloading, uploadReq);
+        if (call != null) {
+            call.onSuccess(Protocol.Downloading, uploadReq);
+        }
 
     }
 

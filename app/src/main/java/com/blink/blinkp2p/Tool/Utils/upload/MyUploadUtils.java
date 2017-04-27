@@ -202,15 +202,20 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
         if (size <= 0) {
             return;
         }
+        if (position >= Comment.uploadlist.size()) {
+            return;
+        }
 
         UploadReq uploadReq = (UploadReq) object;
         UploadTask uploadTask = Comment.uploadlist.get(position);
         uploadTask.speed = uploadReq.getSpeed();
 
+        // 计算进度条
         DecimalFormat df = new DecimalFormat("0.00");
         String db = df.format((double) uploadReq.getBlockID() / (double) uploadReq.getBlockSize());
         double d = Double.parseDouble(db) * 100;
         int present = (int) d;
+        Log.e(TAG, "Uploading: uploadReq.getFilename()===" + uploadReq.getFilename() + "   present===" + present);
         uploadTask.progress = present;
 
         if (downUpCallback != null) {
