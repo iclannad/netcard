@@ -74,6 +74,7 @@ public class UdpSocket {
     public static void closeUdpSocket() {
 
         if (inThread != null) {
+            inThread.interrupt();
             inThread = null;
         }
         if (socket != null) {
@@ -85,7 +86,20 @@ public class UdpSocket {
             timer.cancel();
             timer = null;
         }
+        if (pcLookTimer != null) {
+            pcLookTimer.cancel();
+            pcLookTimer = null;
+        }
+        handler = null;
+        call = null;
+        heartcall = null;
 
+        bufferList = null;
+        controlList = null;
+
+        buf = null;
+
+        isOpen = false;
     }
 
     public UdpSocket(final String ip, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
@@ -225,15 +239,6 @@ public class UdpSocket {
         } else {
             UdpSocket.call = call;
         }
-
-
-//        if (position == Protocol.Heart) {
-//            UdpSocket.heartcall = call;
-//        } else if (position == Protocol.LookFileMsg) {
-//            UdpSocket.lookfilemsgcall = call;
-//        } else {
-//            UdpSocket.call = call;
-//        }
 
         if (handler == null) {
             handler = new Handler() {

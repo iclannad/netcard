@@ -277,6 +277,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                             socketArray[k] = socket;
                             // 设置连接时间
                             socket.setSoTimeout(5000);
+
                         }
                         //如果id为0则说明请求下载
                         //否则就是进入下载东西的过程

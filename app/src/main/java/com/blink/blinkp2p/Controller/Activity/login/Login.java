@@ -584,6 +584,9 @@ public class Login extends BaseActivity implements HandlerImpl {
             MyToast.Toast(context, R.string.login_success);
             finish();
 
+            // 允许接收网络变换的广播
+            Comment.isReceivedBroadCast = true;
+
             //saveAutoLoginData();
             SaveAutoLoginDataCompatOldVersion();
 
@@ -618,6 +621,8 @@ public class Login extends BaseActivity implements HandlerImpl {
 
                 finish();
 
+                // 允许接收网络变换的广播
+                Comment.isReceivedBroadCast = true;
                 //saveAutoLoginData();
                 SaveAutoLoginDataCompatOldVersion();
             }

@@ -60,6 +60,7 @@ import com.blink.blinkp2p.View.DialogClick;
 import com.blink.blinkp2p.View.MyDialog;
 import com.blink.blinkp2p.View.MyPersonalProgressDIalog;
 import com.blink.blinkp2p.View.MyProgressDIalog;
+import com.blink.blinkp2p.View.ReconnectDialog;
 import com.blink.blinkp2p.application.MyApplication;
 import com.blink.blinkp2p.heart.HeartController;
 import com.blink.blinkp2p.heart.HeartHandler;
@@ -837,6 +838,10 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
             CommonIntent.IntentActivity(context, MainActivity.class);
             MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
             UIHelper.ToastSetSuccess(this, R.string.reconnect_success);
+
+            // 允许接收网络变换的广播
+            Comment.isReceivedBroadCast = true;
+
             initHeartThread();
         }
 
@@ -905,11 +910,11 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
             if (value == 0) {
                 MyPersonalProgressDIalog.getInstance(MainActivity.this).dissmissProgress();
                 //MyProgressDIalog.setDialogSuccess(context, R.string.main_handler_change_sucess);
-                Toast.makeText(context,R.string.main_handler_change_sucess,Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.main_handler_change_sucess, Toast.LENGTH_SHORT).show();
             } else {
                 MyPersonalProgressDIalog.getInstance(MainActivity.this).dissmissProgress();
                 //MyProgressDIalog.seetDialogTimeOver(R.string.main_handler_original_error, MainActivity.this);
-                Toast.makeText(context,R.string.main_handler_original_error,Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.main_handler_original_error, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -931,6 +936,8 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
                 UIHelper.ToastSetSuccess(this, R.string.reconnect_success);
                 //打洞成功
                 CommonIntent.IntentActivity(context, MainActivity.class);
+                // 允许接收网络变换的广播
+                Comment.isReceivedBroadCast = true;
                 initHeartThread();
             }
         }
@@ -955,6 +962,36 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
                     MyPersonalProgressDIalog.getInstance(MainActivity.this).dissmissProgress();
                     MyPersonalProgressDIalog.getInstance(MainActivity.this).setContent("正通过服务器连接").showProgressDialog();
                     NetCardController.RelayMsg(MainActivity.this);
+                }
+            });
+        }
+
+        // 申请子服务器失败
+        if (position == ActivityCode.RelayMsg) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // 申请子服务器失败的话就应该再次弹出对话框
+                    MyPersonalProgressDIalog.getInstance(MainActivity.this).dissmissProgress();
+                    Log.e(TAG, "run: 申请子服务器失败");
+                    HeartController.stopHeart();
+
+                    MyApplication.wantCount.set(0);
+                    MyApplication.helloCount.set(0);
+
+                    Log.e(TAG, "run: 重新弹出重连接对话框");
+                    // 弹出重新连接的对话框
+                    try {
+                        ReconnectDialog.CreateYesNoDialog(context, context
+                                        .getResources().getString(R.string.askbreak), context
+                                        .getResources().getString(R.string.askreconnect),
+                                context.getResources().getString(R.string.login),
+                                context.getResources().getString(R.string.reconnect),
+                                MainActivity.heartHandler);
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                        e.printStackTrace();
+                    }
                 }
             });
         }
@@ -1015,7 +1052,7 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
         }
     }
 
-    NetWorkStateReceiver netWorkStateReceiver;
+    public static NetWorkStateReceiver netWorkStateReceiver;
 
     @Override
     protected void onResume() {

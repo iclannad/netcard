@@ -45,6 +45,15 @@ public class NetWorkStateReceiver extends BroadcastReceiver {
             return;
         }
 
+        Log.e(TAG, "onReceive: !Comment.isReceivedBroadCast===" + (!Comment.isReceivedBroadCast));
+        // 判断是否允许接收网络变换的广播
+        if (!Comment.isReceivedBroadCast) {
+            return;
+        }
+
+        // 本次网络变换广播事件处理完成之前不会再处理类似事件
+        Comment.isReceivedBroadCast = false;
+
         // 3s内只能接收一次网络变化请求
         if (timer == null) {
             this.context = context;

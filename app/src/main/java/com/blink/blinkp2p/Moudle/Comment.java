@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 
 import com.blink.blinkp2p.Controller.receiver.NetWorkStateReceiver;
 import com.blink.blinkp2p.Tool.Utils.download.DownTask;
@@ -126,6 +127,11 @@ public class Comment {
     }
 
     /**
+     * 默认的时候允许接收广播接收者
+     */
+    public static boolean isReceivedBroadCast = true;
+
+    /**
      * 释放系统的资源
      */
     public static void releaseSystemResource() {
@@ -149,5 +155,9 @@ public class Comment {
         MyDownUtils.isNeedMonitorTask = false;
         MyTcpUploadUtils.isNeedMonitorTask = false;
         MyTcpDownUtils.isNeedMonitorTask = false;
+
+        // 不允许接收广播
+        Comment.isReceivedBroadCast = false;
+
     }
 }
