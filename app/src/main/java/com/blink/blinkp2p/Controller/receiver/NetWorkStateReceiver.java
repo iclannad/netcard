@@ -23,6 +23,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import smart.blink.com.card.Tcp.TcpSocket;
+import smart.blink.com.card.Tool.ReqDownUp;
 import smart.blink.com.card.Udp.UdpSocket;
 
 /**
@@ -87,10 +88,13 @@ public class NetWorkStateReceiver extends BroadcastReceiver {
                 MyApplication.wantCount.set(0);
                 MyApplication.helloCount.set(0);
 
-                // 释放Tcp资源
-                TcpSocket.closeTcpSocket();
-                // 释放Udp的资源
-                UdpSocket.closeUdpSocket();
+//                // 释放Tcp资源
+//                TcpSocket.closeTcpSocket();
+//                // 释放Udp的资源
+//                UdpSocket.closeUdpSocket();
+
+                Comment.releaseSystemResource();
+
 
                 // 弹出重新连接的对话框
                 try {

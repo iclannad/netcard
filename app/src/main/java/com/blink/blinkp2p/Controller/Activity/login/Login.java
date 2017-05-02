@@ -1,9 +1,11 @@
 package com.blink.blinkp2p.Controller.Activity.login;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -444,7 +446,10 @@ public class Login extends BaseActivity implements HandlerImpl {
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivityForResult(intent, 1);
             } else {
+
                 Toast.makeText(this, R.string.Camera, Toast.LENGTH_SHORT).show();
+                // 摄像头权限还未得到用户的同意
+                //requestCameraPermission();
             }
         }
 
@@ -455,6 +460,29 @@ public class Login extends BaseActivity implements HandlerImpl {
             mDownPopWindows.popupWindwShowing(initActivityEditText);
         }
     }
+
+//    private void requestCameraPermission() {
+//        // 摄像头权限已经被拒绝
+//        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+//                Manifest.permission.CAMERA)) {
+//            // 如果用户已经拒绝劝降，那么提供额外的权限说明
+////            Snackbar.make(mLayout, R.string.permission_camera_rationale,
+////                    Snackbar.LENGTH_INDEFINITE)
+////                    .setAction(R.string.ok, new View.OnClickListener() {
+////                        @Override
+////                        public void onClick(View view) {
+////                            ActivityCompat.requestPermissions(MainActivity.this,
+////                                    new String[]{Manifest.permission.CAMERA},
+////                                    REQUEST_CAMERA);
+////                        }
+////                    })
+////                    .show();
+//        } else {
+//            // 摄像头还没有被拒绝，直接申请
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
+//                    REQUEST_CAMERA);
+//        }
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

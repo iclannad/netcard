@@ -259,6 +259,8 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                     downTask.speed = "0";
                     // 将加入下载任务列表
                     Comment.downlist.add(downTask);
+
+                    Log.e(TAG, "Click: Comment.downlist===" + Comment.downlist );
                 } else {
                     DownorUpload downorUpload = new DownorUpload();
                     String[] filename = list.get(seArray.get(i)).getA().split("/");

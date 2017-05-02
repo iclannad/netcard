@@ -11,6 +11,7 @@ import com.blink.blinkp2p.Moudle.Comment;
 import com.blink.blinkp2p.Moudle.DownorUpload;
 import com.blink.blinkp2p.Moudle.Item;
 import com.blink.blinkp2p.R;
+import com.blink.blinkp2p.Tool.Utils.upload.MyUploadThread;
 import com.blink.blinkp2p.View.DownUpCallback;
 import com.blink.blinkp2p.heart.HeartController;
 import com.example.administrator.data_sdk.Crash.LogException;
@@ -48,6 +49,15 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
     public static ArrayList<Integer> finishTask = new ArrayList<>();    // 存放下载完成的任务
 
     public static DownUpCallback downUpCallback;
+
+    public static void releaseResource() {
+        taskCount.set(0);
+        context = null;
+        currentTaskCount.set(0);
+        maintenceThread = null;
+        isNeedMonitorTask = false;
+        downUpCallback = null;
+    }
 
     private static Object getItem(int id, int status, Drawable drawable, String title, String speed, String present, int progress) {
         Item item = new Item();
@@ -88,6 +98,7 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
 
     public MyDownUtils(Context context) {
         this.context = context;
+        //Log.e(TAG, "MyDownUtils: Comment.downlist.size()===" + Comment.downlist.size());
         // 如果任务列表中有任务
         if (Comment.downlist.size() > 0) {
             isNeedMonitorTask = true;
@@ -104,7 +115,7 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
 
         //　停止心跳线程
         //HeartController.stopHeart();
-        Log.e(TAG, "finishTask: 所有的任务将开始下载");
+        //Log.e(TAG, "finishTask: 所有的任务将开始下载");
     }
 
 
@@ -113,41 +124,84 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
      */
     @Override
     public void run() {
+        //Log.e(TAG, "run: isNeedMonitorTask==" + isNeedMonitorTask);
         while (isNeedMonitorTask) {
             //　开启任务，最多同时能开启5个线程
             // taskCount < Comment.downlist.size() && currentTaskCount
-            while (taskCount.get() < Comment.downlist.size() && currentTaskCount.get() < 5) {
-                Log.e(TAG, "run: taskCount===" + taskCount + " Comment.downlist.size()===" + Comment.downlist.size());
-                final DownTask downTask = Comment.downlist.get(taskCount.get());
+            //Log.e(TAG, "run: taskCount.get()==" + taskCount.get());
+            //Log.e(TAG, "run: Comment.downlist.size()==" + Comment.downlist.size());
+            //Log.e(TAG, "run: currentTaskCount.get()==" + currentTaskCount.get());
 
-                // 如果当前任务已经在任务列表中删除的话，就不开启下一个任务
-                if (downTask.status == 2) {
+            while (taskCount.get() < Comment.downlist.size() && currentTaskCount.get() < 5) {
+
+                //Log.e(TAG, "run: ＭyDownloadThread.isAllowReqDownloadStart==" + ＭyDownloadThread.isAllowReqDownloadStart);
+                if (ＭyDownloadThread.isAllowReqDownloadStart) {
+                    ＭyDownloadThread.isAllowReqDownloadStart = false;
+                    MyUploadThread.isAllowReqUploadStart = false;
+
+                    //Log.e(TAG, "run: taskCount===" + taskCount + " Comment.downlist.size()===" + Comment.downlist.size());
+                    final DownTask downTask = Comment.downlist.get(taskCount.get());
+
+                    // 如果当前任务已经在任务列表中删除的话，就不开启下一个任务
+                    if (downTask.status == 2) {
+                        // 任务标记　自加
+                        //taskCount++;
+                        taskCount.getAndIncrement();
+                        continue;
+                    }
+
+                    downTask.status = 1;
+                    DownorUpload downorUpload = new DownorUpload();
+                    downorUpload.setName(downTask.name);
+                    downorUpload.setFLAG(DownorUpload.DOWN);
+                    downorUpload.setPath(downTask.path);
+
+                    // 开启一个下载任务的逻辑
+                    new ＭyDownloadThread(downTask.id, downorUpload, context, this, this).start();
+
+                    //currentTaskCount++;
+                    currentTaskCount.getAndIncrement();
                     // 任务标记　自加
                     //taskCount++;
                     taskCount.getAndIncrement();
-                    continue;
+
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-
-                downTask.status = 1;
-                DownorUpload downorUpload = new DownorUpload();
-                downorUpload.setName(downTask.name);
-                downorUpload.setFLAG(DownorUpload.DOWN);
-                downorUpload.setPath(downTask.path);
-
-                // 开启一个下载任务的逻辑
-                new ＭyDownloadThread(downTask.id, downorUpload, context, this, this).start();
-
-                //currentTaskCount++;
-                currentTaskCount.getAndIncrement();
-                // 任务标记　自加
-                //taskCount++;
-                taskCount.getAndIncrement();
-
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//                Log.e(TAG, "run: taskCount===" + taskCount + " Comment.downlist.size()===" + Comment.downlist.size());
+//                final DownTask downTask = Comment.downlist.get(taskCount.get());
+//
+//                // 如果当前任务已经在任务列表中删除的话，就不开启下一个任务
+//                if (downTask.status == 2) {
+//                    // 任务标记　自加
+//                    //taskCount++;
+//                    taskCount.getAndIncrement();
+//                    continue;
+//                }
+//
+//                downTask.status = 1;
+//                DownorUpload downorUpload = new DownorUpload();
+//                downorUpload.setName(downTask.name);
+//                downorUpload.setFLAG(DownorUpload.DOWN);
+//                downorUpload.setPath(downTask.path);
+//
+//                // 开启一个下载任务的逻辑
+//                new ＭyDownloadThread(downTask.id, downorUpload, context, this, this).start();
+//
+//                //currentTaskCount++;
+//                currentTaskCount.getAndIncrement();
+//                // 任务标记　自加
+//                //taskCount++;
+//                taskCount.getAndIncrement();
+//
+//                try {
+//                    Thread.sleep(200);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
             }
 
             try {

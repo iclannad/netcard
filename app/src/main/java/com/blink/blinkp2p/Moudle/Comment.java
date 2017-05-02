@@ -14,6 +14,8 @@ import com.blink.blinkp2p.Tool.Utils.download.DownTask;
 import com.blink.blinkp2p.Tool.Utils.download.MyDownUtils;
 import com.blink.blinkp2p.Tool.Utils.download.tcp.MyTcpDownUtils;
 import com.blink.blinkp2p.Tool.Utils.download.tcp.MyTcpUploadUtils;
+import com.blink.blinkp2p.Tool.Utils.download.ＭyDownloadThread;
+import com.blink.blinkp2p.Tool.Utils.upload.MyUploadThread;
 import com.blink.blinkp2p.Tool.Utils.upload.MyUploadUtils;
 import com.blink.blinkp2p.Tool.Utils.upload.UploadTask;
 import com.blink.blinkp2p.heart.HeartController;
@@ -22,7 +24,9 @@ import com.google.gson.FieldNamingStrategy;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import smart.blink.com.card.Tcp.MyUpload;
 import smart.blink.com.card.Tcp.TcpSocket;
+import smart.blink.com.card.Tool.ReqDownUp;
 import smart.blink.com.card.Udp.UdpSocket;
 
 /**
@@ -158,6 +162,13 @@ public class Comment {
 
         // 不允许接收广播
         Comment.isReceivedBroadCast = false;
+
+        MyUploadThread.isAllowReqUploadStart = true;
+        ＭyDownloadThread.isAllowReqDownloadStart = true;
+
+        ReqDownUp.releaseResource();
+        MyDownUtils.releaseResource();
+        MyUploadUtils.releaseResource();
 
     }
 }

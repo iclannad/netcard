@@ -45,8 +45,16 @@ public class MyRevicedTools {
             }
         }
 
+        int fileSize = 0;
+        try {
+            fileSize = Integer.parseInt(Size);
+        } catch (NumberFormatException e) {
+            fileSize = 0;
+        }
+
         //获取实际的数据
-        byte[] msg = new byte[Integer.parseInt(Size)];
+        //byte[] msg = new byte[Integer.parseInt(Size)];
+        byte[] msg = new byte[fileSize];
         for (int i = 0; i < msg.length; i++)
             msg[i] = buffer[376 + i];
 

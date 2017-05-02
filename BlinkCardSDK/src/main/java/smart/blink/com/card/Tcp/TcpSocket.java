@@ -96,6 +96,8 @@ public class TcpSocket {
 
         handler = null;
         isOpen = false;
+
+
     }
 
     /**

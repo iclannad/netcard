@@ -13,6 +13,7 @@ import com.blink.blinkp2p.Moudle.Item;
 import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Utils.download.DownTask;
 import com.blink.blinkp2p.Tool.Utils.download.ThreadHandlerImpl;
+import com.blink.blinkp2p.Tool.Utils.download.ＭyDownloadThread;
 import com.blink.blinkp2p.View.DownUpCallback;
 import com.blink.blinkp2p.heart.HeartController;
 
@@ -39,6 +40,16 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
     public static Thread maintenceThread = null;
     public static boolean isNeedMonitorTask = false;
     public static DownUpCallback downUpCallback;
+
+    public static void releaseResource() {
+        taskCount.set(0);
+        context = null;
+        currentTaskCount.set(0);
+        maintenceThread = null;
+        isNeedMonitorTask = false;
+        downUpCallback = null;
+    }
+
 
     private static Object getItem(int id, int status, Drawable drawable, String title, String speed, String present, int progress) {
         Item item = new Item();
@@ -105,39 +116,79 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
 //            Log.e(TAG, "run: Comment.uploadlist.size()===" + Comment.uploadlist.size());
 //            Log.e(TAG, "run: currentTaskCount.get()===" + currentTaskCount.get());
             while (taskCount.get() < Comment.uploadlist.size() && currentTaskCount.get() < 5) {
-                UploadTask uploadTask = Comment.uploadlist.get(taskCount.get());
 
-                // 如果当前任务已经被删除的话就不需求开启下载
-                if (uploadTask.status == 2) {
+                if (MyUploadThread.isAllowReqUploadStart) {
+                    MyUploadThread.isAllowReqUploadStart = false;
+                    ＭyDownloadThread.isAllowReqDownloadStart = false;
+
+                    UploadTask uploadTask = Comment.uploadlist.get(taskCount.get());
+
+                    // 如果当前任务已经被删除的话就不需求开启下载
+                    if (uploadTask.status == 2) {
+                        taskCount.getAndIncrement();
+                        continue;
+                    }
+
+                    uploadTask.status = 1;
+                    DownorUpload downorUpload = new DownorUpload();
+                    downorUpload.setName(uploadTask.name);
+                    downorUpload.setPath(uploadTask.path);
+
+                    // 上传任务的逻辑
+                    new MyUploadThread(uploadTask.id, downorUpload, context, this, this).start();
+
+                    // 任务标记　自加
                     taskCount.getAndIncrement();
-                    continue;
+                    currentTaskCount.getAndIncrement();
+
+                    // 开启一个上传任务的逻辑
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
 
-                uploadTask.status = 1;
-                DownorUpload downorUpload = new DownorUpload();
-                downorUpload.setName(uploadTask.name);
-                downorUpload.setPath(uploadTask.path);
-
-                // 上传任务的逻辑
-                new MyUploadThread(uploadTask.id, downorUpload, context, this, this).start();
-
-                // 任务标记　自加
-                taskCount.getAndIncrement();
-                currentTaskCount.getAndIncrement();
-
-                // 开启一个上传任务的逻辑
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
 
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//                UploadTask uploadTask = Comment.uploadlist.get(taskCount.get());
+//
+//                // 如果当前任务已经被删除的话就不需求开启下载
+//                if (uploadTask.status == 2) {
+//                    taskCount.getAndIncrement();
+//                    continue;
+//                }
+//
+//                uploadTask.status = 1;
+//                DownorUpload downorUpload = new DownorUpload();
+//                downorUpload.setName(uploadTask.name);
+//                downorUpload.setPath(uploadTask.path);
+//
+//                // 上传任务的逻辑
+//                new MyUploadThread(uploadTask.id, downorUpload, context, this, this).start();
+//
+//                // 任务标记　自加
+//                taskCount.getAndIncrement();
+//                currentTaskCount.getAndIncrement();
+//
+//                // 开启一个上传任务的逻辑
+//                try {
+//                    Thread.sleep(200);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            try {
+//                Thread.sleep(500);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
 
         }
         maintenceThread = null;
@@ -150,17 +201,28 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
      */
     @Override
     public void finishTask(int position) {
+        Log.e(TAG, "finishTask: position===" + position);
         int size = Comment.uploadlist.size();
         if (size <= 0) {
             return;
         }
 
         UploadTask uploadTask = Comment.uploadlist.get(position);
+
+        // 根据打印日志
+        if (uploadTask.status == 2) {
+            return;
+        }
+
         uploadTask.status = 2;
         uploadTask.speed = "";
         uploadTask.progress = 100;
 
         currentTaskCount.getAndDecrement();
+        Log.e(TAG, "finishTask: currentTaskCount.get()===" + currentTaskCount.get());
+        Log.e(TAG, "finishTask: taskCount.get()===" + taskCount.get());
+        Log.e(TAG, "finishTask: Comment.uploadlist.size()===" + Comment.uploadlist.size());
+
         if (currentTaskCount.get() == 0 && taskCount.get() >= Comment.uploadlist.size()) {
             Comment.uploadlist.clear();
             Comment.Uploadlist.clear();

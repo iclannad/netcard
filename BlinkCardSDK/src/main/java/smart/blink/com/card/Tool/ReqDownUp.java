@@ -40,12 +40,19 @@ public class ReqDownUp {
     private static byte[] buffer = null;
     private static boolean isError = false;
 
+    public static void releaseResource() {
+        socket = null;
+        buf = null;
+        in = null;
+        call = null;
+        position = 0;
+        readThread = null;
+        thread = null;
+        buffer = null;
+        isError = false;
+    }
 
-    /**
-     * ----------自己添加--------
-     */
-//    private static BlinkNetCardCall downloadstartcall;
-//    private static BlinkNetCardCall uploadstartcall;
+
     public ReqDownUp(final String IP, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
         ReqDownUp.call = call;
         ReqDownUp.buffer = buffer;
@@ -71,7 +78,7 @@ public class ReqDownUp {
                             public void run() {
                                 while (!isError) {
                                     try {
-                                        Thread.sleep(0);
+                                        Thread.sleep(100);
                                     } catch (InterruptedException e) {
                                         BlinkLog.Error(e.toString());
                                     }
@@ -153,7 +160,7 @@ public class ReqDownUp {
         //上传的请求
         //下面就是下载的请求
         if (ReqDownUp.buffer[0] == Protocol.UploadStart && !isError) {
-            //Log.e(TAG, "Reviced: 请求上传返回的结果：buffer===" + buffer[0]);
+            Log.e(TAG, "Reviced: 请求上传或下载 返回的结果：buffer===" + buffer[0]);
             RevicedTools.UploadStart(buffer, position, call);
         }
 

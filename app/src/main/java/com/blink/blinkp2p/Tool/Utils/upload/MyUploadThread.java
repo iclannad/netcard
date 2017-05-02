@@ -12,11 +12,13 @@ import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Dao.MsgDAO;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
 import com.blink.blinkp2p.Tool.Utils.download.ThreadHandlerImpl;
+import com.blink.blinkp2p.Tool.Utils.download.ＭyDownloadThread;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TransferQueue;
 
 import smart.blink.com.card.bean.UploadReq;
 import smart.blink.com.card.bean.UploadStartReq;
@@ -38,6 +40,10 @@ public class MyUploadThread extends Thread implements HandlerImpl {
 
     private Timer uploadingstarttimer;
 
+    // 检测是否允许发送请求上传的数据
+    // 以后尽量不这样写代码，这样的话关联太多了,尽量高内聚低耦合
+    public static boolean isAllowReqUploadStart = true;
+
 
     public MyUploadThread(int position, DownorUpload downorUpload, Context context, ThreadHandlerImpl threadHandler, UploadingImpl uploading) {
         this.downorUpload = downorUpload;
@@ -51,7 +57,7 @@ public class MyUploadThread extends Thread implements HandlerImpl {
 
     @Override
     public void run() {
-        // 如果10s后无响应，则说明请求下载任务失败
+        // 如果20s后无响应，则说明请求下载任务失败
         uploadingstarttimer = new Timer();
         uploadingstarttimer.schedule(new TimerTask() {
             @Override
@@ -62,7 +68,8 @@ public class MyUploadThread extends Thread implements HandlerImpl {
                     MyUploadThread.this.myError(ActivityCode.UploadStart, -1);
                 }
             }
-        }, 10000);
+        }, 20000);
+        Log.e(TAG, "run: 开始请求上传 downorUpload.getName()===" + downorUpload.getName());
         NetCardController.UploadStart(downorUpload.getPath(), downorUpload.getName(), this);
     }
 
@@ -76,8 +83,14 @@ public class MyUploadThread extends Thread implements HandlerImpl {
     public void myHandler(int position, Object object) {
 
         if (position == ActivityCode.UploadStart) {
+            // 允许下次下载请求
+            MyUploadThread.isAllowReqUploadStart = true;
+            ＭyDownloadThread.isAllowReqDownloadStart = true;
+
+            Log.e(TAG, "myHandler: 请求上传文件成功: + downorUpload.getName()===" + downorUpload.getName());
             // 有数据过来说明请求下载成功
             if (uploadingstarttimer != null) {
+                Log.e(TAG, "myHandler: 取消定时器 downorUpload.getName()===" + downorUpload.getName());
                 uploadingstarttimer.cancel();
                 uploadingstarttimer = null;
             }
@@ -123,6 +136,8 @@ public class MyUploadThread extends Thread implements HandlerImpl {
                 msgdao.close();
             }
 
+            Log.e(TAG, "myHandler: 文件上传成功后的回调 downorUpload.getName()===" + downorUpload.getName());
+
             // 上传一个任务成功后的回调
             threadHandler.finishTask(this.position);
 
@@ -139,6 +154,10 @@ public class MyUploadThread extends Thread implements HandlerImpl {
     public void myError(int position, int error) {
 
         if (position == ActivityCode.UploadStart) {
+            MyUploadThread.isAllowReqUploadStart = true;
+            ＭyDownloadThread.isAllowReqDownloadStart = true;
+
+            Log.e(TAG, "myError: ActivityCode.UploadStart 文件请求上传失败:" + downorUpload.getName());
             Activity activity = (Activity) context;
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -150,6 +169,7 @@ public class MyUploadThread extends Thread implements HandlerImpl {
         }
 
         if (position == ActivityCode.Upload) {
+            Log.e(TAG, "myError: ActivityCode.UploadStart 文件上传失败:" + downorUpload.getName());
             Activity activity = (Activity) context;
             activity.runOnUiThread(new Runnable() {
                 @Override

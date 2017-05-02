@@ -80,6 +80,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
         } else
             count = (int) (size / downSize) + 1;
 
+        Log.e(TAG, "Upload: count===" + count);
         // 处理文件大小为０的情况
         if (count == 0) {
             Log.e(TAG, "Upload: 上传文件的大小为空");
@@ -186,7 +187,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                         buffer = SendTools.Uploading(uploadReq);
                     }
 
-                    Log.e(TAG, "run: 发送数据:buffer[0]" + buffer[0] + "   filename===" + filename + "   flag===" + flag);
+                    //Log.e(TAG, "run: 发送数据:buffer[0]" + buffer[0] + "   filename===" + filename + "   flag===" + flag);
                     try {
                         out.write(buffer);
                         out.flush();
@@ -203,7 +204,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                         }
                         if (buf[0] == Protocol.UploadingReviced1) {
                             // 此处关闭定时器
-                            Log.e(TAG, "run: 接收数据:buffer[0]" + buf[0] + "   filename===" + filename + "   flag===" + flag);
+                            //Log.e(TAG, "run: 接收数据:buffer[0]" + buf[0] + "   filename===" + filename + "   flag===" + flag);
 //                            if (uploadingTimer != null) {
 //                                Log.e(TAG, "run: 清空定时器" + "   filename===" + filename + "   flag===" + flag);
 //                                uploadingTimer.cancel();

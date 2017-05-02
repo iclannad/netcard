@@ -545,7 +545,10 @@ public class UdpSocket {
                 Message message = new Message();
                 message.obj = buffer;
                 message.what = length;
-                handler.sendMessage(message);
+
+                if (handler != null) {
+                    handler.sendMessage(message);
+                }
 
                 thread = null;
             }

@@ -14,6 +14,7 @@ import com.blink.blinkp2p.R;
 import com.blink.blinkp2p.Tool.Dao.MsgDAO;
 import com.blink.blinkp2p.Tool.Thread.HandlerImpl;
 import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
+import com.blink.blinkp2p.Tool.Utils.upload.MyUploadThread;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -38,6 +39,8 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
     private int position;
 
     private Timer downloadingstarttimer;
+    public static boolean isAllowReqDownloadStart = true;
+
 
     // 构造方法
     public ＭyDownloadThread(int position, DownorUpload downorUpload, Context context, ThreadHandlerImpl threadHandler, DownloadingImpl downloading) {
@@ -57,12 +60,13 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
                     ＭyDownloadThread.this.myError(ActivityCode.DownloadStart, -1);
                 }
             }
-        }, 10000);
-        Log.e(TAG, "ＭyDownloadThread: 开启下载任务:" + downorUpload.getName());
+        }, 20000);
+
     }
 
     @Override
     public void run() {
+        Log.e(TAG, "ＭyDownloadThread: 开启下载任务:" + downorUpload.getName());
         NetCardController.DownloadStart(downorUpload.getPath(), this);
     }
 
@@ -75,6 +79,9 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
     @Override
     public void myHandler(int position, Object object) {
         if (position == ActivityCode.DownloadStart) {
+            ＭyDownloadThread.isAllowReqDownloadStart = true;
+            MyUploadThread.isAllowReqUploadStart = true;
+
             // 有数据过来说明请求下载成功
             if (downloadingstarttimer != null) {
                 downloadingstarttimer.cancel();
@@ -131,6 +138,9 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
     @Override
     public void myError(int position, int error) {
         if (position == ActivityCode.DownloadStart) {
+            ＭyDownloadThread.isAllowReqDownloadStart = true;
+            MyUploadThread.isAllowReqUploadStart = true;
+
             Activity activity = (Activity) context;
             activity.runOnUiThread(new Runnable() {
                 @Override
