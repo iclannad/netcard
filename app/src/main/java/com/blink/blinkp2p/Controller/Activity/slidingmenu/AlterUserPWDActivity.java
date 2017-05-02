@@ -141,26 +141,49 @@ public class AlterUserPWDActivity extends MyBaseActivity implements HandlerImpl 
     public void myHandler(int position, Object object) {
         if (position == ActivityCode.ChangePwd) {
             ChangePwdRsp changePwdRsp = (ChangePwdRsp) object;
-            int value = changePwdRsp.getSuccess();
-            // value: 0表示成功，其它表示原密码错误
-            if (value == 0) {
-                MyProgressDIalog.dissmissProgress();
-                Toast.makeText(this, this.getResources().getString(R.string.main_handler_change_sucess), Toast.LENGTH_SHORT).show();
-                // 重新跳到登录界面
-                startActivity(new Intent(this, Login.class));
+            final int value = changePwdRsp.getSuccess();
+//            // value: 0表示成功，其它表示原密码错误
+//            if (value == 0) {
+//                MyProgressDIalog.dissmissProgress();
+//                Toast.makeText(this, this.getResources().getString(R.string.main_handler_change_sucess), Toast.LENGTH_SHORT).show();
+//                // 重新跳到登录界面
+//                startActivity(new Intent(this, Login.class));
+//
+//                Comment.releaseSystemResource();
+//
+//                // 重新登录
+//                SharedPrefsUtils.setBooleanPreference(this, Comment.IS_RELOGIN, true);
+//                // 如果修改密码成功以后，重新登录必须清空原来的密码
+//                SharedPrefsUtils.setBooleanPreference(this, Comment.IS_NEED_CLEAR_OLDER_PWD, true);
+//
+//                MyApplication.getInstance().exit();
+//            } else {
+//                MyProgressDIalog.dissmissProgress();
+//                UIHelper.ToastMessageNetError(this, R.string.main_handler_original_error);
+//            }
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (value == 0) {
+                        MyProgressDIalog.dissmissProgress();
+                        Toast.makeText(AlterUserPWDActivity.this, AlterUserPWDActivity.this.getResources().getString(R.string.main_handler_change_sucess), Toast.LENGTH_SHORT).show();
+                        // 重新跳到登录界面
+                        startActivity(new Intent(AlterUserPWDActivity.this, Login.class));
 
-                Comment.releaseSystemResource();
+                        Comment.releaseSystemResource();
 
-                // 重新登录
-                SharedPrefsUtils.setBooleanPreference(this, Comment.IS_RELOGIN, true);
-                // 如果修改密码成功以后，重新登录必须清空原来的密码
-                SharedPrefsUtils.setBooleanPreference(this, Comment.IS_NEED_CLEAR_OLDER_PWD, true);
+                        // 重新登录
+                        SharedPrefsUtils.setBooleanPreference(AlterUserPWDActivity.this, Comment.IS_RELOGIN, true);
+                        // 如果修改密码成功以后，重新登录必须清空原来的密码
+                        SharedPrefsUtils.setBooleanPreference(AlterUserPWDActivity.this, Comment.IS_NEED_CLEAR_OLDER_PWD, true);
 
-                MyApplication.getInstance().exit();
-            } else {
-                MyProgressDIalog.dissmissProgress();
-                UIHelper.ToastMessageNetError(this, R.string.main_handler_original_error);
-            }
+                        MyApplication.getInstance().exit();
+                    } else {
+                        MyProgressDIalog.dissmissProgress();
+                        UIHelper.ToastMessageNetError(AlterUserPWDActivity.this, R.string.main_handler_original_error);
+                    }
+                }
+            });
         }
     }
 
@@ -173,8 +196,14 @@ public class AlterUserPWDActivity extends MyBaseActivity implements HandlerImpl 
     @Override
     public void myError(int position, int error) {
         if (position == ActivityCode.ChangePwd) {
-            MyProgressDIalog.dissmissProgress();
-            UIHelper.ToastMessageNetError(this, R.string.main_handler_change_lost);
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MyProgressDIalog.dissmissProgress();
+                    UIHelper.ToastMessageNetError(AlterUserPWDActivity.this, R.string.main_handler_change_lost);
+                }
+            });
+
         }
     }
 }

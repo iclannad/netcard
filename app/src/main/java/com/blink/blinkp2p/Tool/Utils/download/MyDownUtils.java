@@ -26,6 +26,7 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.CRC32;
 
+import smart.blink.com.card.Udp.Down;
 import smart.blink.com.card.bean.DownLoadingRsp;
 
 /**
@@ -57,6 +58,8 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
         maintenceThread = null;
         isNeedMonitorTask = false;
         downUpCallback = null;
+
+
     }
 
     private static Object getItem(int id, int status, Drawable drawable, String title, String speed, String present, int progress) {

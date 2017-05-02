@@ -33,6 +33,14 @@ public class MyUpload implements BlinkNetCardCall, TimerTaskCall {
 
     private final File file;
 
+    public static boolean isStart = true;
+
+    public static void releaseResource() {
+        reqBlockId = 0;
+        lastReqBlockId = 0;
+        failedCount = 0;
+    }
+
     public MyUpload(String path, String filename, BlinkNetCardCall call) {
         this.path = path;
         this.filename = filename;
@@ -53,11 +61,16 @@ public class MyUpload implements BlinkNetCardCall, TimerTaskCall {
 //        Log.e(TAG, "该文件的的上传的总块数是：  " + block);
         wantblock = block;
         lastReqBlockId = 0;
+        reqBlockId = 0;
 
         startUpload();
     }
 
     private void startUpload() {
+        if (!isStart) {
+            return;
+        }
+
 //        Log.e(TAG, "startUpload: reqBlockId===" + reqBlockId);
         byte[] buffer = SendTools.UploadingOldVersion(reqBlockId, wantblock, filename, file);
         new TcpSocket(BlinkWeb.zIP, BlinkWeb.zPORT, buffer, Protocol.Uploading, this);
@@ -121,6 +134,14 @@ public class MyUpload implements BlinkNetCardCall, TimerTaskCall {
      */
     @Override
     public void TimerCall() {
+        if (!isStart) {
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+            }
+            return;
+        }
+
         if (reqBlockId < wantblock) {
             UploadReq uploadReq = new UploadReq();
             uploadReq.setBlockID(reqBlockId);
@@ -129,6 +150,7 @@ public class MyUpload implements BlinkNetCardCall, TimerTaskCall {
             lastReqBlockId = reqBlockId;
             uploadReq.setEnd(false);
             uploadReq.setFilename(filename);
+            Log.e(TAG, "TimerCall: upload speed===" + speed);
             uploadReq.setSpeed(speed);
             call.onSuccess(-1, uploadReq);
         }

@@ -78,8 +78,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import smart.blink.com.card.API.BlinkWeb;
+import smart.blink.com.card.Tcp.MyDown;
+import smart.blink.com.card.Tcp.MyUpload;
 import smart.blink.com.card.Tcp.TcpSocket;
+import smart.blink.com.card.Udp.Down;
 import smart.blink.com.card.Udp.UdpSocket;
+import smart.blink.com.card.Udp.Upload;
 import smart.blink.com.card.bean.ChangePcPwdRsp;
 import smart.blink.com.card.bean.ConnectPcRsp;
 import smart.blink.com.card.bean.LookPCRsp;
@@ -841,6 +845,11 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
 
             // 允许接收网络变换的广播
             Comment.isReceivedBroadCast = true;
+            Down.isStart = true;
+            Upload.isStart = true;
+
+            MyDown.isStart = true;
+            MyUpload.isStart = true;
 
             initHeartThread();
         }
@@ -938,6 +947,12 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
                 CommonIntent.IntentActivity(context, MainActivity.class);
                 // 允许接收网络变换的广播
                 Comment.isReceivedBroadCast = true;
+                Down.isStart = true;
+                Upload.isStart = true;
+
+                MyDown.isStart = true;
+                MyUpload.isStart = true;
+
                 initHeartThread();
             }
         }

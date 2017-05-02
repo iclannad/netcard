@@ -53,6 +53,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.db.table.Id;
 
+import smart.blink.com.card.Tcp.MyDown;
+import smart.blink.com.card.Tcp.MyUpload;
+import smart.blink.com.card.Udp.Down;
+import smart.blink.com.card.Udp.Upload;
 import smart.blink.com.card.bean.ConnectPcRsp;
 import smart.blink.com.card.bean.RelayMsgRsp;
 import smart.blink.com.card.bean.WantRsp;
@@ -626,6 +630,11 @@ public class Login extends BaseActivity implements HandlerImpl {
 
             // 允许接收网络变换的广播
             Comment.isReceivedBroadCast = true;
+            Down.isStart = true;
+            Upload.isStart = true;
+
+            MyDown.isStart = true;
+            MyUpload.isStart = true;
 
             //saveAutoLoginData();
             SaveAutoLoginDataCompatOldVersion();
@@ -663,6 +672,11 @@ public class Login extends BaseActivity implements HandlerImpl {
 
                 // 允许接收网络变换的广播
                 Comment.isReceivedBroadCast = true;
+                Down.isStart = true;
+                Upload.isStart = true;
+
+                MyDown.isStart = true;
+                MyUpload.isStart = true;
                 //saveAutoLoginData();
                 SaveAutoLoginDataCompatOldVersion();
             }

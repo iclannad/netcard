@@ -629,7 +629,7 @@ public class SendTools {
             Arrays.fill(msg_file_name, i + 8, i + 9, bt[i]);
         }
 
-        byte[] data = readFile(reqBlockId,file);
+        byte[] data = readFile(reqBlockId, file);
         //block_length
         byte[] blen = new byte[4];
         blen = DataConverter.intToByteArray(blockidlen);
@@ -659,6 +659,7 @@ public class SendTools {
     private static int blockidlen = 0;
 
     private static byte[] readFile(int index, File file) {
+        Log.e(TAG, "readFile: index==" + index);
         try {
             RandomAccessFile raf = new RandomAccessFile(file, "rw");
             raf.seek(index * 1024);
@@ -670,9 +671,12 @@ public class SendTools {
             return data;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            Log.e(TAG, "readFile: e==" + e.toString());
         } catch (IOException e) {
             e.printStackTrace();
+            Log.e(TAG, "readFile: e==" + e.toString());
         }
+
         return null;
     }
 

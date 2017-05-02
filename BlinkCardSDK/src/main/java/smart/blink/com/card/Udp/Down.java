@@ -127,6 +127,8 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
 
     AtomicInteger taskFlag = new AtomicInteger(0);
 
+    // 任务的开关
+    public static boolean isStart = true;
 
     public Down(final String IP, final int PORT, long size, final String filename, String path, final int position, final BlinkNetCardCall call) {
         //计算文件大小开启线程数
@@ -265,7 +267,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                 DataInputStream in = null;
                 int id = 0;
                 //判断是否在可以下载
-                while (threadArray[k]) {
+                while (threadArray[k] && isStart) {
                     try {
                         //如果套接字为空则创建
                         if (socket == null) {
@@ -452,6 +454,14 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
      */
     @Override
     public void TimerCall() {
+        if (isStart == false) {
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+
+            }
+            return;
+        }
         totalSpeed();
     }
 

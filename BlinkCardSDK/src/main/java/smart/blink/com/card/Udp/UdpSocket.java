@@ -249,6 +249,9 @@ public class UdpSocket {
 
                     if (buffer[0] == 7) {
                         // 正常接收心跳
+                        if (heartcall == null) {
+                            return;
+                        }
                         new RevicedTools(-1, buffer, length, heartcall);
                     } else if (buffer[0] == 5) {
                         // 查看电脑文件

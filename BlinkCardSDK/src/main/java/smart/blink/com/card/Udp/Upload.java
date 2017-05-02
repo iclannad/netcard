@@ -59,6 +59,8 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
 
     AtomicInteger taskFlag = new AtomicInteger(0);
 
+    public static boolean isStart = true;
+
     public Upload(final String IP, final int PORT, final String filename, String path, int position, BlinkNetCardCall call) {
 
         this.IP = IP;
@@ -142,7 +144,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                 byte[] buf = null;
                 //id为0说明现在请求处于请求上传的状态，如果id为1说明现在处于正在上传状态
                 int id = 0;
-                while (threadArray[k]) {
+                while (threadArray[k] && isStart) {
                     if (socket == null) {
                         try {
                             socket = new Socket(IP, PORT);
@@ -403,6 +405,14 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
      */
     @Override
     public void TimerCall() {
+        if (isStart == false) {
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+            }
+            return;
+        }
+
         //totalSpeed();
         // 我写的代码
         int totalSize = 0;

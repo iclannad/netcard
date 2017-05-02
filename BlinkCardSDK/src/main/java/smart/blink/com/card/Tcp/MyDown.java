@@ -36,6 +36,14 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
 
     private static int failedCount = 0;
 
+    public static boolean isStart = true;
+
+    public static void releaseResource() {
+        reqBlockId = 0;
+        lastReqBlockId = 0;
+        failedCount = 0;
+    }
+
     /**
      * 构造方法
      *
@@ -66,6 +74,10 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
 
 
     private void startDownLoad() {
+        if (!isStart) {
+            return;
+        }
+
         //Log.e(TAG, "init: 文件的名字是:" + filename);
         byte[] buffer = SendTools.DownloadingOldVersion(reqBlockId, filename);
         new TcpSocket(BlinkWeb.zIP, BlinkWeb.zPORT, buffer, Protocol.Downloading, this);
@@ -130,6 +142,14 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
      */
     @Override
     public void TimerCall() {
+        if (!isStart) {
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+            }
+            return;
+        }
+
         DownLoadingRsp downLoadingRsp = new DownLoadingRsp();
         downLoadingRsp.setBlockId(reqBlockId);
         downLoadingRsp.setTotolSize(wantblock);

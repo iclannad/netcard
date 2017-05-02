@@ -24,10 +24,13 @@ import com.google.gson.FieldNamingStrategy;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import smart.blink.com.card.Tcp.MyDown;
 import smart.blink.com.card.Tcp.MyUpload;
 import smart.blink.com.card.Tcp.TcpSocket;
 import smart.blink.com.card.Tool.ReqDownUp;
+import smart.blink.com.card.Udp.Down;
 import smart.blink.com.card.Udp.UdpSocket;
+import smart.blink.com.card.Udp.Upload;
 
 /**
  * Created by Ruanjiahui on 2017/1/6.
@@ -169,6 +172,16 @@ public class Comment {
         ReqDownUp.releaseResource();
         MyDownUtils.releaseResource();
         MyUploadUtils.releaseResource();
+
+        // 如果释放资源的时候有任务正在下载，就关闭
+        Down.isStart = false;
+        Upload.isStart = false;
+
+        MyDown.isStart = false;
+        MyDown.releaseResource();
+
+        MyUpload.isStart = false;
+        MyUpload.releaseResource();
 
     }
 }
