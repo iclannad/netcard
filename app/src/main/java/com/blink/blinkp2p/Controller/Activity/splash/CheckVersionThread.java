@@ -90,6 +90,7 @@ public class CheckVersionThread {
 
             @Override
             public void onSuccess(ResponseInfo<String> arg0) {
+                // 解析数据
                 // version
                 String[] version = arg0.result
                         .split("<version>");
@@ -139,6 +140,7 @@ public class CheckVersionThread {
                     @Override
                     public void onSuccess(ResponseInfo<File> responseInfo) {
                         //LG.i(getClass(), "下载成功");
+                        // 发送安装程序的意图
                         Intent intent = new Intent();
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.setAction(Intent.ACTION_VIEW);

@@ -109,11 +109,19 @@ public class Tools {
         return true;
     }
 
+    /**
+     * 判断是否第一次进入程序
+     *
+     * @param context
+     * @return
+     */
     public static boolean isFirstRunApplication(Context context) {
+        // 判断配置文件在不在
         if (getProperties(context, FirstRunApplication)) {
             if (ReadProperties(context, FirstRunApplication, "FirstRun").equals(getVersionName(context)))
                 return false;
         }
+        //　如果不存在就添加配置文件或者更新配置文件的值
         WriteProperties(context, FirstRunApplication, "FirstRun", getVersionName(context));
         return true;
     }
@@ -261,7 +269,6 @@ public class Tools {
     }
 
     //版本名
-
     public static String getVersionName(Context context) {
         return PackageInfo(context).versionName;
     }

@@ -969,6 +969,38 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
 
         Log.e(TAG, "myError: ===" + position);
 
+        if (position == ActivityCode.WANT) {
+            Log.e(TAG, "myError: 连接主服务器失败");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //打洞失败则申请子服务器
+                    MyPersonalProgressDIalog.getInstance(MainActivity.this).dissmissProgress();
+                    Toast.makeText(MainActivity.this, "访问主服务器失败", Toast.LENGTH_SHORT).show();
+
+                    HeartController.stopHeart();
+
+                    MyApplication.wantCount.set(0);
+                    MyApplication.helloCount.set(0);
+
+                    Log.e(TAG, "run: 重新弹出重连接对话框");
+                    // 弹出重新连接的对话框
+                    try {
+                        ReconnectDialog.CreateYesNoDialog(context, context
+                                        .getResources().getString(R.string.askbreak), context
+                                        .getResources().getString(R.string.askreconnect),
+                                context.getResources().getString(R.string.login),
+                                context.getResources().getString(R.string.reconnect),
+                                MainActivity.heartHandler);
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+        }
+
         if (position == ActivityCode.HELLO) {
             runOnUiThread(new Runnable() {
                 @Override

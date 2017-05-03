@@ -135,28 +135,11 @@ public class SplashActivity extends BaseActivity {
         }
         /**-----------------------------------------------------------------------------------------*/
 
-
+        //　设置皮肤
         int skinValue = SharedPrefsUtils.getIntegerPreference(this, SkinConfig.SKIN_CONFIG, SkinConfig.SKIN_DEFAULT_VALUE);
         splash_linear.setBackgroundResource(skinValue);
         setTopColor(skinValue);
 
-//        timer = new Timer();
-//        timer.schedule(new TimerTask() {
-//            @Override
-//            public void run() {
-//                if (isFirstEnter) {
-//                    Intent intent = new Intent(SplashActivity.this, LeadActivity.class);
-//                    startActivity(intent);
-//                    SplashActivity.this.finish();
-//                } else {
-//                    Intent intent = new Intent(SplashActivity.this, Login.class);
-//                    startActivity(intent);
-//                    SplashActivity.this.finish();
-//                }
-//
-//                timer.cancel();
-//            }
-//        }, 1500, 1500);
 
         // 创建需要的文件夹
         String downFileDir = SharedPrefsUtils.getStringPreference(this, Comment.DOWNFILE);
