@@ -154,6 +154,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                         } catch (IOException e) {
                             BlinkLog.Error(e.toString());
                         }
+
                         try {
                             socket.setSoTimeout(30000);
                         } catch (SocketException e) {
@@ -164,7 +165,9 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                     byte[] buffer = null;
 
                     if (id == 0) {
+
                         buffer = SendTools.Uploading(k, filename);
+
 //                        BlinkLog.Print(Arrays.toString(buffer));
                     } else {
                         // 此处应该开启一个定时器
@@ -183,7 +186,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
 //                                }
 //                            }
 //                        }, 20000);
-
+                        Log.e(TAG, "run: UploadReq uploadReq = fileRead.Read(j, k);");
                         // 从文件中读取一个数据对象
                         UploadReq uploadReq = fileRead.Read(j, k);
                         buffer = SendTools.Uploading(uploadReq);
@@ -202,9 +205,11 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                         if (buf[0] == Protocol.UploadingReviced) {
                             BlinkLog.Print(Arrays.toString(buf));
                             //上传请求验证成功，将id转成1
+                            Log.e(TAG, "buf[0] == Protocol.UploadingReviced");
                             id = 1;
                         }
                         if (buf[0] == Protocol.UploadingReviced1) {
+                            Log.e(TAG, "run: buf[0] == Protocol.UploadingReviced1");
                             // 此处关闭定时器
                             //Log.e(TAG, "run: 接收数据:buffer[0]" + buf[0] + "   filename===" + filename + "   flag===" + flag);
 //                            if (uploadingTimer != null) {
@@ -373,13 +378,16 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
 
     @Override
     public void onSuccess(int position, MainObject mainObject) {
+        Log.e(TAG, "onSuccess: 进来 poition===" + position + "   count===" + count);
         if (position == count) {
+            Log.e(TAG, "onSuccess: countArray[position]===" + countArray[position] + "   size % downSize===" + size % downSize);
             if (countArray[position] == size % downSize) {
                 SendClose(position);
                 threadArray[position] = false;
                 BlinkLog.Print("上传完成");
                 CloseSocket(position);
                 WaitStart();
+                Log.e(TAG, "onSuccess: 上传完成");
             }
         } else {
             if (countArray[position] == downSize) {
@@ -387,6 +395,7 @@ public class Upload implements BlinkNetCardCall, TimerTaskCall {
                 threadArray[position] = false;
                 CloseSocket(position);
                 BlinkLog.Print("第" + position + "个链路上传完成");
+                Log.e(TAG, "onSuccess: 第" + position + "个链路上传完成");
                 WaitStart();
             }
         }

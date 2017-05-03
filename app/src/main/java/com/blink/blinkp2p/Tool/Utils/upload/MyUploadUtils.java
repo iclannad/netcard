@@ -41,6 +41,7 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
     public static boolean isNeedMonitorTask = false;
     public static DownUpCallback downUpCallback;
 
+    // 当重新登录时需要释放资源
     public static void releaseResource() {
         taskCount.set(0);
         context = null;
@@ -51,6 +52,7 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
     }
 
 
+    // 传输界面中每个下载任务条目的数据
     private static Object getItem(int id, int status, Drawable drawable, String title, String speed, String present, int progress) {
         Item item = new Item();
         item.setListImage(drawable);
@@ -88,6 +90,9 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
         return allUploadingTask;
     }
 
+    /**
+     * 构造方法
+     */
     public MyUploadUtils(Context context) {
         this.context = context;
 
@@ -104,17 +109,15 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
             maintenceThread.start();
         }
 
-        //　停止心跳线程
-        //HeartController.stopHeart();
     }
 
     @Override
     public void run() {
 //        Log.e(TAG, "run: isNeedMonitorTask===" + isNeedMonitorTask);
         while (isNeedMonitorTask) {
-//            Log.e(TAG, "run: taskCount.get()===" + taskCount.get());
-//            Log.e(TAG, "run: Comment.uploadlist.size()===" + Comment.uploadlist.size());
-//            Log.e(TAG, "run: currentTaskCount.get()===" + currentTaskCount.get());
+            Log.e(TAG, "run: taskCount.get()===" + taskCount.get());
+            Log.e(TAG, "run: Comment.uploadlist.size()===" + Comment.uploadlist.size());
+            Log.e(TAG, "run: currentTaskCount.get()===" + currentTaskCount.get());
             while (taskCount.get() < Comment.uploadlist.size() && currentTaskCount.get() < 5) {
 
                 if (MyUploadThread.isAllowReqUploadStart) {
@@ -129,6 +132,7 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
                         continue;
                     }
 
+                    // 更新任务的状态
                     uploadTask.status = 1;
                     DownorUpload downorUpload = new DownorUpload();
                     downorUpload.setName(uploadTask.name);
@@ -156,39 +160,11 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
                 }
             }
 
-//                UploadTask uploadTask = Comment.uploadlist.get(taskCount.get());
-//
-//                // 如果当前任务已经被删除的话就不需求开启下载
-//                if (uploadTask.status == 2) {
-//                    taskCount.getAndIncrement();
-//                    continue;
-//                }
-//
-//                uploadTask.status = 1;
-//                DownorUpload downorUpload = new DownorUpload();
-//                downorUpload.setName(uploadTask.name);
-//                downorUpload.setPath(uploadTask.path);
-//
-//                // 上传任务的逻辑
-//                new MyUploadThread(uploadTask.id, downorUpload, context, this, this).start();
-//
-//                // 任务标记　自加
-//                taskCount.getAndIncrement();
-//                currentTaskCount.getAndIncrement();
-//
-//                // 开启一个上传任务的逻辑
-//                try {
-//                    Thread.sleep(200);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            try {
-//                Thread.sleep(500);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         }
         maintenceThread = null;
@@ -280,6 +256,7 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
         Log.e(TAG, "Uploading: uploadReq.getFilename()===" + uploadReq.getFilename() + "   present===" + present);
         uploadTask.progress = present;
 
+        // 传输列表中刷新任务
         if (downUpCallback != null) {
             downUpCallback.Call(ActivityCode.Upload, null);
         }
