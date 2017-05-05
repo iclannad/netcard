@@ -14,6 +14,7 @@ import com.blink.blinkp2p.Controller.NetCardController;
 
 import com.blink.blinkp2p.Tool.System.Tools;
 import com.blink.blinkp2p.Tool.Utils.UIHelper;
+import com.blink.blinkp2p.View.MyPersonalProgressDIalog;
 import com.blink.blinkp2p.heart.HeartController;
 
 import smart.blink.com.card.bean.FeedbackRsp;
@@ -94,6 +95,7 @@ public class FeedbackActivity extends MyBaseActivity implements HandlerImpl {
                     FeedbackActivity.this.getResources().getString(R.string.error_feedback_islen));
             return;
         }
+        MyPersonalProgressDIalog.getInstance(this).setContent("正提交反馈...").showProgressDialog();
         HeartController.stopHeart();
         NetCardController.FEEDBACK(contacts, text, this);
 
@@ -109,6 +111,7 @@ public class FeedbackActivity extends MyBaseActivity implements HandlerImpl {
     public void myHandler(int position, Object object) {
         Log.e(TAG, "myHandler: ");
         if (position == ActivityCode.Feedback) {
+            MyPersonalProgressDIalog.getInstance(this).dissmissProgress();
             FeedbackRsp feedbackRsp = (FeedbackRsp) object;
 
             HeartController.startHeart();
@@ -119,7 +122,7 @@ public class FeedbackActivity extends MyBaseActivity implements HandlerImpl {
             } else {
                 //Log.e(TAG, "myHandler: " + "提交失败");
                 UIHelper.ToastMessageNetError(FeedbackActivity.this,
-                        FeedbackActivity.this.getResources().getString(R.string.submit_feedback_success));
+                        FeedbackActivity.this.getResources().getString(R.string.submit_feedback_failed));
             }
         }
 
@@ -135,8 +138,15 @@ public class FeedbackActivity extends MyBaseActivity implements HandlerImpl {
     public void myError(int position, int error) {
         if (position == ActivityCode.Feedback) {
             HeartController.startHeart();
-            UIHelper.ToastSetSuccess(FeedbackActivity.this,
-                    FeedbackActivity.this.getResources().getString(R.string.submit_feedback_failed));
+            this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    MyPersonalProgressDIalog.getInstance(FeedbackActivity.this).dissmissProgress();
+                    UIHelper.ToastMessageNetError(FeedbackActivity.this,
+                            FeedbackActivity.this.getResources().getString(R.string.submit_feedback_failed));
+                }
+            });
+
         }
     }
 }

@@ -53,7 +53,7 @@ public class NetCardController {
 
             @Override
             public void onFail(int error) {
-                //handler.myError(ActivityCode.WANT, error);
+                handler.myError(ActivityCode.Feedback, error);
             }
         });
     }

@@ -66,6 +66,7 @@ public class UdpSocket {
     private static Operation pcRestartOperation;
     private static Operation lookPcFileOperation;
     private static Operation lockPcOperation;
+    private static Operation feedbackOperation;
 
 
     /**
@@ -105,7 +106,23 @@ public class UdpSocket {
     public UdpSocket(final String ip, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
         UdpSocket.position = position;
 
-        if (position == Protocol.ChangePwd) {
+        if (position == Protocol.FEEDBACK) {
+            // 修改用户密码
+            feedbackOperation = new Operation();
+            feedbackOperation.position = position;
+            feedbackOperation.call = call;
+            feedbackOperation.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (feedbackOperation.timer != null) {
+                        feedbackOperation.timer.cancel();
+                        feedbackOperation.timer = null;
+                        feedbackOperation.call.onFail(feedbackOperation.position);
+                        feedbackOperation = null;
+                    }
+                }
+            }, 8000);
+        } else if (position == Protocol.ChangePwd) {
             // 修改用户密码
             changeUserPwdOperatioin = new Operation();
             changeUserPwdOperatioin.position = position;
@@ -121,7 +138,6 @@ public class UdpSocket {
                     }
                 }
             }, 6000);
-
         } else if (position == Protocol.SetUploadDir) {
             // 设置上传目录
             setUploadDirOperatioin = new Operation();
@@ -301,6 +317,12 @@ public class UdpSocket {
                             new RevicedTools(changeUserPwdOperatioin.position, buffer, length, changeUserPwdOperatioin.call);
                             changeUserPwdOperatioin = null;
                         }
+                    } else if (buffer[0] == 10) {
+                        // 提交反馈成功
+                        if (feedbackOperation != null) {
+                            new RevicedTools(feedbackOperation.position, buffer, length, feedbackOperation.call);
+                            feedbackOperation = null;
+                        }
                     } else {
                         new RevicedTools(position, buffer, length, UdpSocket.call);
                     }
@@ -339,7 +361,9 @@ public class UdpSocket {
         }
 
         // 开启一个定时器
-        if (position == Protocol.ChangePwd) {
+        if (position == Protocol.FEEDBACK) {
+
+        } else if (position == Protocol.ChangePwd) {
 
         } else if (position == Protocol.SetUploadDir) {
 
@@ -423,7 +447,15 @@ public class UdpSocket {
         synchronized (this) {
 
             // 如果接收数据成功的话就取消定时器
-            if (buffer[0] == 82) {
+            if (buffer[0] == 10) {
+                // 提交反馈
+                if (feedbackOperation != null) {
+                    if (feedbackOperation.timer != null) {
+                        feedbackOperation.timer.cancel();
+                        feedbackOperation.timer = null;
+                    }
+                }
+            } else if (buffer[0] == 82) {
                 // 修改用户密码
                 if (changeUserPwdOperatioin != null) {
                     if (changeUserPwdOperatioin.timer != null) {
