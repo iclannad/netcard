@@ -184,7 +184,6 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
             }
 
         }
-
         maintenceThread = null;
     }
 
