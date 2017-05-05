@@ -590,6 +590,7 @@ public class Login extends BaseActivity implements HandlerImpl {
             switch (wantRsp.getSuccess()) {
                 case 0:
                     //继续打洞
+                    Log.e(TAG, "myHandler: 继续打洞");
                     NetCardController.HELLO(this);
                     break;
                 case 1:

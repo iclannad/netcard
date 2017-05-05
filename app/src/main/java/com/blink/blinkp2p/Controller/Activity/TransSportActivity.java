@@ -246,6 +246,11 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
     public void delete(int position, int type) {
         Log.e(TAG, "delete: position==" + position);
         if (type == Comment.DOWNLOAD) {
+            if (position >= Comment.downlist.size()) {
+
+                return;
+            }
+
             DownTask downTask = Comment.downlist.get(position);
             // 标记当前的任务已经下载完毕
             if (downTask.status == 1) {
@@ -255,6 +260,11 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
             downTask.status = 2;
         }
         if (type == Comment.UPLOAD) {
+            if (position >= Comment.uploadlist.size()) {
+
+                return;
+            }
+
             UploadTask uploadTask = Comment.uploadlist.get(position);
             if (uploadTask.status == 1) {
                 Toast.makeText(this, "不能删除正在进行的任务。", Toast.LENGTH_SHORT).show();

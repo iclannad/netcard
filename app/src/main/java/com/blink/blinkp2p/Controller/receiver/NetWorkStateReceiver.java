@@ -55,7 +55,7 @@ public class NetWorkStateReceiver extends BroadcastReceiver {
         // 本次网络变换广播事件处理完成之前不会再处理类似事件
         Comment.isReceivedBroadCast = false;
 
-        // 3s内只能接收一次网络变化请求
+        // 5s内只能接收一次网络变化请求
         if (timer == null) {
             this.context = context;
 
@@ -109,9 +109,12 @@ public class NetWorkStateReceiver extends BroadcastReceiver {
                     e.printStackTrace();
                 }
             } else {
-                isFirstTimer = true;
-                TcpSocket.closeTcpSocket();
-                UdpSocket.closeUdpSocket();
+                //isFirstTimer = true;
+
+                Comment.releaseSystemResource();
+//                TcpSocket.closeTcpSocket();
+//                UdpSocket.closeUdpSocket();
+
                 // 重新跳到登录界面
                 context.startActivity(new Intent(context, Login.class));
                 MyApplication.getInstance().exit();

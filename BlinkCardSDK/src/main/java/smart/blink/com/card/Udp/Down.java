@@ -297,14 +297,14 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                             // 将会发送下载块数据小包数据包
                             byte[] buffer = SendTools.Downloading();
 
-                            Log.e(TAG, "run: 发送数据：buffer[0]" + buffer[0] + "   downLoadingRsp.getFilename()===" + downLoadingRsp.getFilename() + "   flag===" + flag);
+                            //Log.e(TAG, "run: 发送数据：buffer[0]" + buffer[0] + "   downLoadingRsp.getFilename()===" + downLoadingRsp.getFilename() + "   flag===" + flag);
                             out.write(buffer);
                             out.flush();
                         }
 
                         //接收数据
                         int length = in.read(buf);
-                        Log.e(TAG, "run: 接收数据：buf[0]==" + buf[0] + "   downLoadingRsp.getFilename()===" + downLoadingRsp.getFilename() + "   flag===" + flag);
+                        //Log.e(TAG, "run: 接收数据：buf[0]==" + buf[0] + "   downLoadingRsp.getFilename()===" + downLoadingRsp.getFilename() + "   flag===" + flag);
                         if (buf[0] == 0) {
                             return;
                         }
@@ -329,6 +329,7 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                     } catch (IOException e) {
                         Log.e(TAG, "run: IOException e" + "   downLoadingRsp.getFilename()===" + downLoadingRsp.getFilename() + "   flag===" + flag);
                         BlinkLog.Error(e.toString());
+                        Log.e(TAG, "run: e===" + e.toString());
                         //socket异常断开
 //                        if (ErrorNo.SocketError.equals(e.getMessage()) || ErrorNo.ReadError.equals(e.getMessage())) {
 //                            Log.e(TAG, "run: 网络异常断开");
@@ -389,8 +390,6 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                             BlinkLog.Error(e.toString());
                         }
 
-
-                        // 当网络异常时释放所有的资源----------------------------------------
                     }
                 }
             }

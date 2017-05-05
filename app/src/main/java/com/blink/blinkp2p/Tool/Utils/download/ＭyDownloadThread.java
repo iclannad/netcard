@@ -141,6 +141,8 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
             ＭyDownloadThread.isAllowReqDownloadStart = true;
             MyUploadThread.isAllowReqUploadStart = true;
 
+            Log.e(TAG, "myError: position == ActivityCode.DownloadStart");
+
             Activity activity = (Activity) context;
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -153,6 +155,8 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
         }
 
         if (position == ActivityCode.Downloading) {
+            Log.e(TAG, "myError: position == ActivityCode.Downloading");
+
             Activity activity = (Activity) context;
             activity.runOnUiThread(new Runnable() {
                 @Override

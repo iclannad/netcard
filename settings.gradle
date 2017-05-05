@@ -1,1 +1,1 @@
-include ':app',':BlinkCardSDK' , ':UI_SDK',':DATA_SDK',':Widgets'
+include ':app', ':BlinkCardSDK', ':UI_SDK', ':DATA_SDK', ':Widgets'

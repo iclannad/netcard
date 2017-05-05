@@ -1,5 +1,7 @@
 package com.blink.blinkp2p.Controller.Activity.slidingmenu.settings;
 
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,6 +17,7 @@ import com.blink.blinkp2p.Tool.Adapter.DeviceGridViewAdapter;
 import com.blink.blinkp2p.Tool.Utils.SharedPrefsUtils;
 import com.blink.blinkp2p.Tool.Utils.UIHelper;
 import com.blink.blinkp2p.View.MGridView;
+import com.blink.blinkp2p.View.ReconnectDialog;
 
 /**
  * Created by Administrator on 2017/3/20.

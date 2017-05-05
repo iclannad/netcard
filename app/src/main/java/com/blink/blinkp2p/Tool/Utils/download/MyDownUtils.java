@@ -174,37 +174,7 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
                         e.printStackTrace();
                     }
                 }
-//                Log.e(TAG, "run: taskCount===" + taskCount + " Comment.downlist.size()===" + Comment.downlist.size());
-//                final DownTask downTask = Comment.downlist.get(taskCount.get());
-//
-//                // 如果当前任务已经在任务列表中删除的话，就不开启下一个任务
-//                if (downTask.status == 2) {
-//                    // 任务标记　自加
-//                    //taskCount++;
-//                    taskCount.getAndIncrement();
-//                    continue;
-//                }
-//
-//                downTask.status = 1;
-//                DownorUpload downorUpload = new DownorUpload();
-//                downorUpload.setName(downTask.name);
-//                downorUpload.setFLAG(DownorUpload.DOWN);
-//                downorUpload.setPath(downTask.path);
-//
-//                // 开启一个下载任务的逻辑
-//                new ＭyDownloadThread(downTask.id, downorUpload, context, this, this).start();
-//
-//                //currentTaskCount++;
-//                currentTaskCount.getAndIncrement();
-//                // 任务标记　自加
-//                //taskCount++;
-//                taskCount.getAndIncrement();
-//
-//                try {
-//                    Thread.sleep(200);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
+
             }
 
             try {
@@ -236,7 +206,8 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
         //currentTaskCount--;
         currentTaskCount.getAndDecrement();
         // currentTaskCount == 0
-        if (currentTaskCount.get() == 0) {
+        // 正在进行的任务                      已经开启的任务
+        if (currentTaskCount.get() == 0 && taskCount.get() >= Comment.downlist.size()) {
             Activity activity = (Activity) MyDownUtils.context;
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -284,7 +255,7 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
         DownTask downTask = Comment.downlist.get(position);
         downTask.speed = downLoadingRsp.getSpeed();
 
-        Log.e(TAG, "downloading: 下载中的回调：" + downLoadingRsp.getFilename());
+        //Log.e(TAG, "downloading: 下载中的回调：" + downLoadingRsp.getFilename());
 
         // 当前下载的进行
         DecimalFormat df = new DecimalFormat("0.00");
