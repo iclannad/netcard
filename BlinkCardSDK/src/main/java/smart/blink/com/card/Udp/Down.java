@@ -331,12 +331,6 @@ public class Down implements BlinkNetCardCall, TimerTaskCall {
                         BlinkLog.Error(e.toString());
                         Log.e(TAG, "run: e===" + e.toString());
                         //socket异常断开
-//                        if (ErrorNo.SocketError.equals(e.getMessage()) || ErrorNo.ReadError.equals(e.getMessage())) {
-//                            Log.e(TAG, "run: 网络异常断开");
-//                            CloseTimer();
-//                            call.onFail(ErrorNo.ErrorSocket);
-//                            return;
-//                        }
                         if (timer != null) {
                             timer.cancel();
                             timer = null;

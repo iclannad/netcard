@@ -100,6 +100,31 @@ public class TcpSocket {
 
     }
 
+    public static void closeTcpSocketWithoutHandler() {
+        if (in != null) {
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG, "closeTcpSocket: in error");
+            }
+            in = null;
+        }
+
+        if (socket != null) {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG, "closeTcpSocket: socket error");
+            }
+            socket = null;
+        }
+
+        //handler = null;
+        isOpen = false;
+    }
+
     /**
      * 封装tcp连接
      *
@@ -370,7 +395,8 @@ public class TcpSocket {
                         readThread.start();
                     } catch (IOException e) {
                         BlinkLog.Error(e.toString());
-                        closeTcpSocket();
+                        //closeTcpSocket();
+                        closeTcpSocketWithoutHandler();
                     }
                 }
 
@@ -452,7 +478,8 @@ public class TcpSocket {
                 out.flush();
             } catch (IOException e) {
                 BlinkLog.Error(e.toString());
-                closeTcpSocket();
+                //closeTcpSocket();
+                closeTcpSocketWithoutHandler();
                 Log.e(TAG, "Send: closeTcpSocket()");
 //                Log.e(TAG, "Send: TcpSocket占用的资源");
             }
@@ -469,7 +496,8 @@ public class TcpSocket {
         } catch (IOException e) {
             BlinkLog.Error(e.toString());
             // 释放资源
-            closeTcpSocket();
+            //closeTcpSocket();
+            closeTcpSocketWithoutHandler();
             Log.e(TAG, "Write: closeTcpSocket()");
 //            Log.e(TAG, "Write: 服务器挂了");
         }

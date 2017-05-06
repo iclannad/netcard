@@ -64,7 +64,12 @@ public class UdpSocket {
     private static Operation changPcPwdOperation;
     private static Operation pcShutdownOperation;
     private static Operation pcRestartOperation;
+
     private static Operation lookPcFileOperation;
+    private static int lookPcFileFailedCount = 0;
+    private static byte[] lookPcFileBuffer;
+    private static boolean isReceivedLookPcFileData = true;
+
     private static Operation lockPcOperation;
     private static Operation feedbackOperation;
 
@@ -220,20 +225,47 @@ public class UdpSocket {
             }, 6000);
         } else if (position == Protocol.LookFileMsg) {
             //　查看电脑文件
+            lookPcFileFailedCount = 0;
+            lookPcFileBuffer = buffer;
+            isReceivedLookPcFileData = true;
+
             lookPcFileOperation = new Operation();
             lookPcFileOperation.position = position;
             lookPcFileOperation.call = call;
             lookPcFileOperation.timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if (lookPcFileOperation.timer != null) {
+                    // 失败次数 ++
+                    lookPcFileFailedCount++;
+                    Log.e(TAG, "run: lookPcFileFailedCount===" + lookPcFileFailedCount);
+                    isReceivedLookPcFileData = false;
+
+                    if (lookPcFileOperation.timer != null && lookPcFileFailedCount > 2) {
+                        lookPcFileFailedCount = 0;
+                        lookPcFileBuffer = null;
+
                         lookPcFileOperation.timer.cancel();
                         lookPcFileOperation.timer = null;
                         lookPcFileOperation.call.onFail(lookPcFileOperation.position);
                         lookPcFileOperation = null;
+                        return;
                     }
+
+                    // 再次请求访问电脑文件
+                    thread = null;
+                    thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (lookPcFileBuffer != null) {
+                                Send(ip, PORT, lookPcFileBuffer);
+                            }
+                        }
+                    });
+                    isReceivedLookPcFileData = true;
+                    thread.start();
+
                 }
-            }, 6000);
+            }, 6000,6000);
         } else if (position == Protocol.LOOKPC) {
             //　PC锁屏
             lockPcOperation = new Operation();
@@ -271,7 +303,7 @@ public class UdpSocket {
                         new RevicedTools(-1, buffer, length, heartcall);
                     } else if (buffer[0] == 5) {
                         // 查看电脑文件
-                        if (lookPcFileOperation != null) {
+                        if (lookPcFileOperation != null && isReceivedLookPcFileData) {
                             new RevicedTools(lookPcFileOperation.position, buffer, length, lookPcFileOperation.call);
                             lookPcFileOperation = null;
                         }
@@ -509,6 +541,9 @@ public class UdpSocket {
                     if (lookPcFileOperation.timer != null) {
                         lookPcFileOperation.timer.cancel();
                         lookPcFileOperation.timer = null;
+
+                        lookPcFileFailedCount = 0;
+                        lookPcFileBuffer = null;
                     }
                 }
             } else if (buffer[0] == 7) {

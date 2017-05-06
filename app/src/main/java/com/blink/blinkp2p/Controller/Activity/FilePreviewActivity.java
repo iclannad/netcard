@@ -177,6 +177,7 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
             HeartController.stopHeart();
 
             MyPersonalProgressDIalog.getInstance(this).setContent("正读取文件").showProgressDialog();
+
             //获取电脑路径
             NetCardController.LookFileMsg(mCurrentPath, this);
         } else if (type == ActivityCode.PhoneFile) {
@@ -260,7 +261,7 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                     // 将加入下载任务列表
                     Comment.downlist.add(downTask);
 
-                    Log.e(TAG, "Click: Comment.downlist===" + Comment.downlist );
+                    Log.e(TAG, "Click: Comment.downlist===" + Comment.downlist);
                 } else {
                     DownorUpload downorUpload = new DownorUpload();
                     String[] filename = list.get(seArray.get(i)).getA().split("/");
@@ -544,6 +545,7 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                 control = lookFileRsp.getProtrolList();
 
                 if (control.size() == 1 && control.get(0) == ActivityCode.PAN) {
+                    Log.e(TAG, "myHandler: control.size()===" + control.size());
                     for (int i = 0; i < name.size(); i++) {
                         FileListAdapter.Pair<String, Integer> pair = new FileListAdapter.Pair<>();
                         pair.setA(name.get(i) + ":");

@@ -257,7 +257,23 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
                 Toast.makeText(this, "不能删除正在进行的任务。", Toast.LENGTH_SHORT).show();
                 return;
             }
+            // 将当前的任务标志已完成
             downTask.status = 2;
+
+            // 当任务下载完毕的时候，应该更新当前的任务列表
+            if (BlinkWeb.STATE == BlinkWeb.TCP) {
+                ArrayList<Object> downloadingTask;
+                MyTcpUploadUtils.setProgress(null);
+                MyTcpDownUtils.setProgress(this);
+                downloadingTask = MyTcpDownUtils.getAllDownloadingTask();
+
+                if (adapter == null) {
+                    adapter = new DownUpAdapter(context, downloadingTask, this, Comment.DOWNLOAD);
+                    taskListView.setAdapter(adapter);
+                } else
+                    adapter.Redata(downloadingTask, Comment.DOWNLOAD);
+            }
+
         }
         if (type == Comment.UPLOAD) {
             if (position >= Comment.uploadlist.size()) {
@@ -270,7 +286,33 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
                 Toast.makeText(this, "不能删除正在进行的任务。", Toast.LENGTH_SHORT).show();
                 return;
             }
+            // 将当前的任务标志已完成
             uploadTask.status = 2;
+
+            // 更新当前的任务列表
+            if (BlinkWeb.STATE == BlinkWeb.TCP) {
+                final ArrayList<Object> allUploadingTask;
+                MyTcpUploadUtils.setProgress(this);
+                MyTcpDownUtils.setProgress(null);
+                allUploadingTask = MyTcpUploadUtils.getAllUploadingTask();
+                if (adapter == null) {
+                    adapter = new DownUpAdapter(context, allUploadingTask, this, Comment.UPLOAD);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            taskListView.setAdapter(adapter);
+                        }
+                    });
+
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.Redata(allUploadingTask, Comment.UPLOAD);
+                        }
+                    });
+                }
+            }
         }
     }
 }

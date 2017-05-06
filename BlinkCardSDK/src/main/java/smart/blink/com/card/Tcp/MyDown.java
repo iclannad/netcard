@@ -155,6 +155,7 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
         downLoadingRsp.setTotolSize(wantblock);
 
         String speed = (double) (reqBlockId - lastReqBlockId) + "k/s";
+        Log.e(TAG, "TimerCall: tcp download speed==" + speed);
         lastReqBlockId = reqBlockId;
         downLoadingRsp.setFilename(transport_filename);
         downLoadingRsp.setSpeed(speed);

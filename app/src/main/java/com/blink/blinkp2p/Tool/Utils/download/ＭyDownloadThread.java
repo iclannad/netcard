@@ -41,6 +41,8 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
     private Timer downloadingstarttimer;
     public static boolean isAllowReqDownloadStart = true;
 
+    private static int failedCount = 0;
+
 
     // 构造方法
     public ＭyDownloadThread(int position, DownorUpload downorUpload, Context context, ThreadHandlerImpl threadHandler, DownloadingImpl downloading) {
@@ -60,7 +62,7 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
                     ＭyDownloadThread.this.myError(ActivityCode.DownloadStart, -1);
                 }
             }
-        }, 20000);
+        }, 10000);
 
     }
 
@@ -79,6 +81,8 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
     @Override
     public void myHandler(int position, Object object) {
         if (position == ActivityCode.DownloadStart) {
+            failedCount = 0;
+
             ＭyDownloadThread.isAllowReqDownloadStart = true;
             MyUploadThread.isAllowReqUploadStart = true;
 
@@ -138,25 +142,55 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
     @Override
     public void myError(int position, int error) {
         if (position == ActivityCode.DownloadStart) {
-            ＭyDownloadThread.isAllowReqDownloadStart = true;
-            MyUploadThread.isAllowReqUploadStart = true;
+            failedCount++;
+            Log.e(TAG, "myError: failedCount===" + failedCount);
+            if (failedCount > 2) {
+                ＭyDownloadThread.isAllowReqDownloadStart = true;
+                MyUploadThread.isAllowReqUploadStart = true;
 
-            Log.e(TAG, "myError: position == ActivityCode.DownloadStart");
+                Activity activity = (Activity) context;
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, "任务下载失败:" + downorUpload.getName(), Toast.LENGTH_SHORT).show();
+                        threadHandler.finishTask(ＭyDownloadThread.this.position);
+                    }
+                });
 
-            Activity activity = (Activity) context;
-            activity.runOnUiThread(new Runnable() {
+                failedCount = 0;
+                return;
+            }
+
+            // 再次请求开始下载，开启定时器
+            downloadingstarttimer = new Timer();
+            downloadingstarttimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    Toast.makeText(context, "任务下载失败:" + downorUpload.getName(), Toast.LENGTH_SHORT).show();
-                    threadHandler.finishTask(ＭyDownloadThread.this.position);
+                    if (downloadingstarttimer != null) {
+                        downloadingstarttimer.cancel();
+                        downloadingstarttimer = null;
+                        ＭyDownloadThread.this.myError(ActivityCode.DownloadStart, -1);
+                    }
                 }
-            });
+            }, 10000);
+            NetCardController.DownloadStart(downorUpload.getPath(), this);
+//            ＭyDownloadThread.isAllowReqDownloadStart = true;
+//            MyUploadThread.isAllowReqUploadStart = true;
+//
+//            Log.e(TAG, "myError: position == ActivityCode.DownloadStart");
+//
+//            Activity activity = (Activity) context;
+//            activity.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Toast.makeText(context, "任务下载失败:" + downorUpload.getName(), Toast.LENGTH_SHORT).show();
+//                    threadHandler.finishTask(ＭyDownloadThread.this.position);
+//                }
+//            });
 
         }
 
         if (position == ActivityCode.Downloading) {
-            Log.e(TAG, "myError: position == ActivityCode.Downloading");
-
             Activity activity = (Activity) context;
             activity.runOnUiThread(new Runnable() {
                 @Override

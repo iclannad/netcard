@@ -125,6 +125,10 @@ public class ＭyTcpDownloadThread implements HandlerImpl {
     @Override
     public void myError(int position, int error) {
         if (position == ActivityCode.DownloadStart) {
+
+
+
+
             Activity activity = (Activity) context;
             activity.runOnUiThread(new Runnable() {
                 @Override

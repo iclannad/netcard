@@ -55,6 +55,13 @@ public class MyRevicedTools {
         //获取实际的数据
         //byte[] msg = new byte[Integer.parseInt(Size)];
         byte[] msg = new byte[fileSize];
+
+        // 数组越界，直接失败
+        if ((msg.length - 1 + 376) >= buffer.length) {
+            call.onFail(ErrorNo.ErrorCheck);
+            return;
+        }
+
         for (int i = 0; i < msg.length; i++)
             msg[i] = buffer[376 + i];
 

@@ -51,6 +51,8 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
 
     public static DownUpCallback downUpCallback;
 
+
+
     public static void releaseResource() {
         taskCount.set(0);
         context = null;
