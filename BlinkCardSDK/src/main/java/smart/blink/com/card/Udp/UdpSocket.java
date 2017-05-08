@@ -238,14 +238,17 @@ public class UdpSocket {
                     // 失败次数 ++
                     lookPcFileFailedCount++;
                     Log.e(TAG, "run: lookPcFileFailedCount===" + lookPcFileFailedCount);
+                    Log.e(TAG, "run: 请求查看电脑文件次数 ++");
                     isReceivedLookPcFileData = false;
 
                     if (lookPcFileOperation.timer != null && lookPcFileFailedCount > 2) {
                         lookPcFileFailedCount = 0;
                         lookPcFileBuffer = null;
+                        Log.e(TAG, "run: 请求查看电脑文件失败");
 
                         lookPcFileOperation.timer.cancel();
                         lookPcFileOperation.timer = null;
+                        Log.e(TAG, "run: lookPcFileOperation.call.onFail(lookPcFileOperation.position);");
                         lookPcFileOperation.call.onFail(lookPcFileOperation.position);
                         lookPcFileOperation = null;
                         return;
@@ -265,7 +268,7 @@ public class UdpSocket {
                     thread.start();
 
                 }
-            }, 6000,6000);
+            }, 6000, 6000);
         } else if (position == Protocol.LOOKPC) {
             //　PC锁屏
             lockPcOperation = new Operation();

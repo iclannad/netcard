@@ -39,6 +39,7 @@ public class MyUploadThread extends Thread implements HandlerImpl {
     private UploadingImpl uploading;
 
     private Timer uploadingstarttimer;
+    private static int failedCount = 0;
 
     // 检测是否允许发送请求上传的数据
     // 以后尽量不这样写代码，这样的话关联太多了,尽量高内聚低耦合
@@ -68,7 +69,7 @@ public class MyUploadThread extends Thread implements HandlerImpl {
                     MyUploadThread.this.myError(ActivityCode.UploadStart, -1);
                 }
             }
-        }, 20000);
+        }, 10000);
         Log.e(TAG, "run: 开始请求上传 downorUpload.getName()===" + downorUpload.getName());
         NetCardController.UploadStart(downorUpload.getPath(), downorUpload.getName(), this);
     }
@@ -83,14 +84,16 @@ public class MyUploadThread extends Thread implements HandlerImpl {
     public void myHandler(int position, Object object) {
 
         if (position == ActivityCode.UploadStart) {
+            failedCount = 0;
+
             // 允许下次下载请求
             MyUploadThread.isAllowReqUploadStart = true;
             ＭyDownloadThread.isAllowReqDownloadStart = true;
 
-            Log.e(TAG, "myHandler: 请求上传文件成功: + downorUpload.getName()===" + downorUpload.getName());
+            //Log.e(TAG, "myHandler: 请求上传文件成功: + downorUpload.getName()===" + downorUpload.getName());
             // 有数据过来说明请求下载成功
             if (uploadingstarttimer != null) {
-                Log.e(TAG, "myHandler: 取消定时器 downorUpload.getName()===" + downorUpload.getName());
+                //Log.e(TAG, "myHandler: 取消定时器 downorUpload.getName()===" + downorUpload.getName());
                 uploadingstarttimer.cancel();
                 uploadingstarttimer = null;
             }
@@ -154,18 +157,52 @@ public class MyUploadThread extends Thread implements HandlerImpl {
     public void myError(int position, int error) {
 
         if (position == ActivityCode.UploadStart) {
-            MyUploadThread.isAllowReqUploadStart = true;
-            ＭyDownloadThread.isAllowReqDownloadStart = true;
+            failedCount++;
+            Log.e(TAG, "myError: failedCount===" + failedCount);
+            if (failedCount > 2) {
+                MyUploadThread.isAllowReqUploadStart = true;
+                ＭyDownloadThread.isAllowReqDownloadStart = true;
 
-            Log.e(TAG, "myError: ActivityCode.UploadStart 文件请求上传失败:" + downorUpload.getName());
-            Activity activity = (Activity) context;
-            activity.runOnUiThread(new Runnable() {
+                Log.e(TAG, "myError: ActivityCode.UploadStart 文件请求上传失败:" + downorUpload.getName());
+                Activity activity = (Activity) context;
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, "任务上传失败:" + downorUpload.getName(), Toast.LENGTH_SHORT).show();
+                        threadHandler.finishTask(MyUploadThread.this.position);
+                    }
+                });
+
+                failedCount = 0;
+                return;
+            }
+
+            uploadingstarttimer = new Timer();
+            uploadingstarttimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    Toast.makeText(context, "任务上传失败:" + downorUpload.getName(), Toast.LENGTH_SHORT).show();
-                    threadHandler.finishTask(MyUploadThread.this.position);
+                    if (uploadingstarttimer != null) {
+                        uploadingstarttimer.cancel();
+                        uploadingstarttimer = null;
+                        MyUploadThread.this.myError(ActivityCode.UploadStart, -1);
+                    }
                 }
-            });
+            }, 10000);
+            NetCardController.UploadStart(downorUpload.getPath(), downorUpload.getName(), this);
+
+
+//            MyUploadThread.isAllowReqUploadStart = true;
+//            ＭyDownloadThread.isAllowReqDownloadStart = true;
+//
+//            Log.e(TAG, "myError: ActivityCode.UploadStart 文件请求上传失败:" + downorUpload.getName());
+//            Activity activity = (Activity) context;
+//            activity.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Toast.makeText(context, "任务上传失败:" + downorUpload.getName(), Toast.LENGTH_SHORT).show();
+//                    threadHandler.finishTask(MyUploadThread.this.position);
+//                }
+//            });
         }
 
         if (position == ActivityCode.Upload) {

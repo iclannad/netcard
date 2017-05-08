@@ -272,6 +272,17 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
                     taskListView.setAdapter(adapter);
                 } else
                     adapter.Redata(downloadingTask, Comment.DOWNLOAD);
+            } else {
+                ArrayList<Object> downloadingTask;
+                MyUploadUtils.setProgress(null);
+                MyDownUtils.setProgress(this);
+                downloadingTask = MyDownUtils.getAllDownloadingTask();
+
+                if (adapter == null) {
+                    adapter = new DownUpAdapter(context, downloadingTask, this, Comment.DOWNLOAD);
+                    taskListView.setAdapter(adapter);
+                } else
+                    adapter.Redata(downloadingTask, Comment.DOWNLOAD);
             }
 
         }
@@ -295,6 +306,29 @@ public class TransSportActivity extends MyBaseActivity implements DownUpCallback
                 MyTcpUploadUtils.setProgress(this);
                 MyTcpDownUtils.setProgress(null);
                 allUploadingTask = MyTcpUploadUtils.getAllUploadingTask();
+                if (adapter == null) {
+                    adapter = new DownUpAdapter(context, allUploadingTask, this, Comment.UPLOAD);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            taskListView.setAdapter(adapter);
+                        }
+                    });
+
+                } else {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            adapter.Redata(allUploadingTask, Comment.UPLOAD);
+                        }
+                    });
+                }
+            } else {
+                final ArrayList<Object> allUploadingTask;
+                MyUploadUtils.setProgress(this);
+                MyDownUtils.setProgress(null);
+                allUploadingTask = MyUploadUtils.getAllUploadingTask();
+
                 if (adapter == null) {
                     adapter = new DownUpAdapter(context, allUploadingTask, this, Comment.UPLOAD);
                     runOnUiThread(new Runnable() {

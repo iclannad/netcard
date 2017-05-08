@@ -191,6 +191,7 @@ public class ＭyDownloadThread extends Thread implements HandlerImpl {
         }
 
         if (position == ActivityCode.Downloading) {
+            Log.e(TAG, "myError: 任务下载失败:" + downorUpload.getName());
             Activity activity = (Activity) context;
             activity.runOnUiThread(new Runnable() {
                 @Override

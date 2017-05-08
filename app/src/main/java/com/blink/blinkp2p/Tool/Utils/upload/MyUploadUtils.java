@@ -129,6 +129,10 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
                     // 如果当前任务已经被删除的话就不需求开启下载
                     if (uploadTask.status == 2) {
                         taskCount.getAndIncrement();
+
+                        // 允许下次上传下载请求
+                        MyUploadThread.isAllowReqUploadStart = true;
+                        ＭyDownloadThread.isAllowReqDownloadStart = true;
                         continue;
                     }
 
@@ -195,9 +199,9 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
         uploadTask.progress = 100;
 
         currentTaskCount.getAndDecrement();
-        Log.e(TAG, "finishTask: currentTaskCount.get()===" + currentTaskCount.get());
-        Log.e(TAG, "finishTask: taskCount.get()===" + taskCount.get());
-        Log.e(TAG, "finishTask: Comment.uploadlist.size()===" + Comment.uploadlist.size());
+        //Log.e(TAG, "finishTask: currentTaskCount.get()===" + currentTaskCount.get());
+        //Log.e(TAG, "finishTask: taskCount.get()===" + taskCount.get());
+        //Log.e(TAG, "finishTask: Comment.uploadlist.size()===" + Comment.uploadlist.size());
 
         if (currentTaskCount.get() == 0 && taskCount.get() >= Comment.uploadlist.size()) {
             Comment.uploadlist.clear();

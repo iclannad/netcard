@@ -274,6 +274,9 @@ public class FilePreviewActivity extends MyBaseActivity implements OnItemClickLi
                     String path = "";
                     for (int r = 0; r < filepath.length - 1; r++)
                         path += "/" + filepath[r];
+
+                    Log.e(TAG, "Click: path===" + path);
+
                     downorUpload.setPath(path);
                     Comment.Uploadlist.add(downorUpload);
 

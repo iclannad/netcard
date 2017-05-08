@@ -152,6 +152,11 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
                         // 任务标记　自加
                         //taskCount++;
                         taskCount.getAndIncrement();
+
+                        // 重新开启允许下载
+                        ＭyDownloadThread.isAllowReqDownloadStart = true;
+                        MyUploadThread.isAllowReqUploadStart = true;
+
                         continue;
                     }
 

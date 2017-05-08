@@ -1,6 +1,8 @@
 package smart.blink.com.card.Udp.File;
 
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -33,6 +35,9 @@ public class FileRead {
         filename = file.getName();
         length = file.length();
         //uploadReq = new UploadReq();
+
+        Log.e("file", "FileRead: " + file.getAbsolutePath() );
+
         try {
             randomAccessFile = new RandomAccessFile(file, "rw");
         } catch (FileNotFoundException e) {

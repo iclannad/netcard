@@ -1,9 +1,11 @@
 package com.blink.blinkp2p.Controller.Fragment;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -184,6 +186,9 @@ public class FragmentFilePhone extends Fragment implements AdapterView.OnItemCli
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void startthread() {
+
+        Log.e(TAG, "startthread: ");
+
         imagelist = new ArrayList<>();
         getItems(imagelist, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, IMAGELOADOK);
         videolist = new ArrayList<>();
@@ -289,8 +294,13 @@ public class FragmentFilePhone extends Fragment implements AdapterView.OnItemCli
 
                 while (mCursor.moveToNext()) {
                     String path = mCursor.getString(1);
-                    Log.d("run", "path===" + path);
-                    list.add(path);
+                    Log.e("run", "path===" + path);
+                    String[] strings = path.split("/");
+                    Log.e(TAG, "run: strings[2]==" + strings[2] + "   + strings[last]==" + strings[strings.length - 1]);
+                    String sdcard = strings[2];
+                    if (!sdcard.equals("sdcard1")) {
+                        list.add(path);
+                    }
                 }
                 mHandler.sendEmptyMessage(handmsg);
                 mCursor.close();
@@ -332,10 +342,15 @@ public class FragmentFilePhone extends Fragment implements AdapterView.OnItemCli
                 }
 
                 while (mCursor.moveToNext()) {
-
                     String path = mCursor.getString(1);
-                    Log.d("run", "path===" + path);
-                    list.add(path);
+                    //Log.e("run", "path===" + path);
+
+                    String[] strings = path.split("/");
+                    //Log.e(TAG, "run: strings[2]==" + strings[2] + "    strings[last]==" + strings[strings.length-1]);
+                    String sdcard = strings[2];
+                    if (!sdcard.equals("sdcard1")) {
+                        list.add(path);
+                    }
                 }
                 /**
                  * 之前他写的代码差了这条代码
