@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.view.animation.BounceInterpolator;
 import android.widget.Toast;
 
 import com.blink.blinkp2p.Controller.ActivityCode;
@@ -139,6 +140,9 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (downUpCallback != null) {
+                            downUpCallback.Call(ActivityCode.Upload, null);
+                        }
                         new MyTcpUploadThread(uploadTask.id, null, context, MyTcpUploadUtils.this, MyTcpUploadUtils.this);
                     }
                 });
@@ -215,7 +219,13 @@ public class MyTcpUploadUtils implements Runnable, ThreadHandlerImpl, UploadingI
 
         DecimalFormat df = new DecimalFormat("0.00");
         String db = df.format((double) uploadReq.getBlockID() / (double) uploadReq.getBlockSize());
-        double d = Double.parseDouble(db) * 100;
+        double d = 0;
+        try {
+            d = Double.parseDouble(db) * 100;
+        } catch (NumberFormatException e) {
+            d = 0;
+        }
+        //double d = Double.parseDouble(db) * 100;
         int present = (int) d;
         uploadTask.progress = present;
 

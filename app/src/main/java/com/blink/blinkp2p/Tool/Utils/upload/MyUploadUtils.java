@@ -142,6 +142,19 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
                     downorUpload.setName(uploadTask.name);
                     downorUpload.setPath(uploadTask.path);
 
+                    // 开启下载之前先更新下载界面
+                    if (context != null) {
+                        Activity activity = (Activity) context;
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (downUpCallback != null) {
+                                    downUpCallback.Call(ActivityCode.Upload, null);
+                                }
+                            }
+                        });
+                    }
+
                     // 上传任务的逻辑
                     new MyUploadThread(uploadTask.id, downorUpload, context, this, this).start();
 
@@ -255,7 +268,13 @@ public class MyUploadUtils implements Runnable, ThreadHandlerImpl, UploadingImpl
         // 计算进度条
         DecimalFormat df = new DecimalFormat("0.00");
         String db = df.format((double) uploadReq.getBlockID() / (double) uploadReq.getBlockSize());
-        double d = Double.parseDouble(db) * 100;
+        double d = 0;
+        try {
+            d = Double.parseDouble(db) * 100;
+        } catch (NumberFormatException e) {
+            d = 0;
+        }
+        //double d = Double.parseDouble(db) * 100;
         int present = (int) d;
         Log.e(TAG, "Uploading: uploadReq.getFilename()===" + uploadReq.getFilename() + "   present===" + present);
         uploadTask.progress = present;

@@ -143,6 +143,7 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
 
                 downTask.status = 1;
 
+
 //                DownorUpload downorUpload = new DownorUpload();
 //                downorUpload.setName(downTask.name);
 //                downorUpload.setFLAG(DownorUpload.DOWN);
@@ -152,6 +153,10 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (downUpCallback != null) {
+                            // 每次开启任务时都是更新一下界面
+                            downUpCallback.Call(ActivityCode.Downloading, null);
+                        }
                         new ＭyTcpDownloadThread(downTask.id, null, context, MyTcpDownUtils.this, MyTcpDownUtils.this);
                     }
                 });
@@ -187,7 +192,13 @@ public class MyTcpDownUtils implements Runnable, ThreadHandlerImpl, DownloadingI
         // 当前下载的进行
         DecimalFormat df = new DecimalFormat("0.00");
         String db = df.format((double) downLoadingRsp.getBlockId() / (double) downLoadingRsp.getTotolSize());
-        double d = Double.parseDouble(db) * 100;
+        double d = 0;
+        try {
+            d = Double.parseDouble(db) * 100;
+        }catch (NumberFormatException e) {
+            d = 0;
+        }
+
         int present = (int) d;
         downTask.progress = present;
 

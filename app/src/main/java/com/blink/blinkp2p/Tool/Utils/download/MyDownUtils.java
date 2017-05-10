@@ -52,7 +52,6 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
     public static DownUpCallback downUpCallback;
 
 
-
     public static void releaseResource() {
         taskCount.set(0);
         context = null;
@@ -166,6 +165,18 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
                     downorUpload.setFLAG(DownorUpload.DOWN);
                     downorUpload.setPath(downTask.path);
 
+                    if (context != null) {
+                        Activity activity = (Activity) context;
+                        activity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (downUpCallback != null) {
+                                    downUpCallback.Call(ActivityCode.Downloading, null);
+                                }
+                            }
+                        });
+                    }
+
                     // 开启一个下载任务的逻辑
                     new ＭyDownloadThread(downTask.id, downorUpload, context, this, this).start();
 
@@ -266,7 +277,13 @@ public class MyDownUtils implements Runnable, ThreadHandlerImpl, DownloadingImpl
         // 当前下载的进行
         DecimalFormat df = new DecimalFormat("0.00");
         String db = df.format((double) downLoadingRsp.getBlockId() / (double) downLoadingRsp.getTotolSize());
-        double d = Double.parseDouble(db) * 100;
+        double d = 0;
+        try {
+            d = Double.parseDouble(db) * 100;
+        } catch (NumberFormatException e) {
+            d = 0;
+        }
+        //double d = Double.parseDouble(db) * 100;
         int present = (int) d;
         downTask.progress = present;
 

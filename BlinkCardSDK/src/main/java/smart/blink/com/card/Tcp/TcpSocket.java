@@ -64,7 +64,12 @@ public class TcpSocket {
     private static Operation changPcPwdOperation;
     private static Operation pcShutdownOperation;
     private static Operation pcRestartOperation;
+
     private static Operation lookPcFileOperation;
+    private static int lookPcFileFailedCount = 0;
+    private static byte[] lookPcFileBuffer;
+    private static boolean isReceivedLookPcFileData = true;
+
     private static Operation lockPcOperation;
 //    private static Operation downloadingOperation;
 //    private static Operation uploadingOperation;
@@ -234,6 +239,11 @@ public class TcpSocket {
                 }
             }, 6000);
         } else if (position == Protocol.LookFileMsg) {
+            Log.e(TAG, "TcpSocket: Protocol.LookFileMsg");
+            // 此处可修改成功请求多次
+            lookPcFileFailedCount = 0;
+            lookPcFileBuffer = buffer;
+            isReceivedLookPcFileData = true;
             //　查看电脑文件
             lookPcFileOperation = new Operation();
             lookPcFileOperation.position = position;
@@ -241,14 +251,30 @@ public class TcpSocket {
             lookPcFileOperation.timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    if (lookPcFileOperation.timer != null) {
+                    // 失败次数 ++
+                    lookPcFileFailedCount++;
+                    Log.e(TAG, "run: lookPcFileFailedCount===" + lookPcFileFailedCount);
+                    Log.e(TAG, "run: 请求查看电脑文件次数 ++");
+                    isReceivedLookPcFileData = false;
+
+                    if (lookPcFileOperation.timer != null && lookPcFileFailedCount > 2) {
+                        lookPcFileFailedCount = 0;
+                        lookPcFileBuffer = null;
+                        Log.e(TAG, "run: 请求查看电脑文件失败");
+
                         lookPcFileOperation.timer.cancel();
                         lookPcFileOperation.timer = null;
                         lookPcFileOperation.call.onFail(lookPcFileOperation.position);
                         lookPcFileOperation = null;
+
+                        return;
                     }
+
+                    isReceivedLookPcFileData = true;
+                    Send(lookPcFileBuffer);
+
                 }
-            }, 6000);
+            }, 6000, 6000);
         } else if (position == Protocol.LOOKPC) {
             //　PC锁屏
             lockPcOperation = new Operation();
@@ -306,7 +332,7 @@ public class TcpSocket {
                         // 正常接收心跳
                         new RevicedTools(-1, buffer, length, heartcall);
                     } else if (buffer[0] == 5) {
-                        if (lookPcFileOperation != null) {
+                        if (lookPcFileOperation != null && isReceivedLookPcFileData) {
                             new RevicedTools(lookPcFileOperation.position, buffer, length, lookPcFileOperation.call);
                             lookPcFileOperation = null;
                         }
@@ -571,6 +597,9 @@ public class TcpSocket {
                 if (lockPcOperation.timer != null) {
                     lockPcOperation.timer.cancel();
                     lockPcOperation.timer = null;
+
+                    lookPcFileFailedCount = 0;
+                    lookPcFileBuffer = null;
                 }
             }
         } else if (buffer[0] == 71) {
