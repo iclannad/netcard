@@ -68,7 +68,7 @@ public class NetWorkStateReceiver extends BroadcastReceiver {
                     timer.cancel();
                     timer = null;
                 }
-            }, 5000);
+            }, 8000);
         }
 
     }

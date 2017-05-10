@@ -170,7 +170,7 @@ public class TcpSocket {
                 }
             }, 6000);
         } else if (position == Protocol.CONNECT_SERVER) {
-            // 修改密码
+            // 连接子服务器
             connectSubServerOperation = new Operation();
             connectSubServerOperation.position = position;
             connectSubServerOperation.call = call;

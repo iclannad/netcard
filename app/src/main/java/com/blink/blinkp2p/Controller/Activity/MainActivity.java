@@ -1097,6 +1097,36 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
                 }
             });
         }
+
+        if (position == ActivityCode.ConnectPC) {
+            // 申请子服务器后与子服务建立连接失败
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // 申请子服务器失败的话就应该再次弹出对话框
+                    MyPersonalProgressDIalog.getInstance(MainActivity.this).dissmissProgress();
+                    Log.e(TAG, "run: 与子服务器建立连接失败");
+                    HeartController.stopHeart();
+
+                    MyApplication.wantCount.set(0);
+                    MyApplication.helloCount.set(0);
+
+                    Log.e(TAG, "run: 重新弹出重连接对话框");
+                    // 弹出重新连接的对话框
+                    try {
+                        ReconnectDialog.CreateYesNoDialog(context, context
+                                        .getResources().getString(R.string.askbreak), context
+                                        .getResources().getString(R.string.askreconnect),
+                                context.getResources().getString(R.string.login),
+                                context.getResources().getString(R.string.reconnect),
+                                MainActivity.heartHandler);
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
     public static NetWorkStateReceiver netWorkStateReceiver;

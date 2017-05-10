@@ -19,6 +19,7 @@ import java.util.SimpleTimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.crypto.spec.OAEPParameterSpec;
 import javax.xml.transform.sax.SAXTransformerFactory;
 
 import smart.blink.com.card.API.BlinkLog;
@@ -72,6 +73,9 @@ public class UdpSocket {
 
     private static Operation lockPcOperation;
     private static Operation feedbackOperation;
+    private static Operation wantOperation;
+    private static Operation helloOperation;
+    private static Operation relaymsgOperation;
 
 
     /**
@@ -111,7 +115,55 @@ public class UdpSocket {
     public UdpSocket(final String ip, final int PORT, final byte[] buffer, final int position, final BlinkNetCardCall call) {
         UdpSocket.position = position;
 
-        if (position == Protocol.FEEDBACK) {
+        if (position == Protocol.RelayMsg) {
+            // 向主服务器申请子服务器
+            relaymsgOperation = new Operation();
+            relaymsgOperation.position = position;
+            relaymsgOperation.call = call;
+            relaymsgOperation.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (relaymsgOperation.timer != null) {
+                        relaymsgOperation.timer.cancel();
+                        relaymsgOperation.timer = null;
+                        relaymsgOperation.call.onFail(relaymsgOperation.position);
+                        relaymsgOperation = null;
+                    }
+                }
+            }, 8000);
+        } else if (position == Protocol.HELLO) {
+            // 修改用户密码
+            helloOperation = new Operation();
+            helloOperation.position = position;
+            helloOperation.call = call;
+            helloOperation.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (helloOperation.timer != null) {
+                        helloOperation.timer.cancel();
+                        helloOperation.timer = null;
+                        helloOperation.call.onFail(helloOperation.position);
+                        helloOperation = null;
+                    }
+                }
+            }, 8000);
+        } else if (position == Protocol.WANT) {
+            // 修改用户密码
+            wantOperation = new Operation();
+            wantOperation.position = position;
+            wantOperation.call = call;
+            wantOperation.timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (wantOperation.timer != null) {
+                        wantOperation.timer.cancel();
+                        wantOperation.timer = null;
+                        wantOperation.call.onFail(wantOperation.position);
+                        wantOperation = null;
+                    }
+                }
+            }, 8000);
+        } else if (position == Protocol.FEEDBACK) {
             // 修改用户密码
             feedbackOperation = new Operation();
             feedbackOperation.position = position;
@@ -358,6 +410,24 @@ public class UdpSocket {
                             new RevicedTools(feedbackOperation.position, buffer, length, feedbackOperation.call);
                             feedbackOperation = null;
                         }
+                    } else if (buffer[0] == 2) {
+                        // 请求want
+                        if (wantOperation != null) {
+                            new RevicedTools(wantOperation.position, buffer, length, wantOperation.call);
+                            wantOperation = null;
+                        }
+                    } else if (buffer[0] == 4) {
+                        // hello打洞
+                        if (helloOperation != null) {
+                            new RevicedTools(helloOperation.position, buffer, length, helloOperation.call);
+                            helloOperation = null;
+                        }
+                    } else if (buffer[0] == 110) {
+                        // 申请子服务器
+                        if (relaymsgOperation != null) {
+                            new RevicedTools(relaymsgOperation.position, buffer, length, relaymsgOperation.call);
+                            relaymsgOperation = null;
+                        }
                     } else {
                         new RevicedTools(position, buffer, length, UdpSocket.call);
                     }
@@ -396,7 +466,13 @@ public class UdpSocket {
         }
 
         // 开启一个定时器
-        if (position == Protocol.FEEDBACK) {
+        if (position == Protocol.RelayMsg) {
+
+        } else if (position == Protocol.HELLO) {
+
+        } else if (position == Protocol.WANT) {
+
+        } else if (position == Protocol.FEEDBACK) {
 
         } else if (position == Protocol.ChangePwd) {
 
@@ -482,7 +558,31 @@ public class UdpSocket {
         synchronized (this) {
 
             // 如果接收数据成功的话就取消定时器
-            if (buffer[0] == 10) {
+            if (buffer[0] == 110) {
+                // 申请子服务器
+                if (relaymsgOperation != null) {
+                    if (relaymsgOperation.timer != null) {
+                        relaymsgOperation.timer.cancel();
+                        relaymsgOperation.timer = null;
+                    }
+                }
+            } else if (buffer[0] == 4) {
+                // hello打洞
+                if (helloOperation != null) {
+                    if (helloOperation.timer != null) {
+                        helloOperation.timer.cancel();
+                        helloOperation.timer = null;
+                    }
+                }
+            } else if (buffer[0] == 2) {
+                // want请求
+                if (wantOperation != null) {
+                    if (wantOperation.timer != null) {
+                        wantOperation.timer.cancel();
+                        wantOperation.timer = null;
+                    }
+                }
+            } else if (buffer[0] == 10) {
                 // 提交反馈
                 if (feedbackOperation != null) {
                     if (feedbackOperation.timer != null) {

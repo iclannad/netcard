@@ -30,7 +30,7 @@ public class NetCardController {
 
             @Override
             public void onFail(int error) {
-
+                handler.myError(ActivityCode.ConnectPC,error);
             }
         });
     }

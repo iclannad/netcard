@@ -294,10 +294,11 @@ public class FragmentFilePhone extends Fragment implements AdapterView.OnItemCli
 
                 while (mCursor.moveToNext()) {
                     String path = mCursor.getString(1);
-                    Log.e("run", "path===" + path);
+                    //Log.e("run", "path===" + path);
                     String[] strings = path.split("/");
-                    Log.e(TAG, "run: strings[2]==" + strings[2] + "   + strings[last]==" + strings[strings.length - 1]);
+                    //Log.e(TAG, "run: strings[2]==" + strings[2] + "   + strings[last]==" + strings[strings.length - 1]);
                     String sdcard = strings[2];
+                    // 先不处理外置储存卡的情况
                     if (!sdcard.equals("sdcard1")) {
                         list.add(path);
                     }
