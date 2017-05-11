@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -55,7 +55,9 @@
         <activity android:name="com.blink.blinkp2p.camera.CameraActivity" />
         <activity android:name="com.blink.blinkp2p.Controller.Activity.TransSportActivity" />
         <activity android:name="com.blink.blinkp2p.Controller.Activity.FileRecordActivity" />
-        <activity android:name="com.blink.blinkp2p.Controller.Activity.FilePreviewActivity" />
+        <activity
+            android:name="com.blink.blinkp2p.Controller.Activity.FilePreviewActivity"
+            android:launchMode="singleTask" />
 
         <!--子菜单-->
         <activity android:name="com.blink.blinkp2p.Controller.Activity.slidingmenu.AboutActivity" />

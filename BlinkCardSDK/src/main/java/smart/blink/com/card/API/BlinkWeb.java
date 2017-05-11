@@ -38,7 +38,10 @@ public class BlinkWeb {
     //SDK里面使用的端口
     public static int tPORT = 0;
 
+    // 正式服务器
     public static final String SERVER = "blinkwifi.b-link.net.cn";
+
+    // 测试服务器
     //public static final String SERVER = "sandbox.b-link.net.cn";
     public static final int PORT = 6060;
     

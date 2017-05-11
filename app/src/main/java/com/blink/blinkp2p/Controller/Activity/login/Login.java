@@ -63,6 +63,9 @@ import smart.blink.com.card.bean.WantRsp;
 
 /**
  * Created by Ruanjiahui on 2017/1/4.
+ * <p/>
+ * <p/>
+ * 登录页面的activity
  */
 public class Login extends BaseActivity implements HandlerImpl {
 
@@ -102,6 +105,7 @@ public class Login extends BaseActivity implements HandlerImpl {
     private DropDownPopWindows mDownPopWindows;
     private RelativeLayout init_idLinear = null;
 
+    // 历史记录点击事件
     private Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             Bundle data = msg.getData();
@@ -166,6 +170,7 @@ public class Login extends BaseActivity implements HandlerImpl {
 
     /**
      * Start()
+     * 初始化布局，findViewById() 设置点击事件
      */
     @Override
     public void init() {

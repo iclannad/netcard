@@ -132,7 +132,7 @@ public class RevicedTools {
                 FEEDBACK(buffer, call);
                 break;
             case Protocol.HELLO_FAILED:
-                HELLO_FAILED(call);
+                //HELLO_FAILED(call);
                 break;
             case 9:
                 // 与子服务器进行连接时，请求下载返回的结果

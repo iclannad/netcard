@@ -290,7 +290,7 @@ public class NetCardController {
     }
 
     /**
-     * 修改PC端的密码
+     * 修改PC端的密码 他写的
      *
      * @param newPassword 新密码
      * @param handler

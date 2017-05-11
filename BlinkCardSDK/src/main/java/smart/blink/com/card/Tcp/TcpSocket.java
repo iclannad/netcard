@@ -456,7 +456,7 @@ public class TcpSocket {
                             downloadingTimer.cancel();
                             downloadingTimer = null;
                         }
-                    }, 4000);
+                    }, 6000);
                 } else if (position == Protocol.Uploading) {
                     uploadingTimer = new Timer();
                     uploadingTimer.schedule(new TimerTask() {
@@ -464,12 +464,15 @@ public class TcpSocket {
                         public void run() {
                             // 请求上传失败的逻辑
                             Log.e(TAG, "run: 请求上传失败的逻辑");
+                            if (socket != null) {
+                                socket.isInputShutdown();
+                            }
                             RevicedTools.failUploadingHandlerByTcp(uploadingcall);
 
                             uploadingTimer.cancel();
                             uploadingTimer = null;
                         }
-                    }, 4000);
+                    }, 6000);
                 } else {
                     timer = new Timer();
                     timer.schedule(new TimerTask() {
@@ -499,11 +502,16 @@ public class TcpSocket {
         BlinkLog.Print("send: " + Arrays.toString(buffer));
         if (socket != null) {
             try {
+                Log.i(TAG, "Send: socket.isInputShutdown()===" + socket.isInputShutdown());
+                if (socket.isInputShutdown()) {
+                    in = new DataInputStream(socket.getInputStream());
+                }
+
                 out = new DataOutputStream(socket.getOutputStream());
                 out.write(buffer);
                 out.flush();
             } catch (IOException e) {
-                BlinkLog.Error(e.toString());
+                BlinkLog.Error("Send:" + e.toString());
                 //closeTcpSocket();
                 closeTcpSocketWithoutHandler();
                 Log.e(TAG, "Send: closeTcpSocket()");
@@ -520,7 +528,7 @@ public class TcpSocket {
                 length = in.read(buffer);
             }
         } catch (IOException e) {
-            BlinkLog.Error(e.toString());
+            BlinkLog.Error("Write:" + e.toString());
             // 释放资源
             //closeTcpSocket();
             closeTcpSocketWithoutHandler();

@@ -118,6 +118,11 @@ public class MyUpload implements BlinkNetCardCall, TimerTaskCall {
             failedCount++;
             if (failedCount > 2) {
                 // 请求上传失败的逻辑
+                // 当上传失败的时候关闭定时器
+                if (timer != null) {
+                    timer.cancel();
+                    timer = null;
+                }
                 Log.e(TAG, "onFail: 该任务上传失败");
                 call.onFail(Protocol.Uploading);
 

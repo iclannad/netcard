@@ -463,8 +463,6 @@ public class MainActivity extends NavActivity implements View.OnClickListener, F
                 break;
             case 6:
                 // 重新登录
-                // 必联商城
-
                 intent = new Intent(MainActivity.this, Login.class);
                 startActivity(intent);
                 finish();

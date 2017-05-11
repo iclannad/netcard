@@ -308,6 +308,17 @@ public class MyProgressDIalog {
                         int min = d.getMinutes();
                         int msgtime = (hours * 60 + min)
                                 - (hourOfDay * 60 + minute);
+
+                        Log.i(TAG, "onTimeSet: msgtime===" + msgtime);
+                        if (msgtime > 0) {
+                            //Log.i(TAG, "onTimeSet: 提示用户不能设置小于现在的时间");
+                            //UIHelper.ToastMessageNetError(context, "不能设置小于当前的时间");
+                            //return;
+                            msgtime = msgtime - (24 * 60);
+                        }
+
+
+                        HeartController.stopHeart();
                         // 登录提示
                         MyPersonalProgressDIalog.getInstance(context).setContent("向电脑发送关闭信息...").showProgressDialog();
                         Log.e(TAG, "onTimeSet: " + msgtime);

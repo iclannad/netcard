@@ -30,6 +30,12 @@ import smart.blink.com.card.Tool.RevicedTools;
 
 /**
  * Created by Ruanjiahui on 2017/1/10.
+ * <p/>
+ * 延时判断：先开一个定时器，如果规定时间内服务器没返回数据，就判定这次操作失败
+ * <p/>
+ * <p/>
+ * 将position，call和timer绑定在一起，所以定义了Operation类。不然每次规定时间还没有到，就来另一种
+ * 操作的请求，会使各种请求操作之间call回调混乱，同理TcpSocket也是一样的处理。
  */
 public class UdpSocket {
 
@@ -132,7 +138,7 @@ public class UdpSocket {
                 }
             }, 8000);
         } else if (position == Protocol.HELLO) {
-            // 修改用户密码
+            // 发送Hello
             helloOperation = new Operation();
             helloOperation.position = position;
             helloOperation.call = call;
@@ -524,7 +530,9 @@ public class UdpSocket {
         DatagramPacket out = null;
         try {
             out = new DatagramPacket(buffer, 0, buffer.length, InetAddress.getByName(ip), PORT);
-            socket.send(out);
+            if (socket != null) {
+                socket.send(out);
+            }
         } catch (UnknownHostException e) {
             BlinkLog.Error(e.toString());
         } catch (IOException e) {

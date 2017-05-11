@@ -127,6 +127,11 @@ public class MyDown implements BlinkNetCardCall, TimerTaskCall {
             failedCount++;
             if (failedCount > 2) {
                 // 任务下载失败的处理逻辑
+                if (timer != null) {
+                    timer.cancel();
+                    timer = null;
+                }
+
                 call.onFail(Protocol.Downloading);
                 failedCount = 0;
                 return;
